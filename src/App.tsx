@@ -1,3 +1,4 @@
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { getCurrentDay } from './services/planService'
 import { LoginPage } from './pages/LoginPage'
 import { Dashboard } from './pages/Dashboard'
@@ -7,6 +8,18 @@ import { SessionCompleteView } from './components/SessionCompleteView'
 import { SettingsView } from './components/SettingsView'
 import { TrainingProvider, useTraining } from './contexts/TrainingContext'
 
+function SessionRouteGuard({ children }: { children: React.ReactNode }) {
+  const { sessionStatus } = useTraining()
+  if (sessionStatus !== 'running') return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
+function SessionCompleteRouteGuard({ children }: { children: React.ReactNode }) {
+  const { sessionStatus } = useTraining()
+  if (sessionStatus !== 'complete') return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
 function AppContent() {
   const {
     user,
@@ -14,14 +27,11 @@ function AppContent() {
     plan,
     error,
     completions,
-    viewMode,
-    sessionStatus,
-    sessionDayIndex,
     setSelectedDayIndex,
-    setViewMode,
     handleBackFromComplete,
     handleLogout,
   } = useTraining()
+  const navigate = useNavigate()
 
   if (user === undefined) {
     return (
@@ -75,37 +85,47 @@ function AppContent() {
 
   const currentDayIndex = getCurrentDay(plan, completions)
 
-  if (sessionStatus === 'running' && sessionDayIndex !== null) {
-    return <ActiveSessionView />
-  }
-
-  if (sessionStatus === 'complete') {
-    return (
-      <SessionCompleteView
-        onBackToTraining={() => {
-          handleBackFromComplete()
-          setSelectedDayIndex(currentDayIndex)
-          setViewMode('dashboard')
-        }}
-        onSettingsClick={() => {
-          handleBackFromComplete()
-          setViewMode('settings')
-        }}
+  return (
+    <Routes>
+      <Route
+        path="/session"
+        element={
+          <SessionRouteGuard>
+            <ActiveSessionView />
+          </SessionRouteGuard>
+        }
       />
-    )
-  }
-
-  if (viewMode === 'settings') {
-    return (
-      <SettingsView
-        username={user?.username ?? 'Unknown'}
-        onLogout={handleLogout}
-        onTrainingClick={() => setViewMode('dashboard')}
+      <Route
+        path="/session/complete"
+        element={
+          <SessionCompleteRouteGuard>
+            <SessionCompleteView
+              onBackToTraining={() => {
+                handleBackFromComplete()
+                setSelectedDayIndex(currentDayIndex)
+                navigate('/')
+              }}
+              onSettingsClick={() => {
+                handleBackFromComplete()
+                navigate('/settings')
+              }}
+            />
+          </SessionCompleteRouteGuard>
+        }
       />
-    )
-  }
-
-  return <Dashboard />
+      <Route
+        path="/settings"
+        element={
+          <SettingsView
+            username={user?.username ?? 'Unknown'}
+            onLogout={handleLogout}
+          />
+        }
+      />
+      <Route path="/" element={<Dashboard />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
 
 function App() {

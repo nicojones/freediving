@@ -1,17 +1,14 @@
+import { useNavigate } from 'react-router-dom'
 import { TopAppBar } from './TopAppBar'
 import { BottomNavBar } from './BottomNavBar'
 
 interface SettingsViewProps {
   username: string
   onLogout: () => void
-  onTrainingClick: () => void
 }
 
-export function SettingsView({
-  username,
-  onLogout,
-  onTrainingClick,
-}: SettingsViewProps) {
+export function SettingsView({ username, onLogout }: SettingsViewProps) {
+  const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-background pb-32">
       <TopAppBar variant="dashboard" weekLabel="Settings" planName="" />
@@ -42,7 +39,7 @@ export function SettingsView({
       </main>
       <BottomNavBar
         activeTab="settings"
-        onTrainingClick={onTrainingClick}
+        onTrainingClick={() => navigate('/')}
         onSettingsClick={() => {}}
       />
     </div>

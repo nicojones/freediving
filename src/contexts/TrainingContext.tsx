@@ -7,6 +7,7 @@ import {
   useCallback,
   type ReactNode,
 } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   loadPlan,
   getIntervalsForDay,
@@ -69,6 +70,7 @@ interface TrainingContextValue {
 const TrainingContext = createContext<TrainingContextValue | null>(null)
 
 export function TrainingProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate()
   const [user, setUser] = useState<{ id: number; username: string } | null | undefined>(undefined)
   const [plan, setPlan] = useState<Plan | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -159,6 +161,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       setSessionStatus('complete')
       setTimerState(null)
       setSessionDayIndex(null)
+      navigate('/session/complete')
 
       const dayToRecord = sessionDayIndexRef.current
       if (dayToRecord !== null) {

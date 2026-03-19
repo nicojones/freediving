@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import {
   getIntervalsForDay,
   computeSessionDurationSeconds,
@@ -13,6 +14,7 @@ import { TrainingDayCard } from '../components/TrainingDayCard'
 import { SessionBreakdown } from '../components/SessionBreakdown'
 
 export function Dashboard() {
+  const navigate = useNavigate()
   const {
     plan,
     completions,
@@ -217,7 +219,10 @@ export function Dashboard() {
                 <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-background via-background to-transparent pt-12 pb-8 px-6 pointer-events-none">
                   <div className="max-w-md mx-auto pointer-events-auto">
                     <PrimaryButton
-                      onClick={handleStartSession}
+                      onClick={async () => {
+                        await handleStartSession()
+                        navigate('/session')
+                      }}
                       disabled={audioLoading}
                       loading={audioLoading}
                       icon="play_arrow"
@@ -240,8 +245,8 @@ export function Dashboard() {
       {!showSessionPreview && (
         <BottomNavBar
           activeTab="training"
-          onTrainingClick={() => setViewMode('dashboard')}
-          onSettingsClick={() => setViewMode('settings')}
+          onTrainingClick={() => navigate('/')}
+          onSettingsClick={() => navigate('/settings')}
         />
       )}
     </div>
