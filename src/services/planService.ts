@@ -82,7 +82,25 @@ export function getCurrentDay(
     lastDate.toDateString() === today.toDateString() ||
     lastDate.toDateString() === yesterday.toDateString()
 
-  if (isOnTrack) return nextDayIndex
+  if (isOnTrack) {
+    // If next day is a rest day and we're past that day (viewing app after the rest day),
+    // assume user took the rest and advance to the next day
+    let idx = nextDayIndex
+    while (idx < plan.length && getIntervalsForDay(plan, idx) === null) {
+      const restDayDate = lastDate ? new Date(lastDate) : null
+      if (restDayDate) restDayDate.setDate(restDayDate.getDate() + 1)
+      const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+      const restNorm = restDayDate
+        ? new Date(restDayDate.getFullYear(), restDayDate.getMonth(), restDayDate.getDate())
+        : null
+      if (restNorm && todayNorm.getTime() > restNorm.getTime()) {
+        idx++
+      } else {
+        break
+      }
+    }
+    return idx < plan.length ? idx : null
+  }
 
   // Behind: skip rest days, return first training day
   for (let i = nextDayIndex; i < plan.length; i++) {
