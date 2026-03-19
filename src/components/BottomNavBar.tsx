@@ -1,10 +1,12 @@
+import { memo } from 'react'
+
 interface BottomNavBarProps {
   activeTab: 'training' | 'settings'
   onTrainingClick?: () => void
   onSettingsClick?: () => void
 }
 
-export function BottomNavBar({
+export const BottomNavBar = memo(function BottomNavBar({
   activeTab,
   onTrainingClick,
   onSettingsClick,
@@ -53,4 +55,4 @@ export function BottomNavBar({
       </button>
     </nav>
   )
-}
+})

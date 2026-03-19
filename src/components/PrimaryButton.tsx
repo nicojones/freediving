@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 import clsx from 'clsx'
 
 interface PrimaryButtonProps {
@@ -12,7 +12,7 @@ interface PrimaryButtonProps {
   className?: string
 }
 
-export function PrimaryButton({
+export const PrimaryButton = memo(function PrimaryButton({
   children,
   onClick,
   type = 'button',
@@ -53,4 +53,4 @@ export function PrimaryButton({
       )}
     </button>
   )
-}
+})

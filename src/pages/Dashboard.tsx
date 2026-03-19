@@ -1,18 +1,18 @@
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  getPhasesForDay,
-  computeSessionDurationSeconds,
-  getCurrentDay,
-} from '../services/planService'
-import { formatDuration } from '../utils/formatDuration'
+import { getPhasesForDay, getCurrentDay } from '../services/planService'
 import { useTraining } from '../contexts/TrainingContext'
+import { isDayCompleted } from '../utils/completions'
 import { TopAppBar } from '../components/TopAppBar'
 import { BottomNavBar } from '../components/BottomNavBar'
-import { PrimaryButton } from '../components/PrimaryButton'
 import { InstallPrompt } from '../components/InstallPrompt'
 import { SpeedMultiplierSelector } from '../components/SpeedMultiplierSelector'
 import { TrainingDayCard } from '../components/TrainingDayCard'
 import { SessionBreakdown } from '../components/SessionBreakdown'
+import { BackButton } from '../components/BackButton'
+import { RestDayCard } from '../components/RestDayCard'
+import { SessionPreviewStats } from '../components/SessionPreviewStats'
+import { StartSessionCTA } from '../components/StartSessionCTA'
 
 export function Dashboard() {
   const navigate = useNavigate()
@@ -31,6 +31,27 @@ export function Dashboard() {
     handleStartSession,
   } = useTraining()
 
+  const handleSelectDay = useCallback(
+    (index: number) => {
+      setSelectedDayIndex(index)
+      setViewMode('session-preview')
+    },
+    [setSelectedDayIndex, setViewMode]
+  )
+
+  const handleBack = useCallback(() => setViewMode('dashboard'), [setViewMode])
+
+  const handleStartSessionClick = useCallback(async () => {
+    await handleStartSession()
+    navigate('/session')
+  }, [handleStartSession, navigate])
+
+  const handleTrainingClick = useCallback(() => navigate('/'), [navigate])
+  const handleSettingsClick = useCallback(
+    () => navigate('/settings'),
+    [navigate]
+  )
+
   if (!plan) return null
 
   const currentDayIndex = getCurrentDay(plan, completions)
@@ -45,11 +66,6 @@ export function Dashboard() {
     !isRestDay
   const showDayDetail = selectedDayIndex !== null
   const planName = 'CO2 Tolerance III'
-
-  const handleSelectDay = (index: number) => {
-    setSelectedDayIndex(index)
-    setViewMode('session-preview')
-  }
 
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
@@ -77,42 +93,11 @@ export function Dashboard() {
         )}
 
         {showDayDetail && isRestDay ? (
-          <div className="mt-10 bg-surface-container-low rounded-3xl p-6 overflow-hidden">
-            <div className="flex items-center gap-4 mb-6">
-                <button
-                type="button"
-                onClick={() => setViewMode('dashboard')}
-                className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full px-4 py-2 min-h-11 min-w-11 transition-colors duration-400 -ml-1 shrink-0"
-                aria-label="Back"
-              >
-                <span className="material-symbols-outlined text-xl">arrow_back</span>
-                <span className="font-label text-sm font-semibold uppercase tracking-wider">
-                  Back
-                </span>
-              </button>
-            </div>
-            <section>
-              <h1 className="font-headline text-[3.5rem] leading-[1.1] font-bold tracking-tight text-on-surface mb-2">
-                Day {selectedDayIndex! + 1}: Rest
-              </h1>
-              <p className="text-on-surface-variant text-lg tracking-wide font-medium">
-                Recovery and light activity
-              </p>
-              {completions.some((c) => c.day_index === selectedDayIndex) && (
-                <div className="mt-6 flex items-center gap-3 text-primary">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    check_circle
-                  </span>
-                  <span className="font-label font-semibold uppercase tracking-wider">
-                    Done
-                  </span>
-                </div>
-              )}
-            </section>
-          </div>
+          <RestDayCard
+            dayIndex={selectedDayIndex!}
+            isCompleted={isDayCompleted(completions, selectedDayIndex!)}
+            onBack={handleBack}
+          />
         ) : !showSessionPreview ? (
           <>
             <section className="mb-12">
@@ -132,7 +117,7 @@ export function Dashboard() {
                   plan={plan}
                   dayIndex={i}
                   isCurrent={currentDayIndex === i}
-                  isCompleted={completions.some((c) => c.day_index === i)}
+                  isCompleted={isDayCompleted(completions, i)}
                   onSelect={() => handleSelectDay(i)}
                 />
               ))}
@@ -142,19 +127,7 @@ export function Dashboard() {
           <>
             <div className="mt-0 bg-surface-container-low rounded-3xl p-6 mb-8 overflow-hidden">
               <div className="flex items-center gap-4 mb-6">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('dashboard')}
-                  className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full px-4 py-2 min-h-11 min-w-11 transition-colors duration-400 -ml-1 shrink-0"
-                  aria-label="Back"
-                >
-                  <span className="material-symbols-outlined text-xl">
-                    arrow_back
-                  </span>
-                  <span className="font-label text-sm font-semibold uppercase tracking-wider">
-                    Back
-                  </span>
-                </button>
+                <BackButton onClick={handleBack} />
               </div>
               <section className="mb-0">
                 <h1 className="font-headline text-[3.5rem] leading-[1.1] font-bold tracking-tight text-on-surface mb-2">
@@ -168,50 +141,7 @@ export function Dashboard() {
 
             {selectedPhases && (
               <>
-                <section className="grid grid-cols-2 gap-4 mb-12">
-                  <div className="col-span-2 bg-surface-container-low p-6 rounded-xl flex flex-col justify-between h-40 relative overflow-hidden group">
-                    <div className="relative z-10">
-                      <span className="text-on-surface-variant font-label text-xs uppercase tracking-[0.2em]">
-                        Total Time
-                      </span>
-                      <div className="text-primary font-headline text-5xl font-extrabold mt-2">
-                        {Math.ceil(
-                          computeSessionDurationSeconds(selectedPhases) / 60
-                        )}
-                        m
-                      </div>
-                    </div>
-                    <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-                      <span className="material-symbols-outlined text-[120px]">
-                        timer
-                      </span>
-                    </div>
-                  </div>
-                  <div className="bg-surface-container-low p-5 rounded-xl">
-                    <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em] block mb-2">
-                      Longest Hold
-                    </span>
-                    <div className="text-on-surface font-headline text-2xl font-bold">
-                      {formatDuration(
-                        Math.max(
-                          ...selectedPhases
-                            .filter((p) => p.type === 'hold')
-                            .map((p) => p.duration)
-                        )
-                      )}
-                    </div>
-                  </div>
-                  <div className="bg-surface-container-low p-5 rounded-xl">
-                    <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em] block mb-2">
-                      Recovery
-                    </span>
-                    <div className="text-secondary font-headline text-2xl font-bold">
-                      {formatDuration(
-                        selectedPhases.find((p) => p.type === 'recovery')?.duration ?? 0
-                      )}
-                    </div>
-                  </div>
-                </section>
+                <SessionPreviewStats phases={selectedPhases} />
 
                 <SpeedMultiplierSelector
                   value={speedMultiplier}
@@ -225,21 +155,10 @@ export function Dashboard() {
             {showSessionPreview &&
               selectedPhases &&
               selectedDayIndex === currentDayIndex && (
-                <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-background via-background to-transparent pt-12 pb-8 px-6 pointer-events-none">
-                  <div className="max-w-md mx-auto pointer-events-auto">
-                    <PrimaryButton
-                      onClick={async () => {
-                        await handleStartSession()
-                        navigate('/session')
-                      }}
-                      disabled={audioLoading}
-                      loading={audioLoading}
-                      icon="play_arrow"
-                    >
-                      {audioLoading ? 'Loading…' : 'Start Session'}
-                    </PrimaryButton>
-                  </div>
-                </div>
+                <StartSessionCTA
+                  onStart={handleStartSessionClick}
+                  loading={audioLoading}
+                />
               )}
           </>
         )}
@@ -254,8 +173,8 @@ export function Dashboard() {
       {!showSessionPreview && (
         <BottomNavBar
           activeTab="training"
-          onTrainingClick={() => navigate('/')}
-          onSettingsClick={() => navigate('/settings')}
+          onTrainingClick={handleTrainingClick}
+          onSettingsClick={handleSettingsClick}
         />
       )}
     </div>

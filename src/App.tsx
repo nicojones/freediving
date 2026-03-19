@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { FishIcon } from './components/FishIcon'
 import { getCurrentDay } from './services/planService'
@@ -86,6 +87,17 @@ function AppContent() {
 
   const currentDayIndex = getCurrentDay(plan, completions)
 
+  const handleBackToTraining = useCallback(() => {
+    handleBackFromComplete()
+    setSelectedDayIndex(currentDayIndex)
+    navigate('/')
+  }, [handleBackFromComplete, setSelectedDayIndex, currentDayIndex, navigate])
+
+  const handleSettingsClick = useCallback(() => {
+    handleBackFromComplete()
+    navigate('/settings')
+  }, [handleBackFromComplete, navigate])
+
   return (
     <Routes>
       <Route
@@ -101,15 +113,8 @@ function AppContent() {
         element={
           <SessionCompleteRouteGuard>
             <SessionCompleteView
-              onBackToTraining={() => {
-                handleBackFromComplete()
-                setSelectedDayIndex(currentDayIndex)
-                navigate('/')
-              }}
-              onSettingsClick={() => {
-                handleBackFromComplete()
-                navigate('/settings')
-              }}
+              onBackToTraining={handleBackToTraining}
+              onSettingsClick={handleSettingsClick}
             />
           </SessionCompleteRouteGuard>
         }

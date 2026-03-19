@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 interface SpeedMultiplierSelectorProps {
   value: number
   onChange: (speed: number) => void
@@ -6,7 +8,7 @@ interface SpeedMultiplierSelectorProps {
 
 const SPEEDS = [1, 2, 5, 10] as const
 
-export function SpeedMultiplierSelector({
+export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
   value,
   onChange,
   label = 'Speed (test)',
@@ -34,4 +36,4 @@ export function SpeedMultiplierSelector({
       </div>
     </section>
   )
-}
+})

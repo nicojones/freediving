@@ -1,9 +1,11 @@
 import { useSessionProgress } from '../utils/sessionProgress'
 import { formatDuration } from '../utils/formatDuration'
 import { formatMmSs } from '../utils/formatMmSs'
+import { formatPhaseDisplayName, formatPhaseShortLabel } from '../utils/phaseLabels'
 import { useTraining } from '../contexts/TrainingContext'
 import { TopAppBar } from './TopAppBar'
 import { SpeedMultiplierSelector } from './SpeedMultiplierSelector'
+import { HoldProgressRing } from './HoldProgressRing'
 
 export function ActiveSessionView() {
   const {
@@ -55,40 +57,21 @@ export function ActiveSessionView() {
                 : 'border-surface-container-high'
             }`}
           >
-            {timerState?.phase === 'hold' && phases ? (
-              <svg
-                className="absolute inset-[-12px] w-[344px] h-[344px] rotate-[-90deg]"
-                aria-hidden
-              >
-                <circle
-                  cx="172"
-                  cy="172"
-                  fill="transparent"
-                  r="160"
-                  stroke="#52dad3"
-                  strokeDasharray={`${
-                    (timerState.remainingMs / 1000 /
-                      (phases
-                        .filter((p) => p.type === 'hold')
-                        [timerState.intervalIndex]?.duration ?? 60)) *
-                    1005
-                  } 1005`}
-                  strokeDashoffset="0"
-                  strokeLinecap="round"
-                  strokeWidth="12"
-                />
-              </svg>
-            ) : null}
+            {timerState?.phase === 'hold' && phases && (
+              <HoldProgressRing
+                remainingMs={timerState.remainingMs}
+                holdDurationSeconds={
+                  phases.filter((p) => p.type === 'hold')[
+                    timerState.intervalIndex
+                  ]?.duration ?? 60
+                }
+                isActive
+              />
+            )}
           </div>
           <div className="z-10 text-center">
             <p className="text-primary font-headline text-2xl font-bold tracking-widest mb-2 uppercase">
-              {timerState?.phase === 'hold'
-                ? 'Holding'
-                : timerState?.phase === 'recovery'
-                  ? 'Recovery'
-                  : timerState?.phase === 'relaxation'
-                    ? 'Prepare'
-                    : 'Complete'}
+              {formatPhaseDisplayName(timerState?.phase)}
             </p>
             <h1 className="text-on-surface font-headline text-[5rem] font-extrabold tracking-tighter leading-none tabular-nums">
               {timerState ? formatMmSs(timerState.remainingMs) : '--:--'}
@@ -100,7 +83,7 @@ export function ActiveSessionView() {
                 </span>
                 <span className="text-on-surface-variant font-label text-sm tracking-wide">
                   Next: {formatDuration(nextItem.seconds)}{' '}
-                  {nextItem.type === 'hold' ? 'Hold' : nextItem.label.split(' ')[0]}
+                  {formatPhaseShortLabel(nextItem)}
                 </span>
               </div>
             )}
