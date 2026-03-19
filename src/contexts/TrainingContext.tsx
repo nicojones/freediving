@@ -10,7 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import {
   loadPlan,
-  getIntervalsForDay,
+  getPhasesForDay,
   getCurrentDay,
 } from '../services/planService'
 import { getCurrentUser, logout } from '../services/authService'
@@ -136,8 +136,8 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
 
   const handleStartSession = useCallback(async () => {
     if (!plan || selectedDayIndex === null) return
-    const intervals = getIntervalsForDay(plan, selectedDayIndex)
-    if (!intervals) return
+    const phases = getPhasesForDay(plan, selectedDayIndex)
+    if (!phases) return
 
     sessionDayIndexRef.current = selectedDayIndex
     setSessionDayIndex(selectedDayIndex)
@@ -176,7 +176,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
         }
       }
     })
-    engine.start(intervals, { speedMultiplier })
+    engine.start(phases, { speedMultiplier })
     setSessionStatus('running')
   }, [plan, selectedDayIndex, speedMultiplier])
 

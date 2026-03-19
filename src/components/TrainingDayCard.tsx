@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react'
 import type { Plan } from '../types/plan'
 import {
-  getIntervalsForDay,
+  getPhasesForDay,
   computeSessionDurationSeconds,
   getDaySummary,
 } from '../services/planService'
@@ -22,15 +22,15 @@ export function TrainingDayCard({
   isCompleted,
   onSelect,
 }: TrainingDayCardProps) {
-  const intervals = getIntervalsForDay(plan, dayIndex)
+  const phases = getPhasesForDay(plan, dayIndex)
   const summary = getDaySummary(plan, dayIndex)
   const duration =
-    intervals !== null
-      ? Math.ceil(computeSessionDurationSeconds(intervals) / 60)
+    phases !== null
+      ? Math.ceil(computeSessionDurationSeconds(phases) / 60)
       : 0
-  const holdCount = intervals?.length ?? 0
+  const holdCount = phases?.filter((p) => p.type === 'hold').length ?? 0
 
-  if (isCurrent && intervals) {
+  if (isCurrent && phases) {
     return (
       <button
         type="button"
@@ -79,7 +79,7 @@ export function TrainingDayCard({
     )
   }
 
-  if (isCurrent && !intervals) {
+  if (isCurrent && !phases) {
     return (
       <div className="relative group w-full text-left">
         <div className="absolute -inset-1 bg-primary/10 blur-xl rounded-full opacity-50 transition duration-1000" />
@@ -139,7 +139,7 @@ export function TrainingDayCard({
               Day {dayIndex + 1}
             </h3>
             <p className="font-body text-xs text-on-surface-variant">
-              {intervals
+              {phases
                 ? `${duration}:00 Total • ${holdCount} ${holdCount === 1 ? 'Hold' : 'Holds'}`
                 : 'Rest'}
             </p>

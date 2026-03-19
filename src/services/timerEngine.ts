@@ -1,4 +1,4 @@
-import type { Interval } from '../types/plan'
+import type { Phase } from '../types/plan'
 import {
   RELAXATION_SECONDS,
   type TimerEvent,
@@ -14,36 +14,56 @@ export interface TimerStartOptions {
 }
 
 interface TimerEngineAPI {
-  start(intervals: Interval[], options?: TimerStartOptions): void
+  start(phases: Phase[], options?: TimerStartOptions): void
   on(eventType: EventType, callback: EventCallback): void
   getState(): TimerState
   stop(): void
   setSpeedMultiplier(multiplier: number): void
 }
 
-function buildTimeline(intervals: Interval[]) {
+function buildTimeline(phases: Phase[]) {
   const relaxationMs = RELAXATION_SECONDS * 1000
-  const holdStarts: number[] = []
-  const holdEnds: number[] = []
-  let t = relaxationMs
-  for (let i = 0; i < intervals.length; i++) {
-    const iv = intervals[i]
-    const holdMs = iv.holdSeconds * 1000
-    holdStarts.push(t)
-    holdEnds.push(t + holdMs)
-    t += holdMs
-    if (i < intervals.length - 1) {
-      t += iv.recoverySeconds * 1000
-    }
+  const phaseStarts: number[] = []
+  const phaseEnds: number[] = []
+  let t = 0
+  phaseStarts.push(0)
+  phaseEnds.push(relaxationMs)
+  t = relaxationMs
+  for (const p of phases) {
+    const durMs = p.duration * 1000
+    phaseStarts.push(t)
+    phaseEnds.push(t + durMs)
+    t += durMs
   }
-  return { relaxationMs, holdStarts, holdEnds, intervals }
+  const holdIndices = phases
+    .map((p, i) => (p.type === 'hold' ? i : -1))
+    .filter((i) => i >= 0)
+  const holdStarts = holdIndices.map((i) => phaseStarts[i + 1])
+  const holdEnds = holdIndices.map((i) => phaseEnds[i + 1])
+  const recoveryBeforeHold = holdIndices.map((phaseIdx) => {
+    const prevIdx = phaseIdx - 1
+    if (prevIdx >= 0 && phases[prevIdx].type === 'recovery') {
+      return phases[prevIdx].duration
+    }
+    return 0
+  })
+  return {
+    relaxationMs,
+    phases,
+    phaseStarts,
+    phaseEnds,
+    holdIndices,
+    holdStarts,
+    holdEnds,
+    recoveryBeforeHold,
+  }
 }
 
 function computeState(
   elapsedMs: number,
   timeline: ReturnType<typeof buildTimeline>
 ): TimerState {
-  const { relaxationMs, holdStarts, holdEnds, intervals } = timeline
+  const { relaxationMs, phases, phaseStarts, phaseEnds, holdIndices } = timeline
 
   if (elapsedMs < relaxationMs) {
     return {
@@ -54,28 +74,23 @@ function computeState(
     }
   }
 
-  for (let i = 0; i < intervals.length; i++) {
-    if (elapsedMs < holdStarts[i]) {
+  for (let i = 0; i < phases.length; i++) {
+    const start = phaseStarts[i + 1]
+    const end = phaseEnds[i + 1]
+    if (elapsedMs >= start && elapsedMs < end) {
+      const holdIdx = phases[i].type === 'hold' ? holdIndices.indexOf(i) : holdIndices.indexOf(i - 1)
       return {
-        phase: 'recovery',
-        intervalIndex: i - 1,
+        phase: phases[i].type === 'hold' ? 'hold' : 'recovery',
+        intervalIndex: holdIdx >= 0 ? holdIdx : 0,
         elapsedMs,
-        remainingMs: holdStarts[i] - elapsedMs,
-      }
-    }
-    if (elapsedMs < holdEnds[i]) {
-      return {
-        phase: 'hold',
-        intervalIndex: i,
-        elapsedMs,
-        remainingMs: holdEnds[i] - elapsedMs,
+        remainingMs: end - elapsedMs,
       }
     }
   }
 
   return {
     phase: 'complete',
-    intervalIndex: intervals.length - 1,
+    intervalIndex: holdIndices.length - 1,
     elapsedMs,
     remainingMs: 0,
   }
@@ -85,7 +100,7 @@ const DEFAULT_SPEED = 1
 
 export function createTimerEngine(): TimerEngineAPI {
   let startTime: number | null = null
-  let intervals: Interval[] = []
+  let phases: Phase[] = []
   let timeline: ReturnType<typeof buildTimeline> | null = null
   let tickId: ReturnType<typeof setInterval> | null = null
   let lastElapsedMs = 0
@@ -114,12 +129,12 @@ export function createTimerEngine(): TimerEngineAPI {
     const elapsedMs = Math.floor(realElapsedMs * speedMultiplier)
 
     currentState = computeState(elapsedMs, timeline)
-    const { holdStarts, holdEnds, intervals: ivs } = timeline
+    const { holdStarts, holdEnds, recoveryBeforeHold } = timeline
 
-    for (let i = 0; i < ivs.length; i++) {
+    for (let i = 0; i < holdStarts.length; i++) {
       const prepareHoldAt = holdStarts[i] - 10000
       const countdown30At = holdStarts[i] - 30000
-      const recBeforeThisHold = i > 0 ? ivs[i - 1].recoverySeconds : 0
+      const recBeforeThisHold = recoveryBeforeHold[i] ?? 0
 
       const holdIn3At = holdStarts[i] - 3000
       if (lastElapsedMs < holdIn3At && elapsedMs >= holdIn3At) {
@@ -155,10 +170,10 @@ export function createTimerEngine(): TimerEngineAPI {
     }
   }
 
-  function start(ivs: Interval[], options?: TimerStartOptions) {
+  function start(phasesInput: Phase[], options?: TimerStartOptions) {
     stop()
-    intervals = ivs
-    timeline = buildTimeline(intervals)
+    phases = phasesInput
+    timeline = buildTimeline(phases)
     speedMultiplier = options?.speedMultiplier ?? DEFAULT_SPEED
     startTime = Date.now()
     lastElapsedMs = 0
@@ -190,7 +205,7 @@ export function createTimerEngine(): TimerEngineAPI {
     }
     startTime = null
     timeline = null
-    intervals = []
+    phases = []
     lastElapsedMs = 0
     speedMultiplier = DEFAULT_SPEED
     currentState = {

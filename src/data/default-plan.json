@@ -1,20 +1,124 @@
 [
   {
-    "intervals": [
-      { "holdSeconds": 60, "recoverySeconds": 90 },
-      { "holdSeconds": 60, "recoverySeconds": 90 }
+    "phases": [
+      { "type": "hold", "duration": 60 },
+      { "type": "recovery", "duration": 90 },
+      { "type": "hold", "duration": 60 },
+      { "type": "recovery", "duration": 90 },
+      { "type": "hold", "duration": 60 },
+      { "type": "recovery", "duration": 90 },
+      { "type": "hold", "duration": 60 },
+      { "type": "recovery", "duration": 90 },
+      { "type": "hold", "duration": 60 }
     ],
     "type": "dry"
   },
   {
-    "intervals": [{ "holdSeconds": 90, "recoverySeconds": 120 }],
+    "phases": [
+      { "type": "hold", "duration": 75 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 75 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 75 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 75 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 75 }
+    ]
+  },
+  {
+    "phases": [
+      { "type": "hold", "duration": 90 },
+      { "type": "recovery", "duration": 120 },
+      { "type": "hold", "duration": 90 },
+      { "type": "recovery", "duration": 120 },
+      { "type": "hold", "duration": 90 },
+      { "type": "recovery", "duration": 120 },
+      { "type": "hold", "duration": 90 },
+      { "type": "recovery", "duration": 120 },
+      { "type": "hold", "duration": 90 },
+      { "type": "recovery", "duration": 120 },
+      { "type": "hold", "duration": 90 }
+    ],
     "type": "wet"
+  },
+  {
+    "phases": [
+      { "type": "hold", "duration": 70 },
+      { "type": "recovery", "duration": 90 },
+      { "type": "hold", "duration": 80 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 90 },
+      { "type": "recovery", "duration": 120 }
+    ]
   },
   { "rest": true },
   {
-    "intervals": [{ "holdSeconds": 75, "recoverySeconds": 100 }]
+    "phases": [
+      { "type": "hold", "duration": 80 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 80 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 80 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 80 },
+      { "type": "recovery", "duration": 100 },
+      { "type": "hold", "duration": 80 }
+    ],
+    "type": "dry"
   },
   {
-    "intervals": [{ "holdSeconds": 75, "recoverySeconds": 100 }]
+    "phases": [
+      { "type": "hold", "duration": 100 },
+      { "type": "recovery", "duration": 130 },
+      { "type": "hold", "duration": 100 },
+      { "type": "recovery", "duration": 130 },
+      { "type": "hold", "duration": 100 },
+      { "type": "recovery", "duration": 130 },
+      { "type": "hold", "duration": 100 },
+      { "type": "recovery", "duration": 130 },
+      { "type": "hold", "duration": 100 }
+    ]
+  },
+  {
+    "phases": [
+      { "type": "hold", "duration": 110 },
+      { "type": "recovery", "duration": 140 },
+      { "type": "hold", "duration": 110 },
+      { "type": "recovery", "duration": 140 },
+      { "type": "hold", "duration": 110 },
+      { "type": "recovery", "duration": 140 }
+    ]
+  },
+  { "rest": true },
+  {
+    "phases": [
+      { "type": "hold", "duration": 120 },
+      { "type": "recovery", "duration": 150 },
+      { "type": "hold", "duration": 120 },
+      { "type": "recovery", "duration": 150 },
+      { "type": "hold", "duration": 120 },
+      { "type": "recovery", "duration": 150 },
+      { "type": "hold", "duration": 120 },
+      { "type": "recovery", "duration": 150 },
+      { "type": "hold", "duration": 120 }
+    ],
+    "type": "wet"
+  },
+  {
+    "phases": [
+      { "type": "hold", "duration": 130 },
+      { "type": "recovery", "duration": 160 },
+      { "type": "hold", "duration": 130 },
+      { "type": "recovery", "duration": 160 },
+      { "type": "hold", "duration": 130 },
+      { "type": "recovery", "duration": 160 },
+      { "type": "hold", "duration": 130 },
+      { "type": "recovery", "duration": 160 },
+      { "type": "hold", "duration": 130 },
+      { "type": "recovery", "duration": 160 },
+      { "type": "hold", "duration": 130 }
+    ],
+    "type": "wet"
   }
 ]

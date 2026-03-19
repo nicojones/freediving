@@ -18,7 +18,7 @@ export function ActiveSessionView() {
   if (!plan || sessionDayIndex === null) return null
 
   const {
-    intervals,
+    phases,
     totalRounds,
     currentRound,
     progressPercent,
@@ -55,7 +55,7 @@ export function ActiveSessionView() {
                 : 'border-surface-container-high'
             }`}
           >
-            {timerState?.phase === 'hold' && intervals ? (
+            {timerState?.phase === 'hold' && phases ? (
               <svg
                 className="absolute inset-[-12px] w-[344px] h-[344px] rotate-[-90deg]"
                 aria-hidden
@@ -68,7 +68,9 @@ export function ActiveSessionView() {
                   stroke="#52dad3"
                   strokeDasharray={`${
                     (timerState.remainingMs / 1000 /
-                      (intervals[timerState.intervalIndex]?.holdSeconds ?? 60)) *
+                      (phases
+                        .filter((p) => p.type === 'hold')
+                        [timerState.intervalIndex]?.duration ?? 60)) *
                     1005
                   } 1005`}
                   strokeDashoffset="0"

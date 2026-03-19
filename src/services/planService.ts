@@ -1,4 +1,4 @@
-import type { Plan, Interval } from '../types/plan'
+import type { Plan, Phase } from '../types/plan'
 import defaultPlan from '../data/default-plan.json'
 
 const RELAXATION_SECONDS = 60
@@ -25,10 +25,10 @@ export async function loadPlan(): Promise<Plan | { error: string }> {
 }
 
 /**
- * Returns intervals for a training day, or null for rest/null days or out-of-range.
+ * Returns phases for a training day, or null for rest/null days or out-of-range.
  * Defensively returns null for malformed plan — does not throw.
  */
-export function getIntervalsForDay(plan: Plan, dayIndex: number): Interval[] | null {
+export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
   if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {
     return null
   }
@@ -38,10 +38,10 @@ export function getIntervalsForDay(plan: Plan, dayIndex: number): Interval[] | n
   }
   if (
     typeof day === 'object' &&
-    'intervals' in day &&
-    Array.isArray(day.intervals)
+    'phases' in day &&
+    Array.isArray(day.phases)
   ) {
-    return day.intervals
+    return day.phases
   }
   return null
 }
@@ -86,7 +86,7 @@ export function getCurrentDay(
     // If next day is a rest day and we're past that day (viewing app after the rest day),
     // assume user took the rest and advance to the next day
     let idx = nextDayIndex
-    while (idx < plan.length && getIntervalsForDay(plan, idx) === null) {
+    while (idx < plan.length && getPhasesForDay(plan, idx) === null) {
       const restDayDate = lastDate ? new Date(lastDate) : null
       if (restDayDate) restDayDate.setDate(restDayDate.getDate() + 1)
       const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate())
@@ -104,20 +104,18 @@ export function getCurrentDay(
 
   // Behind: skip rest days, return first training day
   for (let i = nextDayIndex; i < plan.length; i++) {
-    if (getIntervalsForDay(plan, i) !== null) return i
+    if (getPhasesForDay(plan, i) !== null) return i
   }
   return null
 }
 
 /**
- * Computes total session duration in seconds (relaxation + holds + recoveries).
- * No recovery after the last hold.
+ * Computes total session duration in seconds (relaxation + all phases).
  */
-export function computeSessionDurationSeconds(intervals: Interval[]): number {
+export function computeSessionDurationSeconds(phases: Phase[]): number {
   let total = RELAXATION_SECONDS
-  for (let i = 0; i < intervals.length; i++) {
-    total += intervals[i].holdSeconds
-    if (i < intervals.length - 1) total += intervals[i].recoverySeconds
+  for (const p of phases) {
+    total += p.duration
   }
   return total
 }
@@ -126,8 +124,8 @@ export function computeSessionDurationSeconds(intervals: Interval[]): number {
  * Returns a short summary for a day: "Rest" or "X cycle(s)".
  */
 export function getDaySummary(plan: Plan, dayIndex: number): string {
-  const intervals = getIntervalsForDay(plan, dayIndex)
-  if (intervals === null) return 'Rest'
-  const n = intervals.length
-  return n === 1 ? '1 cycle' : `${n} cycles`
+  const phases = getPhasesForDay(plan, dayIndex)
+  if (phases === null) return 'Rest'
+  const holdCount = phases.filter((p) => p.type === 'hold').length
+  return holdCount === 1 ? '1 cycle' : `${holdCount} cycles`
 }

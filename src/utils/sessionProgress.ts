@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { Plan } from '../types/plan'
 import {
-  getIntervalsForDay,
+  getPhasesForDay,
   computeSessionDurationSeconds,
 } from '../services/planService'
 import { buildSessionTimeline, type TimelineItem } from './buildSessionTimeline'
@@ -14,7 +14,7 @@ export type TimerState = {
 }
 
 export type SessionProgress = {
-  intervals: import('../types/plan').Interval[] | null
+  phases: import('../types/plan').Phase[] | null
   timeline: TimelineItem[]
   totalRounds: number
   currentRound: number
@@ -41,11 +41,11 @@ export const useSessionProgress = (
   timerState: TimerState | null
 ): SessionProgress => {
   return useMemo(() => {
-    const intervals =
+    const phases =
       sessionDayIndex !== null && plan
-        ? getIntervalsForDay(plan, sessionDayIndex)
+        ? getPhasesForDay(plan, sessionDayIndex)
         : null
-    const timeline = intervals ? buildSessionTimeline(intervals) : []
+    const timeline = phases ? buildSessionTimeline(phases) : []
     const totalRounds = timeline.filter((t) => t.type === 'hold').length
     const currentRound =
       timerState && timerState.phase === 'hold'
@@ -55,8 +55,8 @@ export const useSessionProgress = (
           : timerState && timerState.phase === 'relaxation'
             ? 0
             : 1
-    const totalDurationMs = intervals
-      ? computeSessionDurationSeconds(intervals) * 1000
+    const totalDurationMs = phases
+      ? computeSessionDurationSeconds(phases) * 1000
       : 0
     const progressPercent =
       totalDurationMs > 0 && timerState
@@ -66,7 +66,7 @@ export const useSessionProgress = (
     const nextItem = timeline[currentIdx + 1]
 
     return {
-      intervals,
+      phases,
       timeline,
       totalRounds,
       currentRound,

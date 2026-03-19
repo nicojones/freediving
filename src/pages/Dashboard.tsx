@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import {
-  getIntervalsForDay,
+  getPhasesForDay,
   computeSessionDurationSeconds,
   getCurrentDay,
 } from '../services/planService'
@@ -33,14 +33,14 @@ export function Dashboard() {
   if (!plan) return null
 
   const currentDayIndex = getCurrentDay(plan, completions)
-  const selectedIntervals =
-    selectedDayIndex !== null ? getIntervalsForDay(plan, selectedDayIndex) : null
-  const isRestDay = selectedIntervals === null && selectedDayIndex !== null
+  const selectedPhases =
+    selectedDayIndex !== null ? getPhasesForDay(plan, selectedDayIndex) : null
+  const isRestDay = selectedPhases === null && selectedDayIndex !== null
   const isPlanComplete = selectedDayIndex === null && plan.length > 0
   const showSessionPreview =
     viewMode === 'session-preview' &&
     selectedDayIndex !== null &&
-    selectedIntervals !== null &&
+    selectedPhases !== null &&
     !isRestDay
   const showDayDetail = selectedDayIndex !== null
   const planName = 'CO2 Tolerance III'
@@ -161,7 +161,7 @@ export function Dashboard() {
               </section>
             </div>
 
-            {selectedIntervals && (
+            {selectedPhases && (
               <>
                 <section className="grid grid-cols-2 gap-4 mb-12">
                   <div className="col-span-2 bg-surface-container-low p-6 rounded-xl flex flex-col justify-between h-40 relative overflow-hidden group">
@@ -171,7 +171,7 @@ export function Dashboard() {
                       </span>
                       <div className="text-primary font-headline text-5xl font-extrabold mt-2">
                         {Math.ceil(
-                          computeSessionDurationSeconds(selectedIntervals) / 60
+                          computeSessionDurationSeconds(selectedPhases) / 60
                         )}
                         m
                       </div>
@@ -188,7 +188,11 @@ export function Dashboard() {
                     </span>
                     <div className="text-on-surface font-headline text-2xl font-bold">
                       {formatDuration(
-                        Math.max(...selectedIntervals.map((i) => i.holdSeconds))
+                        Math.max(
+                          ...selectedPhases
+                            .filter((p) => p.type === 'hold')
+                            .map((p) => p.duration)
+                        )
                       )}
                     </div>
                   </div>
@@ -198,7 +202,7 @@ export function Dashboard() {
                     </span>
                     <div className="text-secondary font-headline text-2xl font-bold">
                       {formatDuration(
-                        selectedIntervals[0]?.recoverySeconds ?? 0
+                        selectedPhases.find((p) => p.type === 'recovery')?.duration ?? 0
                       )}
                     </div>
                   </div>
@@ -209,12 +213,12 @@ export function Dashboard() {
                   onChange={setSpeedMultiplier}
                 />
 
-                <SessionBreakdown intervals={selectedIntervals} />
+                <SessionBreakdown phases={selectedPhases} />
               </>
             )}
 
             {showSessionPreview &&
-              selectedIntervals &&
+              selectedPhases &&
               selectedDayIndex === currentDayIndex && (
                 <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-background via-background to-transparent pt-12 pb-8 px-6 pointer-events-none">
                   <div className="max-w-md mx-auto pointer-events-auto">

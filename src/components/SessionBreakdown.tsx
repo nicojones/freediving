@@ -1,13 +1,13 @@
 import { buildSessionTimeline } from '../utils/buildSessionTimeline'
 import { formatDuration } from '../utils/formatDuration'
-import type { Interval } from '../types/plan'
+import type { Phase } from '../types/plan'
 
 interface SessionBreakdownProps {
-  intervals: Interval[]
+  phases: Phase[]
 }
 
-export function SessionBreakdown({ intervals }: SessionBreakdownProps) {
-  const timeline = buildSessionTimeline(intervals)
+export function SessionBreakdown({ phases }: SessionBreakdownProps) {
+  const timeline = buildSessionTimeline(phases)
 
   return (
     <section className="mb-32">
@@ -16,7 +16,7 @@ export function SessionBreakdown({ intervals }: SessionBreakdownProps) {
           Session Breakdown
         </h3>
         <span className="text-on-surface-variant font-label text-xs">
-          {timeline.length} Intervals
+          {timeline.length} Phases
         </span>
       </div>
       <div className="space-y-4">

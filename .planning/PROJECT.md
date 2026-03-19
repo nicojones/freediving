@@ -16,14 +16,14 @@ User can lie down, close their eyes, and complete a breathhold session guided en
 
 ### Active
 
-- [ ] User can log in with username/password (pre-defined users, no registration)
-- [ ] User can view and select any day in the cuhrrent training plan
-- [ ] App defaults to "current" day: first non-completed day, or today's scheduled day if all previous are done
-- [ ] User can read the session structure (hold/breathe intervals) before starting
-- [ ] User can start a session and follow audio cues: "Hold", "Prepare for hold" (10s before hold), "30 seconds" (only when recovery ≥ 31s, at 30s remaining), "Breathe!" (when hold ends)
-- [ ] No audio during the breathhold itself
-- [ ] App records session completion per user per day
-- [ ] Admin can add/modify training plans via JSON (monthly plans, day sequences)
+- [x] User can log in with username/password (pre-defined users, no registration)
+- [x] User can view and select any day in the current training plan
+- [x] App defaults to "current" day: first non-completed day, or today's scheduled day if all previous are done
+- [x] User can read the session structure (hold/breathe intervals) before starting
+- [x] User can start a session and follow audio cues: "Hold", "Prepare for hold" (10s before hold), "30 seconds" (only when recovery ≥ 31s, at 30s remaining), "Breathe!" (when hold ends)
+- [x] No audio during the breathhold itself
+- [x] App records session completion per user per day
+- [x] Admin can add/modify training plans via JSON (monthly plans, day sequences)
 - [ ] Responsive layout (mobile-first)
 - [ ] PWA installable, works offline
 

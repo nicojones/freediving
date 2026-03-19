@@ -1,30 +1,31 @@
-import type { Interval } from '../types/plan'
+import type { Phase } from '../types/plan'
 import { RELAXATION_SECONDS } from '../types/timer'
 
 export type TimelineItem =
   | { type: 'prepare'; seconds: number; label: string }
   | { type: 'hold'; seconds: number; label: string; isTargetPeak: boolean }
 
-export const buildSessionTimeline = (intervals: Interval[]): TimelineItem[] => {
-  const maxHold = Math.max(...intervals.map((i) => i.holdSeconds))
+export const buildSessionTimeline = (phases: Phase[]): TimelineItem[] => {
+  const holdPhases = phases.filter((p) => p.type === 'hold')
+  const maxHold = holdPhases.length > 0 ? Math.max(...holdPhases.map((p) => p.duration)) : 0
   const items: TimelineItem[] = []
   items.push({
     type: 'prepare',
     seconds: RELAXATION_SECONDS,
     label: 'Relaxation',
   })
-  for (let i = 0; i < intervals.length; i++) {
-    const iv = intervals[i]
-    items.push({
-      type: 'hold',
-      seconds: iv.holdSeconds,
-      label: 'Static Apnea',
-      isTargetPeak: iv.holdSeconds >= maxHold && intervals.length > 1,
-    })
-    if (i < intervals.length - 1) {
+  for (const p of phases) {
+    if (p.type === 'hold') {
+      items.push({
+        type: 'hold',
+        seconds: p.duration,
+        label: 'Static Apnea',
+        isTargetPeak: p.duration >= maxHold && holdPhases.length > 1,
+      })
+    } else {
       items.push({
         type: 'prepare',
-        seconds: iv.recoverySeconds,
+        seconds: p.duration,
         label: 'Controlled Inhalation',
       })
     }
