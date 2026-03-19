@@ -61,6 +61,36 @@ body {
   background: linear-gradient(135deg, #52dad3 0%, #004e4b 100%);
 }
 
+.completion-gradient {
+  background: linear-gradient(135deg, #4ade80 0%, #059669 100%);
+}
+
 .focus-glow {
   box-shadow: 0 0 60px rgba(82, 218, 211, 0.15);
+}
+
+.completion-glow {
+  box-shadow: 0 0 80px rgba(74, 222, 128, 0.5);
+}
+
+.recovery-breathe {
+  box-shadow: 0 0 60px rgba(82, 218, 211, 0.15);
+  animation: recovery-pulse 3s ease-in-out infinite;
+}
+
+@keyframes recovery-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recovery-breathe {
+    animation: none;
+    opacity: 0.8;
+  }
 }

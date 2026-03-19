@@ -12,7 +12,8 @@ import { TrainingProvider, useTraining } from './contexts/TrainingContext'
 
 function SessionRouteGuard({ children }: { children: React.ReactNode }) {
   const { sessionStatus } = useTraining()
-  if (sessionStatus !== 'running') return <Navigate to="/" replace />
+  if (sessionStatus !== 'running' && sessionStatus !== 'awaitingCompletionConfirm')
+    return <Navigate to="/" replace />
   return <>{children}</>
 }
 

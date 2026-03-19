@@ -1,22 +1,54 @@
-import type { Plan, Phase } from '../types/plan'
-import defaultPlan from '../data/default-plan.json'
+import type { Plan, PlanWithMeta, Phase } from '../types/plan'
+
+const planModules = import.meta.glob<{ default: PlanWithMeta }>('../data/*-plan.json', {
+  eager: true,
+})
 
 const RELAXATION_SECONDS = 60
 
 /** Minimal completion shape for getCurrentDay; avoids coupling to progressService */
 export type CompletionForPlan = { day_id: string; completed_at: number }
 
+/** Returns plan days from Plan or PlanWithMeta for backward compatibility */
+export function getPlanDays(plan: Plan | PlanWithMeta): Plan {
+  return (Array.isArray(plan) ? plan : plan.days) as Plan
+}
+
 /**
- * Loads the training plan from JSON.
- * Returns the plan or an error object if loading fails.
+ * Returns all available plans from bundled JSON files.
  */
-export async function loadPlan(): Promise<Plan | { error: string }> {
+export function getAvailablePlans(): PlanWithMeta[] {
+  return Object.values(planModules)
+    .map((m) => m?.default)
+    .filter((p): p is PlanWithMeta => Boolean(p && 'id' in p && 'days' in p))
+}
+
+/**
+ * Loads a plan by id. Returns the plan or an error object if not found.
+ */
+export function loadPlanById(planId: string): PlanWithMeta | { error: string } {
+  const plans = getAvailablePlans()
+  const plan = plans.find((p) => p.id === planId)
+  if (!plan) {
+    return { error: `Plan not found: ${planId}` }
+  }
+  return plan
+}
+
+/**
+ * Loads the training plan. If planId is provided, loads that plan; otherwise loads the first available.
+ * Returns PlanWithMeta or an error object if loading fails.
+ */
+export async function loadPlan(planId?: string): Promise<PlanWithMeta | { error: string }> {
   try {
-    const result = defaultPlan as unknown
-    if (!Array.isArray(result)) {
-      return { error: 'Invalid plan: expected array of days' }
+    if (planId) {
+      return loadPlanById(planId)
     }
-    return result as Plan
+    const plans = getAvailablePlans()
+    if (plans.length === 0) {
+      return { error: 'No plans available' }
+    }
+    return plans[0]
   } catch (e) {
     return {
       error: `Failed to load plan: ${e instanceof Error ? e.message : 'Unknown error'}`,
@@ -44,6 +76,16 @@ export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
     return day.phases
   }
   return null
+}
+
+/**
+ * Returns the day id at the given index, or null if missing/invalid.
+ */
+export function getDayId(plan: Plan, dayIndex: number): string | null {
+  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) return null
+  const day = plan[dayIndex]
+  if (day == null || typeof day !== 'object' || !('id' in day)) return null
+  return (day as { id: string }).id
 }
 
 /**

@@ -28,6 +28,7 @@ function loadCue(cue: CueName): Promise<HTMLAudioElement> {
 export interface AudioServiceAPI {
   preload(): Promise<void>
   play(cue: CueName): void
+  stop(): void
   wireToTimer(engine: { on(eventType: TimerEvent['type'], callback: (e: TimerEvent) => void): void }): void
 }
 
@@ -66,6 +67,13 @@ export function createAudioService(): AudioServiceAPI {
     }
   }
 
+  function stop(): void {
+    for (const audio of preloaded.values()) {
+      audio.pause()
+      audio.currentTime = 0
+    }
+  }
+
   function wireToTimer(
     engine: { on(eventType: TimerEvent['type'], callback: (e: TimerEvent) => void): void }
   ): void {
@@ -75,5 +83,5 @@ export function createAudioService(): AudioServiceAPI {
     engine.on('hold_end', () => play('breathe'))
   }
 
-  return { preload, play, wireToTimer }
+  return { preload, play, stop, wireToTimer }
 }

@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import clsx from 'clsx'
 
 interface BottomNavBarProps {
   activeTab: 'training' | 'settings'
@@ -16,11 +17,12 @@ export const BottomNavBar = memo(function BottomNavBar({
       <button
         type="button"
         onClick={onTrainingClick}
-        className={`flex flex-col items-center justify-center rounded-2xl px-6 py-2 min-h-[44px] min-w-[44px] transition-all duration-400 ${
+        className={clsx(
+          'flex flex-col items-center justify-center rounded-2xl px-6 py-2 min-h-[44px] min-w-[44px] transition-all duration-400',
           activeTab === 'training'
             ? 'text-primary bg-primary/10'
             : 'text-tertiary opacity-60 hover:opacity-100 hover:text-primary'
-        }`}
+        )}
       >
         <span
           className="material-symbols-outlined mb-1"
@@ -36,11 +38,12 @@ export const BottomNavBar = memo(function BottomNavBar({
       <button
         type="button"
         onClick={onSettingsClick}
-        className={`flex flex-col items-center justify-center rounded-2xl px-6 py-2 min-h-[44px] min-w-[44px] transition-all duration-400 ${
+        className={clsx(
+          'flex flex-col items-center justify-center rounded-2xl px-6 py-2 min-h-[44px] min-w-[44px] transition-all duration-400',
           activeTab === 'settings'
             ? 'text-primary bg-primary/10'
             : 'text-tertiary opacity-60 hover:opacity-100 hover:text-primary'
-        }`}
+        )}
       >
         <span
           className="material-symbols-outlined mb-1"

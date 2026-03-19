@@ -1,0 +1,15 @@
+{
+  "id": "minimal",
+  "name": "Minimal Test",
+  "description": "Single-day test plan",
+  "days": [
+    {
+      "id": "a1b2c3d4",
+      "day": 1,
+      "phases": [
+        { "type": "hold", "duration": 5 },
+        { "type": "recovery", "duration": 10 }
+      ]
+    }
+  ]
+}

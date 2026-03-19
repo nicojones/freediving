@@ -14,3 +14,10 @@ CREATE TABLE IF NOT EXISTS progress_completions (
   PRIMARY KEY (user_id, plan_id, day_id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- Active training plan per user
+CREATE TABLE IF NOT EXISTS user_active_plan (
+  user_id INTEGER PRIMARY KEY,
+  plan_id TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);

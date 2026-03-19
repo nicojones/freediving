@@ -11,6 +11,8 @@ type EventCallback = (payload: TimerEvent) => void
 export interface TimerStartOptions {
   /** Simulated seconds per real second. Default 1. Use 10 for test mode (~10× faster). */
   speedMultiplier?: number
+  /** Override relaxation phase duration (seconds). Default uses RELAXATION_SECONDS. Use 3 for test mode. */
+  relaxationSecondsOverride?: number
 }
 
 interface TimerEngineAPI {
@@ -21,8 +23,13 @@ interface TimerEngineAPI {
   setSpeedMultiplier(multiplier: number): void
 }
 
-function buildTimeline(phases: Phase[]) {
-  const relaxationMs = RELAXATION_SECONDS * 1000
+function buildTimeline(
+  phases: Phase[],
+  options?: { relaxationSeconds?: number }
+) {
+  const relaxationSeconds =
+    options?.relaxationSeconds ?? RELAXATION_SECONDS
+  const relaxationMs = relaxationSeconds * 1000
   const phaseStarts: number[] = []
   const phaseEnds: number[] = []
   let t = 0
@@ -173,7 +180,9 @@ export function createTimerEngine(): TimerEngineAPI {
   function start(phasesInput: Phase[], options?: TimerStartOptions) {
     stop()
     phases = phasesInput
-    timeline = buildTimeline(phases)
+    timeline = buildTimeline(phases, {
+      relaxationSeconds: options?.relaxationSecondsOverride,
+    })
     speedMultiplier = options?.speedMultiplier ?? DEFAULT_SPEED
     startTime = Date.now()
     lastElapsedMs = 0

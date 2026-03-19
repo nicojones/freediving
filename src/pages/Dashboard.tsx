@@ -1,24 +1,22 @@
 import { useCallback, useEffect } from 'react'
+import clsx from 'clsx'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getPhasesForDay, getCurrentDay, getDayIndexById } from '../services/planService'
+import { getPhasesForDay, getCurrentDay, getDayIndexById, getDayId } from '../services/planService'
 import { useTraining } from '../contexts/TrainingContext'
 import { isDayCompleted } from '../utils/completions'
 import { TopAppBar } from '../components/TopAppBar'
 import { BottomNavBar } from '../components/BottomNavBar'
 import { InstallPrompt } from '../components/InstallPrompt'
-import { SpeedMultiplierSelector } from '../components/SpeedMultiplierSelector'
-import { TrainingDayCard } from '../components/TrainingDayCard'
-import { SessionBreakdown } from '../components/SessionBreakdown'
-import { BackButton } from '../components/BackButton'
+import { DayListSection } from '../components/DayListSection'
+import { SessionPreviewSection } from '../components/SessionPreviewSection'
 import { RestDayCard } from '../components/RestDayCard'
-import { SessionPreviewStats } from '../components/SessionPreviewStats'
-import { StartSessionCTA } from '../components/StartSessionCTA'
 
 export function Dashboard() {
   const navigate = useNavigate()
   const { dayId: urlDayId } = useParams<{ dayId?: string }>()
   const {
     plan,
+    planWithMeta,
     completions,
     viewMode,
     selectedDayIndex,
@@ -26,17 +24,19 @@ export function Dashboard() {
     audioLoading,
     progressError,
     savedMessage,
+    hasCompletedToday,
+    testMode,
     setSelectedDayIndex,
     setViewMode,
     setSpeedMultiplier,
+    setTestMode,
     handleStartSession,
   } = useTraining()
 
   const handleSelectDay = useCallback(
     (index: number) => {
       if (!plan) return
-      const day = plan[index]
-      const id = day != null && 'id' in day ? (day as { id: string }).id : null
+      const id = getDayId(plan, index)
       if (id) {
         navigate(`/day/${id}`)
       }
@@ -88,7 +88,7 @@ export function Dashboard() {
     selectedPhases !== null &&
     !isRestDay
   const showDayDetail = selectedDayIndex !== null
-  const planName = 'CO2 Tolerance III'
+  const planName = planWithMeta?.name ?? 'CO2 Tolerance III'
 
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
@@ -98,17 +98,21 @@ export function Dashboard() {
         planName={planName}
       />
       <main
-        className={`px-6 pt-8 max-w-2xl mx-auto ${showDayDetail ? 'pb-40' : ''}`}
+        className={clsx('px-6 pt-8 max-w-2xl mx-auto', { 'pb-40': showDayDetail })}
         style={{
           background:
             'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
         }}
       >
         {progressError && (
-          <p className="text-error mb-4 text-sm font-body">{progressError}</p>
+          <p className="px-6 py-3 w-full text-center text-error bg-error/20 rounded-lg text-sm font-body mb-4">
+            {progressError}
+          </p>
         )}
-        {savedMessage && (
-          <p className="text-primary mb-4 text-sm font-body">Saved</p>
+        {savedMessage  && (
+          <p className="px-6 py-3 w-full text-center text-primary bg-primary/20 rounded-lg text-sm font-body mb-4">
+            Saved
+          </p>
         )}
 
         {!showSessionPreview && (
@@ -118,72 +122,32 @@ export function Dashboard() {
         {showDayDetail && isRestDay ? (
           <RestDayCard
             dayIndex={selectedDayIndex!}
-            isCompleted={isDayCompleted(completions, (plan[selectedDayIndex!] as { id?: string })?.id)}
+            isCompleted={isDayCompleted(completions, getDayId(plan, selectedDayIndex!) ?? undefined)}
             onBack={handleBack}
           />
         ) : !showSessionPreview ? (
-          <>
-            <section className="mb-12">
-              <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2">
-                Training
-              </h1>
-              <p className="text-on-surface-variant font-body text-sm max-w-[80%]">
-                Focus on rhythmic breathing and peripheral relaxation during the
-                peak CO2 phases.
-              </p>
-            </section>
-
-            <div className="flex flex-col gap-6">
-              {plan.map((_, i) => (
-                <TrainingDayCard
-                  key={i}
-                  plan={plan}
-                  dayIndex={i}
-                  isCurrent={currentDayIndex === i}
-                  isCompleted={isDayCompleted(completions, (plan[i] as { id?: string })?.id)}
-                  onSelect={() => handleSelectDay(i)}
-                />
-              ))}
-            </div>
-          </>
+          <DayListSection
+            plan={plan}
+            completions={completions}
+            currentDayIndex={currentDayIndex}
+            onSelectDay={handleSelectDay}
+          />
         ) : (
-          <>
-            <div className="mt-0 bg-surface-container-low rounded-3xl p-6 mb-8 overflow-hidden">
-              <div className="flex items-center gap-4 mb-6">
-                <BackButton onClick={handleBack} />
-              </div>
-              <section className="mb-0">
-                <h1 className="font-headline text-[3.5rem] leading-[1.1] font-bold tracking-tight text-on-surface mb-2">
-                  Day {selectedDayIndex! + 1}: Foundation Prep
-                </h1>
-                <p className="text-on-surface-variant text-lg tracking-wide font-medium">
-                  CO2 Tolerance Training • Level 1
-                </p>
-              </section>
-            </div>
-
-            {selectedPhases && (
-              <>
-                <SessionPreviewStats phases={selectedPhases} />
-
-                <SpeedMultiplierSelector
-                  value={speedMultiplier}
-                  onChange={setSpeedMultiplier}
-                />
-
-                <SessionBreakdown phases={selectedPhases} />
-              </>
-            )}
-
-            {showSessionPreview &&
-              selectedPhases &&
-              selectedDayIndex === currentDayIndex && (
-                <StartSessionCTA
-                  onStart={handleStartSessionClick}
-                  loading={audioLoading}
-                />
-              )}
-          </>
+          selectedPhases && (
+            <SessionPreviewSection
+              selectedDayIndex={selectedDayIndex!}
+              selectedPhases={selectedPhases}
+              currentDayIndex={currentDayIndex}
+              speedMultiplier={speedMultiplier}
+              testMode={testMode}
+              audioLoading={audioLoading}
+              hasCompletedToday={hasCompletedToday}
+              onBack={handleBack}
+              onSpeedMultiplierChange={setSpeedMultiplier}
+              onTestModeChange={setTestMode}
+              onStartSession={handleStartSessionClick}
+            />
+          )
         )}
 
         {isPlanComplete && (

@@ -1,6 +1,7 @@
 import { PrimaryButton } from './PrimaryButton'
 import { TopAppBar } from './TopAppBar'
 import { BottomNavBar } from './BottomNavBar'
+import { useTraining } from '../contexts/TrainingContext'
 
 interface SessionCompleteViewProps {
   onBackToTraining: () => void
@@ -11,9 +12,12 @@ export function SessionCompleteView({
   onBackToTraining,
   onSettingsClick,
 }: SessionCompleteViewProps) {
+  const { planWithMeta } = useTraining()
+  const planName = planWithMeta?.name ?? 'CO2 Tolerance III'
+
   return (
     <div className="min-h-screen bg-background">
-      <TopAppBar variant="dashboard" planName="CO2 Tolerance III" />
+      <TopAppBar variant="dashboard" planName={planName} />
       <main className="px-6 pt-8 pb-32 max-w-2xl mx-auto">
         <div className="bg-surface-container-low rounded-3xl p-8 text-center">
           <span

@@ -1,6 +1,7 @@
-import { queueCompletion, flushQueue } from './offlineQueue'
+import { queueCompletion, flushQueue, clearByPlanId } from './offlineQueue'
 
 const API_BASE = '/api/progress'
+const USER_BASE = '/api/user'
 
 export interface Completion {
   plan_id: string
@@ -64,4 +65,57 @@ export async function fetchCompletions(
     return data.completions ?? []
   }
   return []
+}
+
+export async function fetchActivePlan(): Promise<string | null> {
+  const res = await fetch(`${USER_BASE}/active-plan`, { credentials: 'include' })
+  if (res.ok) {
+    const data = await res.json()
+    return data.plan_id ?? null
+  }
+  if (res.status === 404) return null
+  return null
+}
+
+export async function setActivePlan(
+  planId: string
+): Promise<{ ok: boolean } | { error: string }> {
+  try {
+    const res = await fetch(`${USER_BASE}/active-plan`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan_id: planId }),
+      credentials: 'include',
+    })
+    if (res.ok) return { ok: true }
+    if (res.status === 401) {
+      return { error: 'Session expired — please log in again' }
+    }
+    const errBody = (await res.json().catch(() => ({}))) as { error?: string }
+    return { error: errBody?.error ?? `Failed to set active plan (${res.status})` }
+  } catch (e) {
+    return { error: 'Network error — is the server running?' }
+  }
+}
+
+export async function resetProgress(
+  planId: string
+): Promise<{ ok: boolean } | { error: string }> {
+  try {
+    const res = await fetch(
+      `${API_BASE}?plan_id=${encodeURIComponent(planId)}`,
+      { method: 'DELETE', credentials: 'include' }
+    )
+    if (!res.ok) {
+      if (res.status === 401) {
+        return { error: 'Session expired — please log in again' }
+      }
+      const errBody = (await res.json().catch(() => ({}))) as { error?: string }
+      return { error: errBody?.error ?? `Failed to reset progress (${res.status})` }
+    }
+    await clearByPlanId(planId)
+    return { ok: true }
+  } catch (e) {
+    return { error: 'Network error — is the server running?' }
+  }
 }

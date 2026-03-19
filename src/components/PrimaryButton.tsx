@@ -31,7 +31,7 @@ export const PrimaryButton = memo(function PrimaryButton({
       className={clsx(
         'w-full primary-pulse-gradient rounded-xl flex items-center justify-center gap-3 transition-all duration-400 active:scale-95 overflow-hidden relative shadow-[0_20px_40px_rgba(0,0,0,0.4)] font-headline font-bold text-on-primary',
         size === 'login' ? 'h-[5.5rem] text-xl' : 'h-24 text-2xl',
-        isDisabled && 'opacity-50 cursor-not-allowed',
+        { 'opacity-50 cursor-not-allowed': isDisabled },
         className
       )}
     >

@@ -13,9 +13,11 @@
 - [x] **Phase 3: Timer Engine** - Pure state machine with Date-based elapsed time, event emission
 - [x] **Phase 4: Audio Service** - Cue playback on timer events, no audio during hold
 - [x] **Phase 5: Session Runner + Plan/Day Selector** - Day selection, session preview, full session orchestration
-- [ ] **Phase 6: PWA + Offline** - Installable, offline, precached audio, responsive mobile-first layout
-- [ ] **Phase 7: Day IDs + Routing** - Stable day IDs, day/group in plan, URL-based day view, completions by day_id
-- [ ] **Phase 8: Session UX Enhancements** - One session per day, visible completion flow, test toggle, recovery ring animation
+- [x] **Phase 6: PWA + Offline** - Installable, offline, precached audio, responsive mobile-first layout
+- [x] **Phase 7: Day IDs + Routing** - Stable day IDs, day/group in plan, URL-based day view, completions by day_id
+- [x] **Phase 8: Session UX Enhancements** - One session per day, visible completion flow, test toggle, recovery ring animation
+- [x] **Phase 9: Refactor Code** - Code quality improvements and refactoring
+- [ ] **Phase 10: Reset + Plan Change** - Reset progress from settings; multiple plans; active plan in DB; plan-change warning
 
 ---
 
@@ -168,6 +170,40 @@
 
 ---
 
+### Phase 9: Refactor Code
+
+**Goal:** Improve code quality through refactoring; reduce technical debt and improve maintainability.
+
+**Depends on:** Phase 8 (Session UX Enhancements)
+
+**Requirements:** (Enhancement — no new v1 requirement)
+
+**Success Criteria** (what must be TRUE):
+1. Refactoring scope and targets defined in plan
+2. Code structure improved without changing user-facing behavior
+
+**Plans:** `.planning/9-PLAN.md` (4 tasks: getDayId → useSessionEngine → DayListSection/SessionPreviewSection → integration)
+
+---
+
+### Phase 10: Reset + Plan Change
+
+**Goal:** Allow resetting progress from settings; support multiple training plans with active plan stored in DB; plan structure becomes `{id, name, description, days}`; changing plan triggers warning that progress will be reset.
+
+**Depends on:** Phase 9 (Refactor Code)
+
+**Requirements:** (Enhancement — no new v1 requirement)
+
+**Success Criteria** (what must be TRUE):
+1. User can reset progress from the settings page
+2. Multiple plans exist in `src/data`; plan structure is `{id, name, description, days: [...]}` (not array)
+3. Active training plan is stored per user in the DB
+4. Settings page has a dropdown to select plan; changing plan shows warning that progress will be reset
+
+**Plans:** `.planning/10-PLAN.md` (Plan 01: 3 tasks; Plan 02: 3 tasks)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -177,9 +213,11 @@
 | 3. Timer Engine | 3/3 | Complete | 3-PLAN.md |
 | 4. Audio Service | 2/2 | Complete | 4-PLAN.md |
 | 5. Session Runner + Plan/Day Selector | 4/4 | Complete | 5-PLAN.md |
-| 6. PWA + Offline | 0/0 | Not started | - |
-| 7. Day IDs + Routing | 0/0 | Not started | - |
-| 8. Session UX Enhancements | 0/5 | Planned | 8-PLAN.md |
+| 6. PWA + Offline | 4/4 | Complete | 6-PLAN.md |
+| 7. Day IDs + Routing | 5/5 | Complete | 7-PLAN.md |
+| 8. Session UX Enhancements | 5/5 | Complete | 8-PLAN.md |
+| 9. Refactor Code | 4/4 | Complete | 9-PLAN.md |
+| 10. Reset + Plan Change | 0/6 | Pending | 10-PLAN.md |
 
 ---
 

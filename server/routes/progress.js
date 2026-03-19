@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { readFileSync } from 'fs'
+import { readFileSync, existsSync } from 'fs'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { db } from '../db.js'
@@ -7,9 +7,20 @@ import { authMiddleware } from '../auth.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-function loadPlan() {
-  const path = join(__dirname, '../../src/data/default-plan.json')
+function loadPlan(planId = 'default') {
+  const baseName = planId === 'default' ? 'default' : planId
+  const path = join(__dirname, `../../src/data/${baseName}-plan.json`)
+  if (!existsSync(path)) {
+    const fallback = join(__dirname, '../../src/data/default-plan.json')
+    const data = JSON.parse(readFileSync(fallback, 'utf-8'))
+    return data
+  }
   return JSON.parse(readFileSync(path, 'utf-8'))
+}
+
+function getDayAtIndex(plan, dayIndex) {
+  const days = Array.isArray(plan) ? plan : plan.days
+  return days?.[dayIndex] ?? null
 }
 
 export const progressRouter = Router()
@@ -23,8 +34,8 @@ progressRouter.post('/', (req, res) => {
   }
   let resolvedDayId = day_id
   if (resolvedDayId === undefined && typeof day_index === 'number') {
-    const plan = loadPlan()
-    const day = plan[day_index]
+    const plan = loadPlan(plan_id)
+    const day = getDayAtIndex(plan, day_index)
     resolvedDayId = day?.id ?? null
   }
   if (resolvedDayId === undefined || resolvedDayId === null) {
@@ -49,4 +60,16 @@ progressRouter.get('/', (req, res) => {
     )
     .all(userId, planId)
   res.json({ completions: rows })
+})
+
+progressRouter.delete('/', (req, res) => {
+  const planId = req.query.plan_id
+  if (!planId || typeof planId !== 'string') {
+    return res.status(400).json({ error: 'plan_id query param required' })
+  }
+  const userId = req.user.id
+  db.prepare(
+    'DELETE FROM progress_completions WHERE user_id = ? AND plan_id = ?'
+  ).run(userId, planId)
+  res.json({ ok: true })
 })

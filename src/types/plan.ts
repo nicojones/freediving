@@ -26,3 +26,11 @@ export type PlanDay = TrainingDay | RestDay | null
 
 /** Plan: array of days; index = day number (0-based) */
 export type Plan = PlanDay[]
+
+/** Plan with metadata; new structure for multi-plan support */
+export interface PlanWithMeta {
+  id: string
+  name: string
+  description?: string
+  days: PlanDay[]
+}

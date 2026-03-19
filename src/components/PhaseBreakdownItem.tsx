@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import clsx from 'clsx'
 import { formatDuration } from '../utils/formatDuration'
 import { formatPhaseShortLabel } from '../utils/phaseLabels'
 import type { TimelineItem } from '../utils/buildSessionTimeline'
@@ -45,23 +46,29 @@ export const PhaseBreakdownItem = memo(function PhaseBreakdownItem({
   return (
     <div className="relative pl-8 group">
       <div
-        className={`absolute left-[7px] top-0 bottom-0 w-[2px] bg-outline-variant/30 ${
-          isLast ? 'bg-transparent' : ''
-        }`}
+        className={clsx(
+          'absolute left-[7px] top-0 bottom-0 w-[2px] bg-outline-variant/30',
+          { 'bg-transparent': isLast }
+        )}
       />
       <div
-        className={`absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 bg-background z-10 ${
+        className={clsx(
+          'absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 bg-background z-10',
           item.type === 'hold' ? 'border-primary' : 'border-secondary'
-        }`}
+        )}
       />
       <div
-        className={`bg-surface-container-high/40 p-5 rounded-xl flex items-center justify-between transition-colors duration-400 hover:bg-surface-container-high ${getPhaseItemBorderClass(item)}`}
+        className={clsx(
+          'bg-surface-container-high/40 p-5 rounded-xl flex items-center justify-between transition-colors duration-400 hover:bg-surface-container-high',
+          getPhaseItemBorderClass(item)
+        )}
       >
         <div>
           <p
-            className={`font-headline font-bold text-lg ${
+            className={clsx(
+              'font-headline font-bold text-lg',
               item.type === 'hold' ? 'text-primary' : 'text-secondary'
-            }`}
+            )}
           >
             {formatDuration(item.seconds)} {formatPhaseShortLabel(item)}
           </p>
@@ -70,11 +77,10 @@ export const PhaseBreakdownItem = memo(function PhaseBreakdownItem({
           </p>
         </div>
         <span
-          className={`material-symbols-outlined ${
-            item.type === 'hold'
-              ? 'text-primary'
-              : 'text-secondary opacity-40'
-          }`}
+          className={clsx(
+            'material-symbols-outlined',
+            item.type === 'hold' ? 'text-primary' : 'text-secondary opacity-40'
+          )}
           style={
             isTargetPeak ? { fontVariationSettings: "'FILL' 1" } : undefined
           }

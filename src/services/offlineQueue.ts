@@ -80,3 +80,13 @@ export async function getPendingCount(): Promise<number> {
   const db = await getDB()
   return db.count(STORE_NAME)
 }
+
+export async function clearByPlanId(planId: string): Promise<number> {
+  const db = await getDB()
+  const items = (await db.getAll(STORE_NAME)) as PendingCompletion[]
+  const toDelete = items.filter((i) => i.plan_id === planId)
+  for (const item of toDelete) {
+    if (item.id != null) await db.delete(STORE_NAME, item.id)
+  }
+  return toDelete.length
+}

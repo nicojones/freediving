@@ -9,20 +9,25 @@ import {
 } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  loadPlan,
+  loadPlanById,
+  getAvailablePlans,
   getPhasesForDay,
   getCurrentDay,
+  getDayId,
 } from '../services/planService'
 import { getCurrentUser, logout } from '../services/authService'
 import {
   recordCompletion,
   fetchCompletions,
+  fetchActivePlan,
+  setActivePlan as apiSetActivePlan,
+  resetProgress as apiResetProgress,
   flushOfflineQueue,
   type Completion,
 } from '../services/progressService'
-import { createTimerEngine } from '../services/timerEngine'
-import { createAudioService } from '../services/audioService'
-import type { Plan } from '../types/plan'
+import { hasCompletedToday } from '../utils/completions'
+import { useSessionEngine } from '../hooks/useSessionEngine'
+import type { Plan, PlanWithMeta } from '../types/plan'
 
 export type TimerState = {
   phase: string
@@ -33,7 +38,7 @@ export type TimerState = {
 
 export type ViewMode = 'dashboard' | 'session-preview' | 'settings'
 
-export type SessionStatus = 'idle' | 'running' | 'complete'
+export type SessionStatus = 'idle' | 'running' | 'awaitingCompletionConfirm' | 'complete'
 
 interface TrainingContextValue {
   // Auth
@@ -42,9 +47,15 @@ interface TrainingContextValue {
 
   // Plan & progress
   plan: Plan | null
+  planWithMeta: PlanWithMeta | null
+  activePlanId: string | null
+  availablePlans: PlanWithMeta[]
+  activePlanLoading: boolean
   error: string | null
   completions: Completion[]
   progressError: string | null
+  resetProgress: () => Promise<void>
+  setActivePlan: (planId: string) => Promise<void>
 
   // UI
   selectedDayIndex: number | null
@@ -57,13 +68,17 @@ interface TrainingContextValue {
   timerState: TimerState | null
   audioLoading: boolean
   speedMultiplier: number
+  testMode: boolean
+  hasCompletedToday: boolean
 
   // Actions
   setSelectedDayIndex: (index: number | null) => void
   setViewMode: (mode: ViewMode) => void
   setSpeedMultiplier: (speed: number) => void
+  setTestMode: (v: boolean) => void
   handleStartSession: () => Promise<void>
   handleAbortSession: () => void
+  handleCompleteSession: () => Promise<void>
   handleBackFromComplete: () => void
   handleLogout: () => Promise<void>
 }
@@ -74,19 +89,31 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
   const [user, setUser] = useState<{ id: number; username: string } | null | undefined>(undefined)
   const [plan, setPlan] = useState<Plan | null>(null)
+  const [planWithMeta, setPlanWithMeta] = useState<PlanWithMeta | null>(null)
+  const [activePlanId, setActivePlanId] = useState<string | null>(null)
+  const [availablePlans, setAvailablePlans] = useState<PlanWithMeta[]>([])
+  const [activePlanLoading, setActivePlanLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [completions, setCompletions] = useState<Completion[]>([])
   const [progressError, setProgressError] = useState<string | null>(null)
   const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('dashboard')
   const [savedMessage, setSavedMessage] = useState(false)
-  const [sessionStatus, setSessionStatus] = useState<SessionStatus>('idle')
   const [sessionDayIndex, setSessionDayIndex] = useState<number | null>(null)
-  const [timerState, setTimerState] = useState<TimerState | null>(null)
-  const [audioLoading, setAudioLoading] = useState(false)
-  const [speedMultiplier, setSpeedMultiplier] = useState(1)
-  const engineRef = useRef<ReturnType<typeof createTimerEngine> | null>(null)
+  const [testMode, setTestMode] = useState(false)
   const sessionDayIndexRef = useRef<number | null>(null)
+
+  const {
+    startSession: engineStartSession,
+    abortSession: engineAbortSession,
+    resetToIdle: engineResetToIdle,
+    markComplete: engineMarkComplete,
+    timerState,
+    sessionStatus,
+    setSpeedMultiplier,
+    audioLoading,
+    speedMultiplier,
+  } = useSessionEngine()
 
   const refreshUser = useCallback(() => getCurrentUser().then(setUser), [])
 
@@ -95,39 +122,65 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   }, [refreshUser])
 
   useEffect(() => {
-    if (user) {
-      loadPlan()
-        .then((result) => {
-          if ('error' in result) {
-            setError(result.error)
-          } else {
-            setPlan(result)
-          }
-        })
-        .catch((e) => {
-          setError(e instanceof Error ? e.message : 'Unknown error')
-        })
-      const loadCompletions = async () => {
-        if (navigator.onLine) {
-          await flushOfflineQueue()
-        }
-        const c = await fetchCompletions('default')
-        setCompletions(c)
+    if (!user) return
+
+    let cancelled = false
+    const run = async () => {
+      const available = getAvailablePlans()
+      setAvailablePlans(available)
+      if (available.length === 0) {
+        setError('No plans available')
+        return
       }
-      loadCompletions()
+
+      let planId = await fetchActivePlan()
+      if (planId === null) {
+        planId = available[0].id
+        const res = await apiSetActivePlan(planId)
+        if (!('ok' in res)) {
+          setError(res.error)
+          return
+        }
+      }
+      if (cancelled) return
+      setActivePlanId(planId)
+
+      const planResult = loadPlanById(planId)
+      if ('error' in planResult) {
+        setError(planResult.error)
+        return
+      }
+      const meta = planResult
+      setPlanWithMeta(meta)
+      setPlan(meta.days)
+
+      if (navigator.onLine) await flushOfflineQueue()
+      const c = await fetchCompletions(planId)
+      if (cancelled) return
+      setCompletions(c)
+    }
+
+    setActivePlanLoading(true)
+    setError(null)
+    run()
+      .catch((e) => setError(e instanceof Error ? e.message : 'Unknown error'))
+      .finally(() => setActivePlanLoading(false))
+
+    return () => {
+      cancelled = true
     }
   }, [user])
 
   useEffect(() => {
-    if (!user) return
+    if (!user || !activePlanId) return
     const handleOnline = async () => {
       await flushOfflineQueue()
-      const c = await fetchCompletions('default')
+      const c = await fetchCompletions(activePlanId)
       setCompletions(c)
     }
     window.addEventListener('online', handleOnline)
     return () => window.removeEventListener('online', handleOnline)
-  }, [user])
+  }, [user, activePlanId])
 
   useEffect(() => {
     if (plan && completions.length >= 0) {
@@ -136,115 +189,116 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     }
   }, [plan, completions])
 
-  useEffect(() => {
-    if (sessionStatus !== 'running') return
-    const id = setInterval(() => {
-      const engine = engineRef.current
-      if (engine) {
-        const s = engine.getState()
-        setTimerState({
-          phase: s.phase,
-          intervalIndex: s.intervalIndex,
-          remainingMs: s.remainingMs,
-          elapsedMs: s.elapsedMs,
-        })
-      }
-    }, 100)
-    return () => clearInterval(id)
-  }, [sessionStatus])
-
   const handleStartSession = useCallback(async () => {
     if (!plan || selectedDayIndex === null) return
+    if (hasCompletedToday(completions)) return
     const phases = getPhasesForDay(plan, selectedDayIndex)
     if (!phases) return
 
     sessionDayIndexRef.current = selectedDayIndex
     setSessionDayIndex(selectedDayIndex)
 
-    const audioService = createAudioService()
-    setAudioLoading(true)
-    try {
-      await audioService.preload()
-    } catch {
-      setAudioLoading(false)
-      return
-    }
-    setAudioLoading(false)
-
-    const engine = createTimerEngine()
-    engineRef.current = engine
-    audioService.wireToTimer(engine)
-    engine.on('session_complete', async () => {
-      engine.stop()
-      engineRef.current = null
-      setSessionStatus('complete')
-      setTimerState(null)
-      setSessionDayIndex(null)
-      navigate('/session/complete')
-
-      const dayToRecord = sessionDayIndexRef.current
-      if (dayToRecord !== null && plan) {
-        const day = plan[dayToRecord]
-        const dayId = day != null && typeof day === 'object' && 'id' in day ? (day as { id: string }).id : null
-        if (dayId) {
-          const result = await recordCompletion('default', dayId, dayToRecord)
-          if ('ok' in result) {
-            setSavedMessage(true)
-            setTimeout(() => setSavedMessage(false), 2500)
-            if ('queued' in result && result.queued) {
-              setCompletions((prev) => [
-                ...prev,
-                {
-                  plan_id: 'default',
-                  day_id: dayId,
-                  completed_at: Math.floor(Date.now() / 1000),
-                },
-              ])
-            } else {
-              const c = await fetchCompletions('default')
-              setCompletions(c)
-            }
-          } else {
-            setProgressError(result.error)
-          }
-        } else {
-          setProgressError('Day not found in plan — cannot record progress')
-        }
-      }
+    await engineStartSession(phases, {
+      relaxationSecondsOverride: testMode ? 3 : undefined,
     })
-    engine.start(phases, { speedMultiplier })
-    setSessionStatus('running')
-  }, [plan, selectedDayIndex, speedMultiplier])
+  }, [plan, selectedDayIndex, testMode, completions, engineStartSession])
 
   const handleAbortSession = useCallback(() => {
-    engineRef.current?.stop()
-    engineRef.current = null
-    setSessionStatus('idle')
-    setTimerState(null)
+    engineAbortSession()
     setSessionDayIndex(null)
-  }, [])
+  }, [engineAbortSession])
 
   const handleLogout = useCallback(async () => {
     await logout()
     setUser(null)
   }, [])
 
-  const handleBackFromComplete = useCallback(() => {
-    setSessionStatus('idle')
+  const resetProgress = useCallback(async () => {
+    const planId = activePlanId ?? 'default'
+    const res = await apiResetProgress(planId)
+    if ('ok' in res) {
+      const c = await fetchCompletions(planId)
+      setCompletions(c)
+    } else {
+      setProgressError(res.error)
+    }
+  }, [activePlanId])
+
+  const setActivePlan = useCallback(async (planId: string) => {
+    const res = await apiSetActivePlan(planId)
+    if (!('ok' in res)) {
+      setProgressError(res.error)
+      return
+    }
+    await apiResetProgress(planId)
+    const planResult = loadPlanById(planId)
+    if ('error' in planResult) {
+      setError(planResult.error)
+      return
+    }
+    setActivePlanId(planId)
+    setPlanWithMeta(planResult)
+    setPlan(planResult.days)
+    const c = await fetchCompletions(planId)
+    setCompletions(c)
   }, [])
 
-  const setSpeedMultiplierWithEngine = useCallback((speed: number) => {
-    setSpeedMultiplier(speed)
-    engineRef.current?.setSpeedMultiplier(speed)
-  }, [])
+  const handleBackFromComplete = useCallback(() => {
+    engineResetToIdle()
+  }, [engineResetToIdle])
+
+  const handleCompleteSession = useCallback(async () => {
+    const dayToRecord = sessionDayIndexRef.current
+    const p = plan
+    if (dayToRecord === null || !p) {
+      setProgressError('Day not found')
+      return
+    }
+    const dayId = getDayId(p, dayToRecord)
+    if (!dayId) {
+      setProgressError('Day not found in plan — cannot record progress')
+      return
+    }
+    const planId = activePlanId ?? 'default'
+    const result = await recordCompletion(planId, dayId, dayToRecord)
+    if ('ok' in result) {
+      setProgressError(null)
+      engineMarkComplete()
+      setSessionDayIndex(null)
+      navigate('/session/complete')
+      setSavedMessage(true)
+      setTimeout(() => setSavedMessage(false), 2500)
+      if ('queued' in result && result.queued) {
+        setCompletions((prev) => [
+          ...prev,
+          {
+            plan_id: planId,
+            day_id: dayId,
+            completed_at: Math.floor(Date.now() / 1000),
+          },
+        ])
+      } else {
+        const c = await fetchCompletions(planId)
+        setCompletions(c)
+      }
+    } else {
+      setProgressError(result.error)
+    }
+  }, [plan, activePlanId, navigate, engineMarkComplete])
 
   const value: TrainingContextValue = {
     user,
     refreshUser,
     plan,
+    planWithMeta,
+    activePlanId,
+    availablePlans,
+    activePlanLoading,
     error,
     completions,
     progressError,
+    resetProgress,
+    setActivePlan,
     selectedDayIndex,
     viewMode,
     savedMessage,
@@ -253,11 +307,15 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     timerState,
     audioLoading,
     speedMultiplier,
+    testMode,
+    hasCompletedToday: hasCompletedToday(completions),
     setSelectedDayIndex,
     setViewMode,
-    setSpeedMultiplier: setSpeedMultiplierWithEngine,
+    setSpeedMultiplier,
+    setTestMode,
     handleStartSession,
     handleAbortSession,
+    handleCompleteSession,
     handleBackFromComplete,
     handleLogout,
   }

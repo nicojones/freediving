@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import clsx from 'clsx'
 
 interface SpeedMultiplierSelectorProps {
   value: number
@@ -6,7 +7,7 @@ interface SpeedMultiplierSelectorProps {
   label?: string
 }
 
-const SPEEDS = [1, 2, 5, 10] as const
+const SPEEDS = [1, 2, 5, 10, 25] as const
 
 export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
   value,
@@ -24,11 +25,12 @@ export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
             key={speed}
             type="button"
             onClick={() => onChange(speed)}
-            className={`px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 ${
+            className={clsx(
+              'px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400',
               value === speed
                 ? 'bg-primary text-on-primary'
                 : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-variant'
-            }`}
+            )}
           >
             {speed}×
           </button>

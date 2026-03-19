@@ -7,9 +7,12 @@ interface HoldProgressRingProps {
   isActive: boolean
 }
 
-const CIRCLE_CX = 172
-const CIRCLE_CY = 172
-const CIRCLE_R = 160
+// Match ActiveSessionView: 320px container, 12px border → stroke center at 154 from center
+const SIZE = 320
+const BORDER = 12
+const CIRCLE_CX = SIZE / 2
+const CIRCLE_CY = SIZE / 2
+const CIRCLE_R = SIZE / 2 - BORDER / 2 // 154 — stroke center aligns with border center
 const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_R
 
 export const HoldProgressRing = memo(function HoldProgressRing({
@@ -27,7 +30,7 @@ export const HoldProgressRing = memo(function HoldProgressRing({
 
   return (
     <svg
-      className="absolute inset-[-12px] w-[344px] h-[344px] rotate-[-90deg]"
+      className="absolute inset-0 w-[320px] h-[320px] -rotate-90"
       aria-hidden
     >
       <circle
