@@ -11,8 +11,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Submerged — Breathhold Protocol',
-        short_name: 'Submerged',
+        name: 'Fishly — Breathhold Protocol',
+        short_name: 'Fishly',
         theme_color: '#52dad3',
         background_color: '#0d1416',
         display: 'standalone',

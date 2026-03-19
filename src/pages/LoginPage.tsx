@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { login } from '../services/authService'
+import { FishIcon } from '../components/FishIcon'
 import { TextInput } from '../components/TextInput'
 import { PrimaryButton } from '../components/PrimaryButton'
 
@@ -37,12 +38,10 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       <div className="w-full max-w-md flex flex-col items-center">
         <header className="mb-20 text-center flex flex-col items-center">
           <div className="mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border border-primary/20">
-            <span className="material-symbols-outlined text-4xl" aria-hidden>
-              waves
-            </span>
+            <FishIcon className="text-primary" size={40} aria-hidden />
           </div>
           <h1 className="font-headline text-[3.5rem] font-bold tracking-tight text-primary leading-none mb-2">
-            Submerged
+            Fishly
           </h1>
           <p className="font-label text-on-surface-variant tracking-[0.2em] uppercase text-[0.65rem] font-medium">
             Breathhold Protocol

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Submerged color tokens */
+  /* Fishly color tokens */
   --color-background: #0d1416;
   --color-surface: #0d1416;
   --color-surface-container-low: #161d1f;

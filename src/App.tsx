@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { FishIcon } from './components/FishIcon'
 import { getCurrentDay } from './services/planService'
 import { LoginPage } from './pages/LoginPage'
 import { Dashboard } from './pages/Dashboard'
@@ -37,8 +38,8 @@ function AppContent() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-background text-on-surface p-8">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-primary animate-pulse">waves</span>
-          <span className="font-headline font-bold text-xl text-primary">Submerged</span>
+          <FishIcon className="text-primary animate-pulse" size={28} aria-hidden />
+          <span className="font-headline font-bold text-xl text-primary">Fishly</span>
         </div>
         <p className="mt-4 text-on-surface-variant font-body">Loading…</p>
       </main>

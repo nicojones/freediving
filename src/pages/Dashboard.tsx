@@ -140,7 +140,7 @@ export function Dashboard() {
           </>
         ) : (
           <>
-            <div className="mt-10 bg-surface-container-low rounded-3xl p-6 mb-8 overflow-hidden">
+            <div className="mt-0 bg-surface-container-low rounded-3xl p-6 mb-8 overflow-hidden">
               <div className="flex items-center gap-4 mb-6">
                 <button
                   type="button"

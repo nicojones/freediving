@@ -62,7 +62,7 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
     <div className="mb-6 bg-surface-container-low rounded-2xl p-4 flex items-center justify-between gap-4">
       <div className="flex-1 min-w-0">
         <p className="text-on-surface font-label font-semibold text-sm uppercase tracking-wider">
-          Install Submerged
+          Install Fishly
         </p>
         <p className="text-on-surface-variant text-sm mt-1">
           {deferredPrompt

@@ -1,3 +1,5 @@
+import { FishIcon } from './FishIcon'
+
 type TopAppBarVariant = 'dashboard' | 'session-preview' | 'active-session'
 
 interface TopAppBarProps {
@@ -31,11 +33,9 @@ export function TopAppBar({
             <span className="font-label text-sm font-semibold uppercase tracking-wider">Back</span>
           </button>
         )}
-        <span className="material-symbols-outlined text-primary" aria-hidden>
-          waves
-        </span>
+        <FishIcon className="text-primary" size={28} aria-hidden />
         <span className="font-headline font-bold text-xl tracking-tighter text-primary">
-          Submerged
+          Fishly
         </span>
       </div>
       <div className="flex items-center gap-4">
