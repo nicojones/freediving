@@ -1,0 +1,89 @@
+type TopAppBarVariant = 'dashboard' | 'session-preview' | 'active-session'
+
+interface TopAppBarProps {
+  variant: TopAppBarVariant
+  weekLabel?: string
+  planName?: string
+  onBack?: () => void
+  onShare?: () => void
+  onMore?: () => void
+}
+
+export function TopAppBar({
+  variant,
+  weekLabel = 'Current Week',
+  planName = 'CO2 Tolerance III',
+  onBack,
+  onShare,
+  onMore,
+}: TopAppBarProps) {
+  return (
+    <header className="bg-background h-20 w-full flex items-center justify-between px-8 z-50">
+      <div className="flex items-center gap-3">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full px-4 py-2 transition-colors duration-400 -ml-1"
+            aria-label="Back"
+          >
+            <span className="material-symbols-outlined text-xl">arrow_back</span>
+            <span className="font-label text-sm font-semibold uppercase tracking-wider">Back</span>
+          </button>
+        )}
+        <span className="material-symbols-outlined text-primary" aria-hidden>
+          waves
+        </span>
+        <span className="font-headline font-bold text-xl tracking-tighter text-primary">
+          Submerged
+        </span>
+      </div>
+      <div className="flex items-center gap-4">
+        {variant === 'dashboard' && (
+          <div className="flex flex-col items-end">
+            <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em]">
+              {weekLabel}
+            </span>
+            <span className="text-primary font-headline font-bold text-lg">
+              {planName}
+            </span>
+          </div>
+        )}
+        {variant === 'session-preview' && (
+          <>
+            {onShare && (
+              <button
+                type="button"
+                onClick={onShare}
+                className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-400 p-2 rounded-full"
+                aria-label="Share"
+              >
+                <span className="material-symbols-outlined">share</span>
+              </button>
+            )}
+            {onMore && (
+              <button
+                type="button"
+                onClick={onMore}
+                className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-400 p-2 rounded-full"
+                aria-label="More options"
+              >
+                <span className="material-symbols-outlined">more_vert</span>
+              </button>
+            )}
+          </>
+        )}
+        {variant === 'active-session' && onMore && (
+          <button
+            type="button"
+            onClick={onMore}
+            className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-400 p-2 rounded-full"
+            aria-label="More options"
+          >
+            <span className="material-symbols-outlined">more_vert</span>
+          </button>
+        )}
+      </div>
+    </header>
+  )
+}

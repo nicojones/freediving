@@ -1,0 +1,56 @@
+interface BottomNavBarProps {
+  activeTab: 'training' | 'settings'
+  onTrainingClick?: () => void
+  onSettingsClick?: () => void
+}
+
+export function BottomNavBar({
+  activeTab,
+  onTrainingClick,
+  onSettingsClick,
+}: BottomNavBarProps) {
+  return (
+    <nav className="fixed bottom-0 w-full z-50 pb-safe bg-background/60 backdrop-blur-xl shadow-[0_-20px_40px_rgba(0,0,0,0.4)] flex justify-around items-center h-24 px-10">
+      <button
+        type="button"
+        onClick={onTrainingClick}
+        className={`flex flex-col items-center justify-center rounded-2xl px-6 py-2 transition-all duration-400 ${
+          activeTab === 'training'
+            ? 'text-primary bg-primary/10'
+            : 'text-tertiary opacity-60 hover:opacity-100 hover:text-primary'
+        }`}
+      >
+        <span
+          className="material-symbols-outlined mb-1"
+          style={{ fontVariationSettings: activeTab === 'training' ? "'FILL' 1" : undefined }}
+          aria-hidden
+        >
+          timer
+        </span>
+        <span className="font-label text-xs font-medium uppercase tracking-widest">
+          Training
+        </span>
+      </button>
+      <button
+        type="button"
+        onClick={onSettingsClick}
+        className={`flex flex-col items-center justify-center rounded-2xl px-6 py-2 transition-all duration-400 ${
+          activeTab === 'settings'
+            ? 'text-primary bg-primary/10'
+            : 'text-tertiary opacity-60 hover:opacity-100 hover:text-primary'
+        }`}
+      >
+        <span
+          className="material-symbols-outlined mb-1"
+          style={{ fontVariationSettings: activeTab === 'settings' ? "'FILL' 1" : undefined }}
+          aria-hidden
+        >
+          settings
+        </span>
+        <span className="font-label text-xs font-medium uppercase tracking-widest">
+          Settings
+        </span>
+      </button>
+    </nav>
+  )
+}
