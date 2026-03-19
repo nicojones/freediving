@@ -18,6 +18,7 @@ import { LoginPage } from './pages/LoginPage'
 import { TopAppBar } from './components/TopAppBar'
 import { BottomNavBar } from './components/BottomNavBar'
 import { PrimaryButton } from './components/PrimaryButton'
+import { SpeedMultiplierSelector } from './components/SpeedMultiplierSelector'
 import type { Plan, Interval } from './types/plan'
 import { RELAXATION_SECONDS } from './types/timer'
 
@@ -73,13 +74,13 @@ function App() {
   const [progressError, setProgressError] = useState<string | null>(null)
   const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null)
   const [viewMode, setViewMode] = useState<'dashboard' | 'session-preview' | 'settings'>('dashboard')
-  const [showReadyConfirm, setShowReadyConfirm] = useState(false)
   const [savedMessage, setSavedMessage] = useState(false)
   const [sessionStatus, setSessionStatus] = useState<'idle' | 'running' | 'complete'>('idle')
   const [timerState, setTimerState] = useState<{
     phase: string
     intervalIndex: number
     remainingMs: number
+    elapsedMs: number
   } | null>(null)
   const [, setSessionMessage] = useState<string | null>(null)
   const [audioLoading, setAudioLoading] = useState(false)
@@ -125,6 +126,7 @@ function App() {
           phase: s.phase,
           intervalIndex: s.intervalIndex,
           remainingMs: s.remainingMs,
+          elapsedMs: s.elapsedMs,
         })
       }
     }, 100)
@@ -141,7 +143,6 @@ function App() {
     }
 
     sessionDayIndexRef.current = selectedDayIndex
-    setShowReadyConfirm(false)
 
     const audioService = createAudioService()
     setAudioLoading(true)
@@ -256,7 +257,13 @@ function App() {
           : timerState && timerState.phase === 'relaxation'
             ? 0
             : 1
-    const progressPercent = totalRounds > 0 ? (currentRound / totalRounds) * 100 : 0
+    const totalDurationMs = intervals
+      ? computeSessionDurationSeconds(intervals) * 1000
+      : 0
+    const progressPercent =
+      totalDurationMs > 0 && timerState
+        ? Math.min(100, (timerState.elapsedMs / totalDurationMs) * 100)
+        : 0
     const getCurrentTimelineIndex = () => {
       if (!timerState) return 0
       if (timerState.phase === 'relaxation') return 0
@@ -280,9 +287,9 @@ function App() {
                 {currentRound} / {totalRounds} Rounds
               </span>
             </div>
-            <div className="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+            <div className="h-1 w-full bg-surface-container-high rounded-full overflow-hidden">
               <div
-                className="h-full bg-primary-fixed rounded-full transition-all duration-400"
+                className="h-full bg-primary/40 rounded-full transition-all duration-400"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -339,6 +346,13 @@ function App() {
           </div>
 
           <div className="w-full flex flex-col gap-6 mb-12">
+            <SpeedMultiplierSelector
+              value={speedMultiplier}
+              onChange={(speed) => {
+                setSpeedMultiplier(speed)
+                engineRef.current?.setSpeedMultiplier(speed)
+              }}
+            />
             <button
               type="button"
               onClick={() => {
@@ -356,15 +370,8 @@ function App() {
                 stop_circle
               </span>
               <span className="text-on-primary font-headline text-2xl font-extrabold uppercase tracking-tight">
-                Stop Hold
+                Abort Session
               </span>
-            </button>
-            <button
-              type="button"
-              className="w-full bg-surface-container-high h-20 rounded-xl flex items-center justify-center gap-3 hover:bg-surface-variant transition-colors duration-400"
-            >
-              <span className="material-symbols-outlined text-tertiary">flag</span>
-              <span className="text-on-surface font-label font-semibold">Lap</span>
             </button>
           </div>
         </main>
@@ -754,27 +761,10 @@ function App() {
                   </div>
                 </section>
 
-                <section className="mb-8">
-                  <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em] block mb-3">
-                    Speed (test)
-                  </span>
-                  <div className="flex gap-2">
-                    {[1, 2, 5, 10].map((speed) => (
-                      <button
-                        key={speed}
-                        type="button"
-                        onClick={() => setSpeedMultiplier(speed)}
-                        className={`px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 ${
-                          speedMultiplier === speed
-                            ? 'bg-primary text-on-primary'
-                            : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-variant'
-                        }`}
-                      >
-                        {speed}×
-                      </button>
-                    ))}
-                  </div>
-                </section>
+                <SpeedMultiplierSelector
+                  value={speedMultiplier}
+                  onChange={setSpeedMultiplier}
+                />
 
                 <section className="mb-32">
                   <div className="flex items-center justify-between mb-8">
@@ -861,32 +851,14 @@ function App() {
               selectedDayIndex === currentDayIndex && (
               <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-background via-background to-transparent pt-12 pb-8 px-6 pointer-events-none">
                 <div className="max-w-md mx-auto pointer-events-auto">
-                  {!showReadyConfirm ? (
-                    <PrimaryButton
-                      onClick={() => setShowReadyConfirm(true)}
-                      icon="play_arrow"
-                    >
-                      Start Session
-                    </PrimaryButton>
-                  ) : (
-                    <div className="flex gap-4">
-                      <PrimaryButton
-                        onClick={handleStartSession}
-                        disabled={audioLoading}
-                        loading={audioLoading}
-                        icon="play_arrow"
-                      >
-                        {audioLoading ? 'Loading…' : 'Start'}
-                      </PrimaryButton>
-                      <button
-                        type="button"
-                        onClick={() => setShowReadyConfirm(false)}
-                        className="flex-1 h-24 bg-surface-container-high rounded-xl font-label font-semibold text-on-surface hover:bg-surface-variant transition-colors duration-400"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
+                  <PrimaryButton
+                    onClick={handleStartSession}
+                    disabled={audioLoading}
+                    loading={audioLoading}
+                    icon="play_arrow"
+                  >
+                    {audioLoading ? 'Loading…' : 'Start Session'}
+                  </PrimaryButton>
                 </div>
               </div>
             )}

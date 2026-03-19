@@ -10,8 +10,10 @@
     "intervals": [{ "holdSeconds": 90, "recoverySeconds": 120 }],
     "type": "wet"
   },
-  null,
   { "rest": true },
+  {
+    "intervals": [{ "holdSeconds": 75, "recoverySeconds": 100 }]
+  },
   {
     "intervals": [{ "holdSeconds": 75, "recoverySeconds": 100 }]
   }
