@@ -116,7 +116,7 @@
 **Prevention:**
 - Strict state machine: HOLD → no cues. Only transition to RECOVERY before any recovery-related cue.
 - Unit test edge cases: recovery 30s, 31s, 32s—"30 seconds" must only play when appropriate.
-- Double-check condition: `recoverySeconds >= 31` before scheduling "30 seconds" cue.
+- Double-check condition: recovery phase `duration >= 31` before scheduling "30 seconds" cue.
 
 **Detection:** Run sessions with recovery 30s, 31s, 35s—verify "30 seconds" never plays during hold.
 

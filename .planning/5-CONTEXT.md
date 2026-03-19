@@ -61,9 +61,9 @@
 
 ## Code Context
 
-- **Plan Service:** `src/services/planService.ts` — `loadPlan()`, `getIntervalsForDay(plan, dayIndex)`
+- **Plan Service:** `src/services/planService.ts` — `loadPlan()`, `getPhasesForDay(plan, dayIndex)`
 - **Progress Service:** `src/services/progressService.ts` — `fetchCompletions(planId)`, `recordCompletion(planId, dayIndex)`. `Completion` has `completed_at`.
-- **Plan types:** `src/types/plan.ts` — `Plan`, `PlanDay`, `Interval`, `TrainingDay` (has optional `type: 'dry' | 'wet'`)
+- **Plan types:** `src/types/plan.ts` — `Plan`, `PlanDay`, `Phase`, `TrainingDay` (has optional `type: 'dry' | 'wet'`)
 - **App:** `src/App.tsx` — currently hardcodes day 0; session_complete not wired to recordCompletion. Manual "Mark day 0 complete" button exists.
 - **Current day helper:** Needs `getCurrentDay(plan, completions)` — uses `completed_at` to determine on-track vs behind; skips rest when behind.
 - **Plan ID:** Use `"default"`; pass through so multi-plan is easy later.

@@ -82,19 +82,19 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
    - `nextDayIndex = lastCompletedDayIndex + 1`.
    - If `nextDayIndex >= plan.length`: return `null` (all done).
    - **On track:** `lastDate.toDateString()` equals today or yesterday (local). If on track: return `nextDayIndex`.
-   - **Behind:** From `nextDayIndex`, skip rest/null days (use `getIntervalsForDay(plan, i) === null`); return first training day index. If none, return `null`.
-2. Add `computeSessionDurationSeconds(intervals: Interval[]): number`:
+   - **Behind:** From `nextDayIndex`, skip rest/null days (use `getPhasesForDay(plan, i) === null`); return first training day index. If none, return `null`.
+2. Add `computeSessionDurationSeconds(phases: Phase[]): number`:
    - `RELAXATION = 60` (from timer.ts or inline).
-   - `total = 60 + Σ(hold_i) + Σ(recovery_i for i < n-1)`.
+   - `total = 60 + Σ(phase.duration)` for all phases.
    - Return total.
 3. Add `getDaySummary(plan: Plan, dayIndex: number): string`:
-   - If `getIntervalsForDay(plan, dayIndex) === null`: return `"Rest"`.
-   - Else: `intervals = getIntervalsForDay(...)`; return `"${intervals.length} cycle(s)"` (or "1 cycle" if length 1).
+   - If `getPhasesForDay(plan, dayIndex) === null`: return `"Rest"`.
+   - Else: `phases = getPhasesForDay(...)`; return `"${holdCount} cycle(s)"` (or "1 cycle" if 1 hold).
 
 **Verify:**
 ```typescript
 // getCurrentDay: no completions → 0; all done → null; on-track includes rest; behind skips rest
-// computeSessionDurationSeconds: day 0 default-plan → 60 + 60+90 + 60+90 = 360 (no recovery after last hold)
+// computeSessionDurationSeconds: day 0 default-plan → 60 + sum of all phase durations (hold, rec, hold, rec, hold…)
 // getDaySummary: rest → "Rest"; training → "2 cycles" or "1 cycle"
 ```
 
@@ -135,7 +135,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 **Action:**
 1. Add session preview section below day list. Updates when `selectedDayIndex` changes.
 2. If `selectedDayIndex === null`: show "Plan complete — no session to run."
-3. If rest day (`getIntervalsForDay(plan, selectedDayIndex) === null`): show "Rest day — No intervals today." Disable Start. Show "Mark rest day complete" button; on click call `handleMarkDayComplete(selectedDayIndex)`.
+3. If rest day (`getPhasesForDay(plan, selectedDayIndex) === null`): show "Rest day — No phases today." Disable Start. Show "Mark rest day complete" button; on click call `handleMarkDayComplete(selectedDayIndex)`.
 4. If training day:
    - Summary: `${intervals.length} cycle(s) · ~${Math.ceil(computeSessionDurationSeconds(intervals) / 60)} min` + type if present.
    - Expandable detail: numbered list "1. Hold 60s, recover 90s", etc.

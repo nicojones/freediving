@@ -13,7 +13,7 @@
 - **Plan structure:** Single array of days. Users typically stick to one plan; switching is possible but not the primary use case.
 - **Day structure:** Each entry is one day. Index = day number (0-based).
 - **Rest days:** `null` or `{ rest: true }`.
-- **Training days:** Object with `intervals` array and optional `type` for wet vs dry.
+- **Training days:** Object with `phases` array and optional `type` for wet vs dry.
 - **No audio in JSON:** Audio cue mapping is application-level (Phase 4).
 - **Format:** Up to implementation; example below.
 
@@ -44,17 +44,17 @@
 
 ```json
 [
-  { "intervals": [{ "holdSeconds": 60, "recoverySeconds": 90 }, { "holdSeconds": 60, "recoverySeconds": 90 }], "type": "dry" },
-  { "intervals": [{ "holdSeconds": 90, "recoverySeconds": 120 }], "type": "wet" },
+  { "phases": [{ "type": "hold", "duration": 60 }, { "type": "recovery", "duration": 90 }, { "type": "hold", "duration": 60 }, { "type": "recovery", "duration": 90 }], "type": "dry" },
+  { "phases": [{ "type": "hold", "duration": 90 }, { "type": "recovery", "duration": 120 }], "type": "wet" },
   null,
   { "rest": true },
-  { "intervals": [{ "holdSeconds": 75, "recoverySeconds": 100 }] }
+  { "phases": [{ "type": "hold", "duration": 75 }, { "type": "recovery", "duration": 100 }] }
 ]
 ```
 
 **Conventions:**
 - Index 0 = Day 1, index 1 = Day 2, etc.
-- `intervals`: array of `{ holdSeconds, recoverySeconds }` — one cycle per entry.
+- `phases`: array of `{ type: "hold" | "recovery", duration: number }` — flat sequence (hold, recovery, hold, recovery, hold…; no recovery after last hold).
 - `type`: `"dry"` | `"wet"` — optional; default `"dry"` if omitted.
 - Rest: `null` or `{ rest: true }`.
 
@@ -73,7 +73,7 @@
 
 | Requirement | Decision |
 |-------------|----------|
-| PLAN-01 | Load from `src/data/`, parse array of days, expose intervals |
+| PLAN-01 | Load from `src/data/`, parse array of days, expose phases |
 | ADMN-01 | Admin edits JSON in repo, git commit, deploy |
 
 ---

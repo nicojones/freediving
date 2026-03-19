@@ -29,7 +29,7 @@ Phase 5 orchestrates day selection, session preview, and full session execution 
 | 2. On track? | `completed_at` in ms. Compare to local calendar: `new Date(completed_at).toDateString()` equals today or yesterday (`new Date()` minus 1 day). |
 | 3. Next day | `nextDayIndex = lastCompletedDayIndex + 1` (or 0 if no completions). |
 | 4. If on track | `current = nextDayIndex` (can be rest). |
-| 5. If behind | From `nextDayIndex`, skip rest/null days until first training day. Use `getIntervalsForDay(plan, i) !== null` to detect training days. |
+| 5. If behind | From `nextDayIndex`, skip rest/null days until first training day. Use `getPhasesForDay(plan, i) !== null` to detect training days. |
 | 6. All done | If `nextDayIndex >= plan.length` or all days completed, return `null` (no current day). |
 
 **Date comparison (local timezone):**
@@ -57,16 +57,15 @@ function isOnTrack(completions: Completion[]): boolean {
 
 **Formula (from timerEngine):**
 - Relaxation: 60s (RELAXATION_SECONDS)
-- Per interval: hold + recovery (except last interval has no recovery after final hold)
-- Total seconds = 60 + Σ(hold_i) + Σ(recovery_i for i < n-1)
+- Phases: flat sequence (hold, recovery, hold, recovery, hold…; no recovery after last hold)
+- Total seconds = 60 + Σ(phase.duration) for all phases
 
 ```typescript
-function computeSessionDurationSeconds(intervals: Interval[]): number {
+function computeSessionDurationSeconds(phases: Phase[]): number {
   const RELAXATION = 60
   let total = RELAXATION
-  for (let i = 0; i < intervals.length; i++) {
-    total += intervals[i].holdSeconds
-    if (i < intervals.length - 1) total += intervals[i].recoverySeconds
+  for (const p of phases) {
+    total += p.duration
   }
   return total
 }
@@ -97,12 +96,12 @@ function computeSessionDurationSeconds(intervals: Interval[]): number {
 **React patterns:**
 - Controlled selection: `selectedDayIndex` state; `onClick` on day item updates it.
 - Current day badge: compute `currentDay` via `getCurrentDay(plan, completions)`; show "Current" or "Next" on that item.
-- Rest day: `getIntervalsForDay(plan, i) === null` → render "Rest" summary; disable Start when selected.
+- Rest day: `getPhasesForDay(plan, i) === null` → render "Rest" summary; disable Start when selected.
 - Completed: `completions.some(c => c.day_index === i)` → checkmark + dimmed style.
 
 **Summary text per day:**
 - Rest: "Day N — Rest"
-- Training: "Day N — X cycles" (intervals.length) or "Day N — 1 cycle"
+- Training: "Day N — X cycles" (hold phase count) or "Day N — 1 cycle"
 - Optional: "dry" / "wet" from `day.type` if present.
 
 ---
@@ -112,8 +111,8 @@ function computeSessionDurationSeconds(intervals: Interval[]): number {
 **5-CONTEXT:** Summary + detail; "3 cycles · ~12 min total"; expandable per-cycle; rest = "Rest day — No intervals today"; hold/recovery, duration, type.
 
 **Structure:**
-- **Summary line:** `${intervals.length} cycle(s) · ~${Math.ceil(durationSec / 60)} min` + type if present (`dry`/`wet`).
-- **Expandable detail:** Numbered list: "1. Hold 60s, recover 90s", "2. Hold 60s, recover 90s".
+- **Summary line:** `${holdCount} cycle(s) · ~${Math.ceil(durationSec / 60)} min` + type if present (`dry`/`wet`).
+- **Expandable detail:** Numbered list of phases: "1. Hold 60s", "2. Recovery 90s", "3. Hold 60s", etc.
 - **Rest day:** "Rest day — No intervals today."
 
 ---
@@ -155,7 +154,7 @@ function computeSessionDurationSeconds(intervals: Interval[]): number {
 | Module | Purpose |
 |--------|---------|
 | `getCurrentDay(plan, completions)` | Returns day index or null; uses on-track/behind logic |
-| `computeSessionDurationSeconds(intervals)` | Total seconds for preview |
+| `computeSessionDurationSeconds(phases)` | Total seconds for preview |
 | `getDaySummary(plan, dayIndex)` | "Rest" or "X cycles" for list item |
 | App.tsx | Day selector, preview, session flow, session_complete → recordCompletion |
 
@@ -189,7 +188,7 @@ App load
 - ARCHITECTURE.md — Data flow, "what's next" flow, Plan/Day Selector responsibility
 - PITFALLS.md — Pitfall 8 (decision fatigue), Pitfall 11 (completion feedback)
 - progressService.ts — fetchCompletions, recordCompletion, Completion type
-- planService.ts — getIntervalsForDay, loadPlan
+- planService.ts — getPhasesForDay, loadPlan
 - timerEngine.ts — buildTimeline, RELAXATION_SECONDS, session structure
 - server/routes/progress.js — completed_at as Date.now()
 - WebSearch: JavaScript date comparison (today/yesterday, local timezone)

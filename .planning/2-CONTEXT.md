@@ -90,8 +90,8 @@
 
 ## Code Context
 
-- **Plan Service:** `src/services/planService.ts` — `loadPlan()`, `getIntervalsForDay()`
-- **Plan types:** `src/types/plan.ts` — `Plan`, `PlanDay`, `Interval`
+- **Plan Service:** `src/services/planService.ts` — `loadPlan()`, `getPhasesForDay()`
+- **Plan types:** `src/types/plan.ts` — `Plan`, `PlanDay`, `Phase`
 - **Plans location:** `src/data/` (e.g. `default-plan.json`)
 - **Architecture:** Backend (API + SQLite) + PWA frontend. Auth service, User service, Progress service.
 - **Research:** Backend stack (Node/Express + better-sqlite3 or similar), auth approach (sessions, JWT, or simple token).

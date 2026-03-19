@@ -33,8 +33,8 @@ must_haves:
   key_links:
     - from: src/services/timerEngine.ts
       to: src/types/plan.ts
-      via: "Interval type for session structure"
-      pattern: "Interval"
+      via: "Phase type for session structure"
+      pattern: "Phase"
     - from: src/App.tsx
       to: src/services/timerEngine.ts
       via: "demo: start session, log events"
@@ -57,18 +57,18 @@ Implement a pure Timer Engine that emits events at correct moments using Date-ba
 - @.planning/ROADMAP.md
 - @.planning/research/ARCHITECTURE.md
 
-**Existing:** Phase 1 complete. `getIntervalsForDay(plan, dayIndex)` returns `Interval[]`. Phase 2 complete (auth, progress).
+**Existing:** Phase 1 complete. `getPhasesForDay(plan, dayIndex)` returns `Phase[]`. Phase 2 complete (auth, progress).
 
 **Design decisions (from Phase 3 discussion):**
 - **Relaxation:** 60s fixed at start, silent (no events). Not in plan. Future: customizable.
-- **First phase:** Always relaxation → then plan intervals (recovery → hold → …).
+- **First phase:** Always relaxation → then plan phases (hold, recovery, hold, recovery, hold…).
 - **Pause/resume:** Out of scope for Phase 3.
 - **Tick:** `setInterval(100)` to poll; progression driven by `Date.now()` elapsed.
 - **Hold start:** `phase_start` with `phase: 'hold'` triggers "Hold" cue (Phase 4).
 
 **Session timeline:**
 ```
-[60s relaxation, silent] → [interval 0: recovery → hold] → [interval 1: recovery → hold] → … → session_complete
+[60s relaxation, silent] → [phase 0: hold] → [phase 1: recovery] → [phase 2: hold] → … → session_complete
 ```
 
 **Events:**
@@ -110,25 +110,25 @@ Implement a pure Timer Engine that emits events at correct moments using Date-ba
 
 **Action:**
 1. Create `src/services/timerEngine.ts`:
-   - Import `Interval` from `../types/plan`, types from `../types/timer`.
-   - **Core logic:** Given `intervals: Interval[]`, `elapsedMs: number`, compute:
+   - Import `Phase` from `../types/plan`, types from `../types/timer`.
+   - **Core logic:** Given `phases: Phase[]`, `elapsedMs: number`, compute:
      - Current phase (relaxation | recovery | hold | complete)
-     - Interval index (0-based; -1 during relaxation)
+     - Hold index (0-based; -1 during relaxation)
      - Remaining ms in current phase
      - Events that should have fired since last tick (compare previous elapsed to current; emit any newly crossed thresholds)
    - **Timeline construction:**
      - 0 to `RELAXATION_SECONDS * 1000`: relaxation
-     - Then for each interval: recovery phase, then hold phase
-     - Total duration = relaxation + sum(interval.recoverySeconds + interval.holdSeconds) for all intervals
-   - **Event thresholds (per interval):**
+     - Then for each phase: sum phase durations in order (hold, recovery, hold…; no recovery after last hold)
+     - Total duration = relaxation + sum(phase.duration) for all phases
+   - **Event thresholds (per hold):**
      - `prepare_hold`: 10s before hold start
-     - `countdown_30`: 30s remaining in recovery, only if `recoverySeconds >= 31`
+     - `countdown_30`: 30s remaining in recovery, only if preceding recovery phase `duration >= 31`
      - `phase_start(hold)`: at hold start
      - `hold_end`: at hold end
      - `session_complete`: when last hold ends
    - **API:**
-     - `createTimerEngine()` returns `{ start(intervals), on(event, callback), getState(), stop() }`
-     - `start(intervals)`: store `startTime = Date.now()`, intervals; begin tick loop
+     - `createTimerEngine()` returns `{ start(phases), on(event, callback), getState(), stop() }`
+     - `start(phases)`: store `startTime = Date.now()`, phases; begin tick loop
      - Tick loop: `setInterval(100)`, each tick: `elapsedMs = Date.now() - startTime`; compute state and events; emit newly crossed events; if phase === 'complete', stop loop
      - `on(eventType, callback)`: subscribe; callbacks receive event payload
      - `getState()`: return current `TimerState` from last tick
@@ -144,10 +144,10 @@ engine.on('prepare_hold', () => console.log('prepare_hold'))
 engine.on('countdown_30', () => console.log('countdown_30'))
 engine.on('hold_end', () => console.log('hold_end'))
 engine.on('session_complete', () => console.log('session_complete'))
-engine.start([{ holdSeconds: 60, recoverySeconds: 90 }])
-// Timeline: 0–60s relaxation, 60–150s recovery, 150–210s hold
-// Expect: prepare_hold at 140s, countdown_30 at 120s, phase_start(hold,0) at 150s, hold_end at 210s, session_complete at 210s
-// Negative: engine.start([{ holdSeconds: 60, recoverySeconds: 30 }]) → countdown_30 must NOT fire (recovery < 31s)
+engine.start([{ type: 'hold', duration: 60 }, { type: 'recovery', duration: 90 }])
+// Timeline: 0–60s relaxation, 60–120s hold, 120–210s recovery
+// Expect: prepare_hold at 50s (10s before hold), phase_start(hold,0) at 60s, hold_end at 120s, countdown_30 at 180s (30s remaining in recovery), session_complete at 210s
+// Negative: engine.start([{ type: 'hold', duration: 60 }, { type: 'recovery', duration: 30 }]) → countdown_30 must NOT fire (recovery < 31s)
 ```
 
 **Done:** Timer engine runs; events fire at correct elapsed times; no events during hold.
@@ -160,7 +160,7 @@ engine.start([{ holdSeconds: 60, recoverySeconds: 90 }])
 
 **Action:**
 1. Add "Start session (day 0)" button below existing content.
-2. On click: get intervals for day 0 via `getIntervalsForDay(plan, 0)`. If null, show message. Else create timer engine, subscribe to all events with `console.log`, call `start(intervals)`.
+2. On click: get phases for day 0 via `getPhasesForDay(plan, 0)`. If null, show message. Else create timer engine, subscribe to all events with `console.log`, call `start(phases)`.
 3. Optionally display current state (phase, remaining) in UI during session — e.g. a small status line that updates every 100ms via `getState()`, or a ref that stores latest state. Keep it minimal.
 4. When `session_complete` fires, call `engine.stop()` and show "Session complete" message.
 
@@ -169,17 +169,20 @@ engine.start([{ holdSeconds: 60, recoverySeconds: 90 }])
 npm run dev
 # Login, click "Start session (day 0)"
 # Open devtools console; verify events log at correct times.
-# Day 0: 2 intervals of 60/90 each. Timeline:
-# 0–60s relaxation | 60–150s rec0 | 150–210s hold0 | 210–300s rec1 | 300–360s hold1
-# - prepare_hold at 140s (10s before hold at 150s)
-# - countdown_30 at 120s (30s remaining in rec0; recovery 90 >= 31)
-# - phase_start(hold, 0) at 150s
-# - hold_end at 210s
-# - prepare_hold at 290s (10s before hold at 300s)
-# - countdown_30 at 270s (30s before hold at 300s)
-# - phase_start(hold, 1) at 300s
-# - hold_end at 360s
-# - session_complete at 360s
+# Day 0: hold 60, rec 90, hold 60, rec 90, hold 60. Timeline:
+# 0–60s relaxation | 60–120s hold0 | 120–210s rec0 | 210–270s hold1 | 270–360s rec1 | 360–420s hold2
+# - prepare_hold at 50s (10s before hold at 60s)
+# - phase_start(hold, 0) at 60s
+# - hold_end at 120s
+# - countdown_30 at 180s (30s remaining in rec0; recovery 90 >= 31)
+# - prepare_hold at 200s (10s before hold at 210s)
+# - phase_start(hold, 1) at 210s
+# - hold_end at 270s
+# - countdown_30 at 330s (30s remaining in rec1)
+# - prepare_hold at 350s (10s before hold at 360s)
+# - phase_start(hold, 2) at 360s
+# - hold_end at 420s
+# - session_complete at 420s
 ```
 
 **Done:** Demo proves timer works; events fire correctly; no events during hold.
@@ -193,7 +196,7 @@ npm run dev
 | Date-based elapsed time | Tick uses `Date.now() - startTime`; no accumulation from setInterval |
 | Events emitted | phase_start, prepare_hold, countdown_30, hold_end, session_complete |
 | No events during hold | Console shows no events between phase_start(hold) and hold_end |
-| countdown_30 only when recovery ≥31s | Day 0 (90s recovery) → fires at 30s remaining; **negative:** `[{ holdSeconds: 60, recoverySeconds: 30 }]` → countdown_30 must NOT fire |
+| countdown_30 only when recovery ≥31s | Day 0 (90s recovery phase) → fires at 30s remaining; **negative:** `[{ type: 'hold', duration: 60 }, { type: 'recovery', duration: 30 }]` → countdown_30 must NOT fire |
 | Pure logic | No audio, no fetch, no localStorage in timerEngine |
 
 ---

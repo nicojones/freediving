@@ -105,13 +105,13 @@ From `src/types/plan.ts`:
 ```typescript
 export type Plan = PlanDay[]
 export type PlanDay = TrainingDay | RestDay | null
-export interface Interval { holdSeconds: number; recoverySeconds: number }
+export interface Phase { type: 'hold' | 'recovery'; duration: number }
 ```
 
 From `src/services/planService.ts`:
 ```typescript
 export async function loadPlan(): Promise<Plan | { error: string }>
-export function getIntervalsForDay(plan: Plan, dayIndex: number): Interval[] | null
+export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null
 ```
 
 **Decisions (from 2-CONTEXT):**
