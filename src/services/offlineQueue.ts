@@ -2,36 +2,45 @@ import { openDB } from 'idb'
 
 const DB_NAME = 'submerged-offline'
 const STORE_NAME = 'pending_completions'
-const DB_VERSION = 1
+const DB_VERSION = 2
 
 export interface PendingCompletion {
   id?: number
   plan_id: string
-  day_index: number
+  day_id: string
+  day_index?: number
   completed_at: number
   created_at: number
 }
 
 async function getDB() {
   return openDB(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true })
+    upgrade(db, oldVersion) {
+      if (oldVersion < 2) {
+        db.deleteObjectStore(STORE_NAME)
+      }
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true })
+      }
     },
   })
 }
 
 export async function queueCompletion(
   planId: string,
-  dayIndex: number
+  dayId: string,
+  dayIndex?: number
 ): Promise<void> {
   const db = await getDB()
   const now = Date.now()
-  await db.add(STORE_NAME, {
+  const item: PendingCompletion = {
     plan_id: planId,
-    day_index: dayIndex,
+    day_id: dayId,
     completed_at: now,
     created_at: now,
-  })
+  }
+  if (typeof dayIndex === 'number') item.day_index = dayIndex
+  await db.add(STORE_NAME, item)
 }
 
 export async function flushQueue(): Promise<{ synced: number; failed: number }> {
@@ -42,13 +51,15 @@ export async function flushQueue(): Promise<{ synced: number; failed: number }> 
 
   for (const item of items) {
     try {
+      const body: Record<string, string | number> = {
+        plan_id: item.plan_id,
+        day_id: item.day_id,
+      }
+      if (typeof item.day_index === 'number') body.day_index = item.day_index
       const res = await fetch('/api/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          plan_id: item.plan_id,
-          day_index: item.day_index,
-        }),
+        body: JSON.stringify(body),
         credentials: 'include',
       })
       if (res.ok) {

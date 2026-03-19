@@ -35,6 +35,18 @@ function AppContent() {
   } = useTraining()
   const navigate = useNavigate()
 
+  const currentDayIndex = plan ? getCurrentDay(plan, completions) : 0
+  const handleBackToTraining = useCallback(() => {
+    handleBackFromComplete()
+    setSelectedDayIndex(currentDayIndex)
+    navigate('/')
+  }, [handleBackFromComplete, setSelectedDayIndex, currentDayIndex, navigate])
+
+  const handleSettingsClick = useCallback(() => {
+    handleBackFromComplete()
+    navigate('/settings')
+  }, [handleBackFromComplete, navigate])
+
   if (user === undefined) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-background text-on-surface p-8">
@@ -85,19 +97,6 @@ function AppContent() {
     )
   }
 
-  const currentDayIndex = getCurrentDay(plan, completions)
-
-  const handleBackToTraining = useCallback(() => {
-    handleBackFromComplete()
-    setSelectedDayIndex(currentDayIndex)
-    navigate('/')
-  }, [handleBackFromComplete, setSelectedDayIndex, currentDayIndex, navigate])
-
-  const handleSettingsClick = useCallback(() => {
-    handleBackFromComplete()
-    navigate('/settings')
-  }, [handleBackFromComplete, navigate])
-
   return (
     <Routes>
       <Route
@@ -129,6 +128,7 @@ function AppContent() {
         }
       />
       <Route path="/" element={<Dashboard />} />
+      <Route path="/day/:dayId" element={<Dashboard />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

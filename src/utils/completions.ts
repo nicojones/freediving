@@ -1,10 +1,13 @@
 /** Minimal completion shape for day checks */
-export type CompletionForDay = { day_index: number }
+export type CompletionForDay = { day_id: string }
 
 /** Returns true if the given day has been completed */
 export function isDayCompleted(
   completions: CompletionForDay[],
-  dayIndex: number
+  dayId: string | undefined
 ): boolean {
-  return completions.some((c) => c.day_index === dayIndex)
+  if (!dayId) return false
+  return completions.some(
+    (c) => c?.day_id && c.day_id.toLowerCase() === dayId.toLowerCase()
+  )
 }

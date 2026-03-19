@@ -19,9 +19,16 @@ export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
   onSelect,
 }: CurrentDayTrainingCardProps) {
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
       className="relative group w-full text-left cursor-pointer"
     >
       <div className="absolute -inset-1 bg-primary/10 blur-xl rounded-full opacity-50 group-hover:opacity-100 transition duration-1000" />
@@ -62,6 +69,6 @@ export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
           </PrimaryButton>
         </div>
       </div>
-    </button>
+    </div>
   )
 })

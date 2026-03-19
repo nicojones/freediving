@@ -5,12 +5,12 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash TEXT NOT NULL
 );
 
--- Progress completions: per user, per plan, per day
+-- Progress completions: per user, per plan, per day (day_id = 8 hex chars from plan)
 CREATE TABLE IF NOT EXISTS progress_completions (
   user_id INTEGER NOT NULL,
   plan_id TEXT NOT NULL,
-  day_index INTEGER NOT NULL,
+  day_id TEXT NOT NULL,
   completed_at INTEGER NOT NULL,
-  PRIMARY KEY (user_id, plan_id, day_index),
+  PRIMARY KEY (user_id, plan_id, day_id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );

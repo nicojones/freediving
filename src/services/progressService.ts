@@ -4,7 +4,7 @@ const API_BASE = '/api/progress'
 
 export interface Completion {
   plan_id: string
-  day_index: number
+  day_id: string
   completed_at: number
 }
 
@@ -15,24 +15,38 @@ export type RecordCompletionResult =
 
 export async function recordCompletion(
   planId: string,
-  dayIndex: number
+  dayId: string,
+  dayIndex?: number
 ): Promise<RecordCompletionResult> {
   if (!navigator.onLine) {
-    await queueCompletion(planId, dayIndex)
+    await queueCompletion(planId, dayId, dayIndex)
     return { ok: true, queued: true }
   }
 
-  const res = await fetch(API_BASE, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ plan_id: planId, day_index: dayIndex }),
-    credentials: 'include',
-  })
+  const reqBody: Record<string, string | number> = { plan_id: planId, day_id: dayId }
+  if (typeof dayIndex === 'number') reqBody.day_index = dayIndex
+
+  let res: Response
+  try {
+    res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reqBody),
+      credentials: 'include',
+    })
+  } catch (e) {
+    return { error: 'Network error — is the server running? (npm run server)' }
+  }
   if (res.ok) {
     const data = await res.json()
     return { ok: data.ok }
   }
-  return { error: 'Failed to record completion' }
+  if (res.status === 401) {
+    return { error: 'Session expired — please log in again' }
+  }
+  const errBody = (await res.json().catch(() => ({}))) as { error?: string }
+  const msg = errBody?.error ?? `Failed to record completion (${res.status})`
+  return { error: msg }
 }
 
 export async function flushOfflineQueue(): Promise<void> {

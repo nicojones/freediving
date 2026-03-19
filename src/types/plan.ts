@@ -6,12 +6,18 @@ export interface Phase {
 
 /** Training day with phases (hold, recovery, hold, recovery, hold...); type defaults to "dry" if omitted */
 export interface TrainingDay {
+  id: string
+  day: number
+  group?: string
   phases: Phase[]
   type?: 'dry' | 'wet'
 }
 
 /** Rest day */
 export interface RestDay {
+  id: string
+  day: number
+  group?: string
   rest: true
 }
 

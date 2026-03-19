@@ -5,9 +5,17 @@ import { fileURLToPath } from 'url'
 import bcrypt from 'bcrypt'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const DB_PATH = join(__dirname, 'data.db')
 
-export const db = new Database(DB_PATH)
+// Database in project: server/data.db (in .gitignore)
+const DB_PATH = process.env.FREEDIVING_DB_PATH || join(__dirname, 'data.db')
+
+export const db = new Database(DB_PATH, { readonly: false })
+db.pragma('journal_mode = DELETE')
+db.pragma('temp_store = MEMORY')
+
+if (process.env.NODE_ENV !== 'test') {
+  console.log('Database:', DB_PATH)
+}
 
 export function runSchema() {
   const schemaPath = join(__dirname, 'schema.sql')

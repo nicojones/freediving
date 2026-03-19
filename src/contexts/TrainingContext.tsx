@@ -183,26 +183,32 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       navigate('/session/complete')
 
       const dayToRecord = sessionDayIndexRef.current
-      if (dayToRecord !== null) {
-        const result = await recordCompletion('default', dayToRecord)
-        if ('ok' in result) {
-          setSavedMessage(true)
-          setTimeout(() => setSavedMessage(false), 2500)
-          if ('queued' in result && result.queued) {
-            setCompletions((prev) => [
-              ...prev,
-              {
-                plan_id: 'default',
-                day_index: dayToRecord,
-                completed_at: Math.floor(Date.now() / 1000),
-              },
-            ])
+      if (dayToRecord !== null && plan) {
+        const day = plan[dayToRecord]
+        const dayId = day != null && typeof day === 'object' && 'id' in day ? (day as { id: string }).id : null
+        if (dayId) {
+          const result = await recordCompletion('default', dayId, dayToRecord)
+          if ('ok' in result) {
+            setSavedMessage(true)
+            setTimeout(() => setSavedMessage(false), 2500)
+            if ('queued' in result && result.queued) {
+              setCompletions((prev) => [
+                ...prev,
+                {
+                  plan_id: 'default',
+                  day_id: dayId,
+                  completed_at: Math.floor(Date.now() / 1000),
+                },
+              ])
+            } else {
+              const c = await fetchCompletions('default')
+              setCompletions(c)
+            }
           } else {
-            const c = await fetchCompletions('default')
-            setCompletions(c)
+            setProgressError(result.error)
           }
         } else {
-          setProgressError(result.error)
+          setProgressError('Day not found in plan — cannot record progress')
         }
       }
     })

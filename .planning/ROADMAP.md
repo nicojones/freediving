@@ -14,6 +14,8 @@
 - [x] **Phase 4: Audio Service** - Cue playback on timer events, no audio during hold
 - [x] **Phase 5: Session Runner + Plan/Day Selector** - Day selection, session preview, full session orchestration
 - [ ] **Phase 6: PWA + Offline** - Installable, offline, precached audio, responsive mobile-first layout
+- [ ] **Phase 7: Day IDs + Routing** - Stable day IDs, day/group in plan, URL-based day view, completions by day_id
+- [ ] **Phase 8: Session UX Enhancements** - One session per day, visible completion flow, test toggle, recovery ring animation
 
 ---
 
@@ -129,6 +131,43 @@
 
 ---
 
+### Phase 7: Day IDs + Routing
+
+**Goal:** Add stable day IDs to the plan; use them for completions and URL routing. Each day has `id`, `day` (ordinal), and optional `group`; viewing a day puts its id in the URL.
+
+**Depends on:** Phase 6 (PWA + Offline)
+
+**Requirements:** (Enhancement — no new v1 requirement)
+
+**Success Criteria** (what must be TRUE):
+1. Every day in the plan has `id` (8 hex), `day` (ordinal), and optional `group`
+2. Example groups in default-plan: warm-up, deep pool, endurance
+3. Completions use `day_id` instead of `day_index` (backend + frontend)
+4. Route `/day/:dayId` shows day view; refresh preserves view
+5. Invalid dayId redirects to `/`
+
+**Plans:** `.planning/7-PLAN.md` (5 tasks: plan schema + default-plan → backend day_id → planService lookups → progressService/offlineQueue → routing + Dashboard URL sync)
+
+---
+
+### Phase 8: Session UX Enhancements
+
+**Goal:** Improve session flow UX: block duplicate sessions per day, make completion/save more visible, add test toggle, and enhance recovery phase visuals.
+
+**Depends on:** Phase 5 (Session Runner)
+
+**Requirements:** (Enhancement — no new v1 requirement)
+
+**Success Criteria** (what must be TRUE):
+1. User cannot start a new session if they already completed one today
+2. After last step, user sees green glowing ring + "Complete session" button (no auto-leave)
+3. Test toggle allows overriding step 1 (relaxation) for faster testing
+4. Recovery phase shows faint glowing ring with breathing animation (no ring = faint blue)
+
+**Plans:** `.planning/8-PLAN.md` (5 tasks: hasCompletedToday → completion flow → test toggle → recovery ring → integration)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -139,6 +178,8 @@
 | 4. Audio Service | 2/2 | Complete | 4-PLAN.md |
 | 5. Session Runner + Plan/Day Selector | 4/4 | Complete | 5-PLAN.md |
 | 6. PWA + Offline | 0/0 | Not started | - |
+| 7. Day IDs + Routing | 0/0 | Not started | - |
+| 8. Session UX Enhancements | 0/5 | Planned | 8-PLAN.md |
 
 ---
 

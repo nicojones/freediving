@@ -4,7 +4,7 @@ import defaultPlan from '../data/default-plan.json'
 const RELAXATION_SECONDS = 60
 
 /** Minimal completion shape for getCurrentDay; avoids coupling to progressService */
-export type CompletionForPlan = { day_index: number; completed_at: number }
+export type CompletionForPlan = { day_id: string; completed_at: number }
 
 /**
  * Loads the training plan from JSON.
@@ -47,6 +47,26 @@ export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
 }
 
 /**
+ * Returns the day object for a given id, or null. Case-insensitive for URLs.
+ */
+export function getDayById(plan: Plan, dayId: string): (typeof plan)[number] | null {
+  if (!Array.isArray(plan) || !dayId) return null
+  const lower = dayId.toLowerCase()
+  const day = plan.find((d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower)
+  return day ?? null
+}
+
+/**
+ * Returns the index of the day with the given id, or null.
+ */
+export function getDayIndexById(plan: Plan, dayId: string): number | null {
+  if (!Array.isArray(plan) || !dayId) return null
+  const lower = dayId.toLowerCase()
+  const idx = plan.findIndex((d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower)
+  return idx >= 0 ? idx : null
+}
+
+/**
  * Returns the current day index (next to do), or null if all days complete.
  * On track (trained yesterday or today): next day in sequence, including rest.
  * Behind (last completion 2+ days ago): skip rest days, return first training day.
@@ -60,7 +80,9 @@ export function getCurrentDay(
   let lastCompletedDayIndex = -1
   if (completions.length > 0) {
     const sorted = [...completions].sort((a, b) => b.completed_at - a.completed_at)
-    lastCompletedDayIndex = sorted[0].day_index
+    const lastId = sorted[0].day_id
+    const idx = getDayIndexById(plan, lastId)
+    lastCompletedDayIndex = idx ?? -1
   }
 
   let nextDayIndex = lastCompletedDayIndex + 1

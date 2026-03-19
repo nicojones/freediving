@@ -56,6 +56,8 @@
 - [x] Phase 4: Audio Service
 - [ ] Phase 5: Session Runner + Plan/Day Selector
 - [ ] Phase 6: PWA + Offline
+- [ ] Phase 7: Day IDs + Routing
+- [ ] Phase 8: Session UX Enhancements (context in 8-CONTEXT.md)
 
 ### Blockers
 

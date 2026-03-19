@@ -1,6 +1,6 @@
-import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getPhasesForDay, getCurrentDay } from '../services/planService'
+import { useCallback, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { getPhasesForDay, getCurrentDay, getDayIndexById } from '../services/planService'
 import { useTraining } from '../contexts/TrainingContext'
 import { isDayCompleted } from '../utils/completions'
 import { TopAppBar } from '../components/TopAppBar'
@@ -16,6 +16,7 @@ import { StartSessionCTA } from '../components/StartSessionCTA'
 
 export function Dashboard() {
   const navigate = useNavigate()
+  const { dayId: urlDayId } = useParams<{ dayId?: string }>()
   const {
     plan,
     completions,
@@ -33,13 +34,22 @@ export function Dashboard() {
 
   const handleSelectDay = useCallback(
     (index: number) => {
+      if (!plan) return
+      const day = plan[index]
+      const id = day != null && 'id' in day ? (day as { id: string }).id : null
+      if (id) {
+        navigate(`/day/${id}`)
+      }
       setSelectedDayIndex(index)
       setViewMode('session-preview')
     },
-    [setSelectedDayIndex, setViewMode]
+    [plan, navigate, setSelectedDayIndex, setViewMode]
   )
 
-  const handleBack = useCallback(() => setViewMode('dashboard'), [setViewMode])
+  const handleBack = useCallback(() => {
+    navigate('/')
+    setViewMode('dashboard')
+  }, [navigate, setViewMode])
 
   const handleStartSessionClick = useCallback(async () => {
     await handleStartSession()
@@ -53,6 +63,19 @@ export function Dashboard() {
   )
 
   if (!plan) return null
+
+  // Sync URL dayId to selected day; invalid dayId → redirect to /
+  useEffect(() => {
+    if (urlDayId) {
+      const idx = getDayIndexById(plan, urlDayId)
+      if (idx === null) {
+        navigate('/', { replace: true })
+      } else {
+        setSelectedDayIndex(idx)
+        setViewMode('session-preview')
+      }
+    }
+  }, [urlDayId, plan, navigate, setSelectedDayIndex, setViewMode])
 
   const currentDayIndex = getCurrentDay(plan, completions)
   const selectedPhases =
@@ -95,7 +118,7 @@ export function Dashboard() {
         {showDayDetail && isRestDay ? (
           <RestDayCard
             dayIndex={selectedDayIndex!}
-            isCompleted={isDayCompleted(completions, selectedDayIndex!)}
+            isCompleted={isDayCompleted(completions, (plan[selectedDayIndex!] as { id?: string })?.id)}
             onBack={handleBack}
           />
         ) : !showSessionPreview ? (
@@ -117,7 +140,7 @@ export function Dashboard() {
                   plan={plan}
                   dayIndex={i}
                   isCurrent={currentDayIndex === i}
-                  isCompleted={isDayCompleted(completions, i)}
+                  isCompleted={isDayCompleted(completions, (plan[i] as { id?: string })?.id)}
                   onSelect={() => handleSelectDay(i)}
                 />
               ))}
