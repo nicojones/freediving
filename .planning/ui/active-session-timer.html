@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Submerged | Active Session</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary": "#1b343b",
+              "on-error": "#690005",
+              "secondary": "#ffd799",
+              "primary": "#52dad3",
+              "on-surface-variant": "#c0c7cd",
+              "secondary-fixed": "#ffdeac",
+              "surface-dim": "#0d1416",
+              "surface-variant": "#2f3638",
+              "tertiary": "#b0cbd3",
+              "on-tertiary-container": "#9db7bf",
+              "primary-fixed-dim": "#52dad3",
+              "on-secondary": "#432c00",
+              "on-primary-fixed-variant": "#00504d",
+              "error-container": "#93000a",
+              "surface-tint": "#52dad3",
+              "on-secondary-fixed": "#281900",
+              "on-error-container": "#ffdad6",
+              "inverse-on-surface": "#2a3234",
+              "primary-container": "#004e4b",
+              "secondary-container": "#feb300",
+              "tertiary-container": "#304950",
+              "on-tertiary-fixed-variant": "#324a51",
+              "surface-container-low": "#161d1f",
+              "on-tertiary-fixed": "#041f25",
+              "surface-container": "#1a2123",
+              "inverse-surface": "#dde4e6",
+              "secondary-fixed-dim": "#ffba38",
+              "on-primary": "#003735",
+              "error": "#ffb4ab",
+              "background": "#0d1416",
+              "surface-bright": "#333a3d",
+              "surface-container-lowest": "#080f11",
+              "inverse-primary": "#006a66",
+              "on-primary-container": "#36c6bf",
+              "outline": "#8a9297",
+              "tertiary-fixed-dim": "#b0cbd3",
+              "on-background": "#dde4e6",
+              "on-secondary-container": "#6a4800",
+              "outline-variant": "#40484c",
+              "on-surface": "#dde4e6",
+              "surface-container-highest": "#2f3638",
+              "on-secondary-fixed-variant": "#604100",
+              "surface": "#0d1416",
+              "surface-container-high": "#242b2d",
+              "tertiary-fixed": "#cce7f0",
+              "primary-fixed": "#73f7ef",
+              "on-primary-fixed": "#00201e"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0d1416;
+            color: #dde4e6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom ring glow for focus effect */
+        .focus-glow {
+            box-shadow: 0 0 60px rgba(82, 218, 211, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body selection:bg-primary/30">
+<!-- Top Navigation Anchor (As per Shared Components) -->
+<header class="bg-[#0d1416] docked full-width top-0 z-50 flex items-center justify-between px-8 h-20 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#52dad3]" data-icon="waves">waves</span>
+<span class="text-[#52dad3] font-manrope font-bold text-xl tracking-tighter">Submerged</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-[#c0c7cd] hover:bg-[#1a2426] transition-colors duration-400 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</header>
+<main class="min-h-screen flex flex-col pt-20 pb-24 px-8 items-center justify-between">
+<!-- Overall Progress Bar (Oxygen Flow Component) -->
+<div class="w-full mt-4">
+<div class="flex justify-between items-end mb-3">
+<span class="text-on-surface-variant font-label text-xs tracking-widest uppercase">Session Progress</span>
+<span class="text-on-surface font-headline font-bold">4 / 8 Rounds</span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full w-1/2 bg-primary-fixed rounded-full"></div>
+</div>
+</div>
+<!-- Central Focus Area (The Weightless Void) -->
+<div class="flex flex-col items-center justify-center flex-1 w-full relative">
+<!-- Focus Ring (Specialized Component) -->
+<div class="absolute w-[320px] h-[320px] rounded-full border-[12px] border-surface-container-high focus-glow flex items-center justify-center">
+<!-- Inner Animated Stroke Simulation -->
+<svg class="absolute inset-[-12px] w-[344px] h-[344px] rotate-[-90deg]">
+<circle cx="172" cy="172" fill="transparent" r="160" stroke="#52dad3" stroke-dasharray="1005" stroke-dashoffset="350" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+</div>
+<!-- Timer Content -->
+<div class="z-10 text-center">
+<p class="text-primary font-headline text-2xl font-bold tracking-widest mb-2">HOLDING</p>
+<h1 class="text-on-surface font-headline text-[5rem] font-extrabold tracking-tighter leading-none">01:45</h1>
+<div class="mt-8 flex items-center justify-center gap-2 bg-surface-container-low px-6 py-3 rounded-full">
+<span class="material-symbols-outlined text-tertiary text-sm" data-icon="next_plan">next_plan</span>
+<span class="text-on-surface-variant font-label text-sm tracking-wide">Next: 1:30 Recovery</span>
+</div>
+</div>
+</div>
+<!-- Action Controls (The Pulse Variants) -->
+<div class="w-full flex flex-col gap-6 mb-12">
+<!-- Large Stop Button -->
+<button class="bg-gradient-to-r from-primary to-primary-container h-24 w-full rounded-xl flex items-center justify-center gap-4 scale-95 active:scale-90 transition-transform duration-400 ease-in-out">
+<span class="material-symbols-outlined text-on-primary text-3xl" data-icon="stop_circle" style="font-variation-settings: 'FILL' 1;">stop_circle</span>
+<span class="text-on-primary font-headline text-2xl font-extrabold uppercase tracking-tight">Stop Hold</span>
+</button>
+<!-- Secondary Actions -->
+<div class="grid grid-cols-2 gap-4">
+<button class="bg-surface-container-high h-20 rounded-xl flex items-center justify-center gap-3 hover:bg-surface-variant transition-colors duration-400">
+<span class="material-symbols-outlined text-secondary" data-icon="pause_circle">pause_circle</span>
+<span class="text-on-surface font-label font-semibold">Pause</span>
+</button>
+<button class="bg-surface-container-high h-20 rounded-xl flex items-center justify-center gap-3 hover:bg-surface-variant transition-colors duration-400">
+<span class="material-symbols-outlined text-tertiary" data-icon="flag">flag</span>
+<span class="text-on-surface font-label font-semibold">Lap</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell (As per Shared Components) -->
+<!-- Suppressed on active session screens to prioritize focus, however, including the structure for brand consistency as requested by Shell Visibility & Relevance -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#0d1416]/60 backdrop-blur-xl shadow-[0_-20px_40px_rgba(0,0,0,0.4)] md:hidden">
+<div class="flex justify-around items-center h-24 px-10 w-full">
+<!-- Training Active State -->
+<a class="flex flex-col items-center justify-center text-[#52dad3] bg-[#52dad3]/10 rounded-2xl px-6 py-2 transition-all duration-400" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="timer" style="font-variation-settings: 'FILL' 1;">timer</span>
+<span class="font-inter text-xs font-medium uppercase tracking-widest">Training</span>
+</a>
+<!-- Settings Inactive State -->
+<a class="flex flex-col items-center justify-center text-[#b0cbd3] opacity-60 px-6 py-2 hover:opacity-100 hover:text-[#52dad3] transition-all duration-400" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-inter text-xs font-medium uppercase tracking-widest">Settings</span>
+</a>
+</div>
+<!-- Gradient Separation Logic -->
+<div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#0d1416] to-transparent pointer-events-none h-full"></div>
+</nav>
+<!-- Background Ambience (Subtle Tonal Stacking) -->
+<div class="fixed inset-0 -z-20 overflow-hidden pointer-events-none">
+<div class="absolute -top-[10%] -left-[20%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-tertiary/5 blur-[100px]"></div>
+</div>
+</body></html>

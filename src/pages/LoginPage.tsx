@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import clsx from 'clsx'
 import { login } from '../services/authService'
 
 interface LoginPageProps {
@@ -25,12 +26,12 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
   }
 
   return (
-    <main style={{ padding: '2rem', maxWidth: 400, margin: '0 auto' }}>
+    <main className="p-8 max-w-[400px] mx-auto">
       <h1>Freediving Breathhold Trainer</h1>
       <p>Sign in to continue</p>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="username" style={{ display: 'block', marginBottom: 4 }}>
+        <div className="mb-4">
+          <label htmlFor="username" className="block mb-1">
             Username
           </label>
           <input
@@ -40,11 +41,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
             required
-            style={{ width: '100%', padding: 8 }}
+            className="w-full p-2"
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: 4 }}>
+        <div className="mb-4">
+          <label htmlFor="password" className="block mb-1">
             Password
           </label>
           <input
@@ -54,13 +55,17 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
             required
-            style={{ width: '100%', padding: 8 }}
+            className="w-full p-2"
           />
         </div>
         {error && (
-          <p style={{ color: 'crimson', marginBottom: '1rem' }}>{error}</p>
+          <p className="text-[crimson] mb-4">{error}</p>
         )}
-        <button type="submit" disabled={loading} style={{ padding: '8px 16px' }}>
+        <button
+          type="submit"
+          disabled={loading}
+          className={clsx('px-4 py-2', loading && 'opacity-50 cursor-not-allowed')}
+        >
           {loading ? 'Signing in...' : 'Sign in'}
         </button>
       </form>

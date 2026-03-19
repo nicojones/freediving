@@ -10,7 +10,7 @@
 
 - [ ] **Phase 1: Plan Service** - Load training plans from JSON, admin can add/modify plans
 - [x] **Phase 2: Progress + Profile Services** - Username/password login, backend + SQLite, session completion, cross-device progress
-- [ ] **Phase 3: Timer Engine** - Pure state machine with Date-based elapsed time, event emission
+- [x] **Phase 3: Timer Engine** - Pure state machine with Date-based elapsed time, event emission
 - [ ] **Phase 4: Audio Service** - Cue playback on timer events, no audio during hold
 - [ ] **Phase 5: Session Runner + Plan/Day Selector** - Day selection, session preview, full session orchestration
 - [ ] **Phase 6: PWA + Offline** - Installable, offline, precached audio, responsive mobile-first layout
@@ -69,7 +69,7 @@
 4. "30 seconds" event fires only when recovery ≥31s, at 30s remaining
 5. Engine is pure logic (no audio or persistence side effects)
 
-**Plans:** TBD
+**Plans:** `.planning/3-PLAN.md` (3 tasks: types → timer engine → demo)
 
 ---
 
@@ -88,7 +88,7 @@
 4. User hears "Breathe!" exactly when hold ends
 5. No audio plays during the breathhold itself
 
-**Plans:** TBD
+**Plans:** `.planning/4-PLAN.md` (2 tasks: audioService → wire App)
 
 ---
 
@@ -107,7 +107,7 @@
 4. User can start a session and complete it with all audio cues
 5. Session completion is recorded for the selected profile and day
 
-**Plans:** TBD
+**Plans:** `.planning/5-PLAN.md` (4 tasks: session utils → day selector → preview → session flow)
 
 ---
 
@@ -135,8 +135,8 @@
 |-------|----------------|--------|-----------|
 | 1. Plan Service | 0/5 | Not started | - |
 | 2. Progress + Profile Services | 2/2 | Complete | 2-PLAN.md |
-| 3. Timer Engine | 0/0 | Not started | - |
-| 4. Audio Service | 0/0 | Not started | - |
+| 3. Timer Engine | 3/3 | Complete | 3-PLAN.md |
+| 4. Audio Service | 0/2 | Not started | 4-PLAN.md |
 | 5. Session Runner + Plan/Day Selector | 0/0 | Not started | - |
 | 6. PWA + Offline | 0/0 | Not started | - |
 

@@ -8,7 +8,7 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 2 — Progress + Profile Services (planned)
+**Current focus:** Phase 4 — Audio Service (complete)
 
 ---
 
@@ -16,13 +16,13 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 2. Progress + Profile Services |
-| Plan | 2-PLAN.md |
+| Phase | 4. Audio Service |
+| Plan | 4-PLAN.md |
 | Status | Complete |
-| Progress | 2/6 phases |
+| Progress | 4/6 phases |
 
 ```
-[████░░░░░░] 33%
+[██████░░░░] 67%
 ```
 
 ---
@@ -31,9 +31,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases complete | 2 |
+| Phases complete | 4 |
 | Requirements mapped | 17/17 |
-| Plans executed | 2 |
+| Plans executed | 4 |
 
 ---
 
@@ -52,8 +52,8 @@
 
 - [x] Phase 1: Plan Service (context captured in 1-CONTEXT.md)
 - [x] Phase 2: Progress + Profile Services (context captured in 2-CONTEXT.md)
-- [ ] Phase 3: Timer Engine
-- [ ] Phase 4: Audio Service
+- [x] Phase 3: Timer Engine
+- [x] Phase 4: Audio Service
 - [ ] Phase 5: Session Runner + Plan/Day Selector
 - [ ] Phase 6: PWA + Offline
 
@@ -65,4 +65,4 @@ None.
 
 ## Session Continuity
 
-When resuming: run `/gsd-execute-phase 2` to execute the phase plan (2-PLAN.md).
+When resuming: run `/gsd-execute-phase 5` for Session Runner + Plan/Day Selector (5-PLAN.md when created).

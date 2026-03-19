@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A PWA for training freediving breathholds. Users select a pre-defined profile, pick a day from their training plan, read what the session contains, then lie down with eyes closed and follow audio cues through hold/breathe intervals. Progress is stored locally (SQLite) so the app can surface "what should I focus on today?" based on the last completed session. Training plans are defined in JSON and managed by the admin (no in-app plan editor).
+A PWA for training freediving breathholds — a simple website that runs well on phone and browser, installable as an app. Users log in (username/password, pre-defined, no registration), pick a day from their training plan, read what the session contains, then lie down with eyes closed and follow audio cues through hold/breathe intervals. Progress is stored on the backend (SQLite) so it syncs across devices. Training plans are defined in JSON and managed by the admin (no in-app plan editor).
 
 ## Core Value
 
@@ -16,8 +16,8 @@ User can lie down, close their eyes, and complete a breathhold session guided en
 
 ### Active
 
-- [ ] User can select from pre-defined profiles (no registration)
-- [ ] User can view and select any day in the current training plan
+- [ ] User can log in with username/password (pre-defined users, no registration)
+- [ ] User can view and select any day in the cuhrrent training plan
 - [ ] App defaults to "current" day: first non-completed day, or today's scheduled day if all previous are done
 - [ ] User can read the session structure (hold/breathe intervals) before starting
 - [ ] User can start a session and follow audio cues: "Hold", "Prepare for hold" (10s before hold), "30 seconds" (only when recovery ≥ 31s, at 30s remaining), "Breathe!" (when hold ends)
@@ -29,7 +29,7 @@ User can lie down, close their eyes, and complete a breathhold session guided en
 
 ### Out of Scope
 
-- User registration or sign-up — profiles are pre-defined
+- User registration or sign-up — users are pre-defined, admin configures credentials
 - Records or best times — progress is "what's next", not performance metrics
 - In-app plan editor — plans come from JSON
 - Audio generation — user provides audio files
@@ -43,19 +43,21 @@ User can lie down, close their eyes, and complete a breathhold session guided en
 
 ## Constraints
 
-- **Platform**: PWA (web app acceptable)
-- **Storage**: SQLite for progress
-- **Users**: Few, pre-defined (no registration)
+- **Platform**: PWA (web app; runs well on phone and browser; installable)
+- **Backend**: API + SQLite for progress and auth
+- **Storage**: SQLite on server; progress syncs across devices
+- **Users**: Few, pre-defined (username/password, no registration)
 - **Plans**: JSON format, admin-managed
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| PWA over native | Single codebase, installable, offline | — Pending |
-| Pre-defined users | Small user set, no auth complexity | — Pending |
+| PWA over native | Single codebase, installable, works on phone + browser | — Pending |
+| PWA + backend | Fetch/store data server-side; cross-device progress | — Pending |
+| Pre-defined users | Small user set; username/password, no sign-up flow | — Pending |
 | JSON for plans | Admin uploads/modifies, no in-app editor | — Pending |
-| SQLite | Local storage, no backend required | — Pending |
+| SQLite on server | Progress and auth; survives restart, syncs across devices | — Pending |
 
 ---
 *Last updated: 2025-03-19 after initialization*

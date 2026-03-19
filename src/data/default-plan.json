@@ -1,0 +1,18 @@
+[
+  {
+    "intervals": [
+      { "holdSeconds": 60, "recoverySeconds": 90 },
+      { "holdSeconds": 60, "recoverySeconds": 90 }
+    ],
+    "type": "dry"
+  },
+  {
+    "intervals": [{ "holdSeconds": 90, "recoverySeconds": 120 }],
+    "type": "wet"
+  },
+  null,
+  { "rest": true },
+  {
+    "intervals": [{ "holdSeconds": 75, "recoverySeconds": 100 }]
+  }
+]
