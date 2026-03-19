@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+  <!-- Fish swimming down: forked tail at top, head at bottom -->
+  <path
+    d="M10 4 L16 12 L22 4 Z"
+    fill="#52dad3"
+  />
+  <ellipse cx="16" cy="18" rx="7" ry="9" fill="#52dad3" />
+  <circle cx="17.6" cy="22.4" r="2" fill="#0d1416" />
+</svg>
