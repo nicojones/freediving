@@ -9,6 +9,7 @@ import { useTraining } from '../contexts/TrainingContext'
 import { TopAppBar } from '../components/TopAppBar'
 import { BottomNavBar } from '../components/BottomNavBar'
 import { PrimaryButton } from '../components/PrimaryButton'
+import { InstallPrompt } from '../components/InstallPrompt'
 import { SpeedMultiplierSelector } from '../components/SpeedMultiplierSelector'
 import { TrainingDayCard } from '../components/TrainingDayCard'
 import { SessionBreakdown } from '../components/SessionBreakdown'
@@ -51,7 +52,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
       <TopAppBar
         variant={showDayDetail ? 'session-preview' : 'dashboard'}
         weekLabel="Current Week"
@@ -71,13 +72,17 @@ export function Dashboard() {
           <p className="text-primary mb-4 text-sm font-body">Saved</p>
         )}
 
+        {!showSessionPreview && (
+          <InstallPrompt hasEngaged={completions.length > 0} />
+        )}
+
         {showDayDetail && isRestDay ? (
           <div className="mt-10 bg-surface-container-low rounded-3xl p-6 overflow-hidden">
             <div className="flex items-center gap-4 mb-6">
-              <button
+                <button
                 type="button"
                 onClick={() => setViewMode('dashboard')}
-                className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full px-4 py-2 transition-colors duration-400 -ml-1 shrink-0"
+                className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full px-4 py-2 min-h-11 min-w-11 transition-colors duration-400 -ml-1 shrink-0"
                 aria-label="Back"
               >
                 <span className="material-symbols-outlined text-xl">arrow_back</span>
@@ -140,7 +145,7 @@ export function Dashboard() {
                 <button
                   type="button"
                   onClick={() => setViewMode('dashboard')}
-                  className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full px-4 py-2 transition-colors duration-400 -ml-1 shrink-0"
+                  className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-full px-4 py-2 min-h-11 min-w-11 transition-colors duration-400 -ml-1 shrink-0"
                   aria-label="Back"
                 >
                   <span className="material-symbols-outlined text-xl">

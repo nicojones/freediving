@@ -17,6 +17,7 @@ import { getCurrentUser, logout } from '../services/authService'
 import {
   recordCompletion,
   fetchCompletions,
+  flushOfflineQueue,
   type Completion,
 } from '../services/progressService'
 import { createTimerEngine } from '../services/timerEngine'
@@ -106,8 +107,26 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
         .catch((e) => {
           setError(e instanceof Error ? e.message : 'Unknown error')
         })
-      fetchCompletions('default').then((c) => setCompletions(c))
+      const loadCompletions = async () => {
+        if (navigator.onLine) {
+          await flushOfflineQueue()
+        }
+        const c = await fetchCompletions('default')
+        setCompletions(c)
+      }
+      loadCompletions()
     }
+  }, [user])
+
+  useEffect(() => {
+    if (!user) return
+    const handleOnline = async () => {
+      await flushOfflineQueue()
+      const c = await fetchCompletions('default')
+      setCompletions(c)
+    }
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
   }, [user])
 
   useEffect(() => {
@@ -169,8 +188,19 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
         if ('ok' in result) {
           setSavedMessage(true)
           setTimeout(() => setSavedMessage(false), 2500)
-          const c = await fetchCompletions('default')
-          setCompletions(c)
+          if ('queued' in result && result.queued) {
+            setCompletions((prev) => [
+              ...prev,
+              {
+                plan_id: 'default',
+                day_index: dayToRecord,
+                completed_at: Math.floor(Date.now() / 1000),
+              },
+            ])
+          } else {
+            const c = await fetchCompletions('default')
+            setCompletions(c)
+          }
         } else {
           setProgressError(result.error)
         }
