@@ -9,7 +9,7 @@
 ## Phases
 
 - [ ] **Phase 1: Plan Service** - Load training plans from JSON, admin can add/modify plans
-- [ ] **Phase 2: Progress + Profile Services** - Profile selection, SQLite progress storage, session completion recording
+- [x] **Phase 2: Progress + Profile Services** - Username/password login, backend + SQLite, session completion, cross-device progress
 - [ ] **Phase 3: Timer Engine** - Pure state machine with Date-based elapsed time, event emission
 - [ ] **Phase 4: Audio Service** - Cue playback on timer events, no audio during hold
 - [ ] **Phase 5: Session Runner + Plan/Day Selector** - Day selection, session preview, full session orchestration
@@ -32,25 +32,25 @@
 2. Parsed plans expose hold/breathe intervals per day
 3. Admin can add or modify plans by updating JSON (no in-app editor)
 
-**Plans:** TBD
+**Plans:** `.planning/1-PLAN.md` (5 tasks: scaffold → types → Plan Service → wire App → admin docs)
 
 ---
 
 ### Phase 2: Progress + Profile Services
 
-**Goal:** User can select a profile; app stores and retrieves progress per profile per day.
+**Goal:** User can log in; app stores and retrieves progress per user per day via backend.
 
 **Depends on:** Phase 1 (needs plan structure for "current day" logic)
 
 **Requirements:** PROF-01, PROF-02, SESS-07
 
 **Success Criteria** (what must be TRUE):
-1. User can select from pre-defined profiles (no registration)
-2. App persists progress in SQLite (IndexedDB-backed)
-3. App records session completion per profile per day
-4. Progress survives browser restart
+1. User can log in with username/password (pre-defined users, no registration)
+2. Backend persists progress in SQLite; PWA fetches/stores via API
+3. App records session completion per user per day
+4. Progress survives browser restart and syncs across devices
 
-**Plans:** TBD
+**Plans:** `.planning/2-PLAN.md` (Plan 01: 3 tasks backend; Plan 02: 2 tasks frontend)
 
 ---
 
@@ -133,8 +133,8 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Plan Service | 0/0 | Not started | - |
-| 2. Progress + Profile Services | 0/0 | Not started | - |
+| 1. Plan Service | 0/5 | Not started | - |
+| 2. Progress + Profile Services | 2/2 | Complete | 2-PLAN.md |
 | 3. Timer Engine | 0/0 | Not started | - |
 | 4. Audio Service | 0/0 | Not started | - |
 | 5. Session Runner + Plan/Day Selector | 0/0 | Not started | - |

@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-19
+**Last updated:** 2025-03-19 — PWA + backend architecture
 
 ---
 
@@ -8,7 +8,7 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 1 — Plan Service
+**Current focus:** Phase 2 — Progress + Profile Services (planned)
 
 ---
 
@@ -16,13 +16,13 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 1. Plan Service |
-| Plan | — |
-| Status | Not started |
-| Progress | 0/6 phases |
+| Phase | 2. Progress + Profile Services |
+| Plan | 2-PLAN.md |
+| Status | Complete |
+| Progress | 2/6 phases |
 
 ```
-[░░░░░░░░░░] 0%
+[████░░░░░░] 33%
 ```
 
 ---
@@ -31,9 +31,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases complete | 0 |
+| Phases complete | 2 |
 | Requirements mapped | 17/17 |
-| Plans executed | 0 |
+| Plans executed | 2 |
 
 ---
 
@@ -41,16 +41,17 @@
 
 ### Decisions
 
-- PWA over native: single codebase, installable, offline
-- Pre-defined users: small user set, no auth complexity
+- PWA over native: single codebase, installable, runs well on phone and browser
+- PWA + backend: fetch/store data server-side; progress syncs across devices
+- Pre-defined users: username/password, no registration; admin configures credentials
 - JSON for plans: admin uploads/modifies, no in-app editor
-- SQLite (sql.js + IndexedDB): local storage, no backend
+- SQLite on server: progress and auth; cross-device persistence
 - Date-based elapsed time for timer: avoid setInterval drift
 
 ### Todos
 
-- [ ] Phase 1: Plan Service
-- [ ] Phase 2: Progress + Profile Services
+- [x] Phase 1: Plan Service (context captured in 1-CONTEXT.md)
+- [x] Phase 2: Progress + Profile Services (context captured in 2-CONTEXT.md)
 - [ ] Phase 3: Timer Engine
 - [ ] Phase 4: Audio Service
 - [ ] Phase 5: Session Runner + Plan/Day Selector
@@ -64,4 +65,4 @@ None.
 
 ## Session Continuity
 
-When resuming: run `/gsd-plan-phase 1` to create the first phase plan.
+When resuming: run `/gsd-execute-phase 2` to execute the phase plan (2-PLAN.md).

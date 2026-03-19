@@ -9,8 +9,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Profiles
 
-- [ ] **PROF-01**: User can select from pre-defined profiles (no registration)
-- [ ] **PROF-02**: App stores progress per profile
+- [x] **PROF-01**: User can log in with username/password (pre-defined users, no registration)
+- [x] **PROF-02**: App stores progress per profile (server-side; syncs across devices)
 
 ### Plan & Day Selection
 
@@ -27,7 +27,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SESS-04**: User hears "Breathe!" exactly when hold ends
 - [ ] **SESS-05**: No audio plays during the breathhold itself
 - [ ] **SESS-06**: Cue timing uses Date-based elapsed time (not setInterval)
-- [ ] **SESS-07**: App records session completion per profile per day
+- [x] **SESS-07**: App records session completion per profile per day
 
 ### PWA & Offline
 
@@ -59,7 +59,7 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| User registration | Pre-defined profiles only |
+| User registration | Pre-defined users only; admin configures credentials |
 | Records / best times | Progress is "what's next", not performance metrics |
 | In-app plan editor | Plans come from JSON |
 | Audio generation | User provides audio files |
@@ -72,9 +72,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-01 | Phase 2 | Pending |
-| PROF-02 | Phase 2 | Pending |
-| PLAN-01 | Phase 1 | Pending |
+| PROF-01 | Phase 2 | Complete |
+| PROF-02 | Phase 2 | Complete |
+| PLAN-01 | Phase 1 | Complete |
 | PLAN-02 | Phase 5 | Pending |
 | PLAN-03 | Phase 5 | Pending |
 | PLAN-04 | Phase 5 | Pending |
@@ -84,12 +84,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SESS-04 | Phase 4 | Pending |
 | SESS-05 | Phase 4 | Pending |
 | SESS-06 | Phase 3 | Pending |
-| SESS-07 | Phase 2 | Pending |
+| SESS-07 | Phase 2 | Complete |
 | PWA-01 | Phase 6 | Pending |
 | PWA-02 | Phase 6 | Pending |
 | PWA-03 | Phase 6 | Pending |
 | PWA-04 | Phase 6 | Pending |
-| ADMN-01 | Phase 1 | Pending |
+| ADMN-01 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 17 total
@@ -98,4 +98,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-03-19*
-*Last updated: 2025-03-19 after initial definition*
+*Last updated: 2025-03-19 — PWA + backend, username/password auth*
