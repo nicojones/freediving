@@ -14,6 +14,14 @@ files_modified:
   - package.json
   - src/test/setup.ts
   - playwright.config.ts
+  - src/pages/LoginPage.tsx
+  - src/pages/Dashboard.tsx
+  - src/components/SessionPreviewSection.tsx
+  - src/components/ActiveSessionView.tsx
+  - src/components/StatusBanner.tsx
+  - src/components/PrimaryButton.tsx
+  - src/components/SpeedMultiplierSelector.tsx
+  - src/components/HoldProgressRing.tsx
   - src/services/timerEngine.test.ts
   - src/services/planService.test.ts
   - src/utils/completions.test.ts
@@ -276,17 +284,18 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `e2e/session-flow.spec.ts`
 
 **Action:**
-1. Create `e2e/session-flow.spec.ts`.
-2. Test: User can complete a session (with test mode).
+1. Add `data-testid` to SessionPreviewSection / ActiveSessionView: `test-mode-toggle`, `speed-selector`, `start-session-button`, `complete-session-button`, etc.
+2. Create `e2e/session-flow.spec.ts`.
+3. Test: User can complete a session (with test mode).
    - Log in first (reuse login flow or helper)
-   - Navigate to day view (e.g. click first day or go to /day/...)
-   - Enable test mode toggle
-   - Set speed to 10× (SpeedMultiplierSelector)
-   - Click "Start session"
+   - Navigate to day view via `getByTestId('day-card-...')` or route
+   - Enable test mode via `page.getByTestId('test-mode-toggle')`
+   - Set speed via `page.getByTestId('speed-selector')` (or `data-testid-value` for option)
+   - Click via `page.getByTestId('start-session-button')`
    - Wait for session to complete (~30s with test mode + 10× speed)
-   - Assert completion UI (e.g. "Complete session" button or "Saved")
-3. Use `test.step` or shared `loginAsUser` helper if useful.
-4. Timeout: session may take ~30–60s; set `test.setTimeout(90000)` if needed.
+   - Assert completion via `page.getByTestId('complete-session-button')` or `session-complete`
+4. **Never** use class names. Use `data-testid`, `data-testid-value`, `data-testid-*` only.
+5. Timeout: session may take ~30–60s; set `test.setTimeout(90000)` if needed.
 
 **Verification:** `npx playwright test e2e/session-flow.spec.ts` passes.
 

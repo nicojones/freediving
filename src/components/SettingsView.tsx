@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { TopAppBar } from './TopAppBar'
 import { BottomNavBar } from './BottomNavBar'
 import { PlanSelectorSection } from './PlanSelectorSection'
 import { ResetProgressSection } from './ResetProgressSection'
+import { ConfirmResetModal } from './ConfirmResetModal'
 import { UserProfileCard } from './UserProfileCard'
 import { useTraining } from '../contexts/TrainingContext'
 
@@ -11,6 +13,8 @@ interface SettingsViewProps {
   username: string
   onLogout: () => void
 }
+
+type ConfirmType = 'reset' | 'planChange' | null
 
 export function SettingsView({ username, onLogout }: SettingsViewProps) {
   const navigate = useNavigate()
@@ -22,22 +26,33 @@ export function SettingsView({ username, onLogout }: SettingsViewProps) {
     setActivePlan,
   } = useTraining()
 
-  const handlePlanChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const [confirmState, setConfirmState] = useState<{
+    type: ConfirmType
+    pendingPlanId?: string
+  }>({ type: null })
+
+  const handlePlanChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newPlanId = e.target.value
     if (newPlanId === activePlanId) return
-    const confirmed = window.confirm(
-      'Changing plan will reset your progress. Continue?'
-    )
-    if (!confirmed) return
-    await setActivePlan(newPlanId)
+    setConfirmState({ type: 'planChange', pendingPlanId: newPlanId })
   }
 
-  const handleResetProgress = async () => {
-    const confirmed = window.confirm(
-      'This will clear all progress for this plan. Continue?'
-    )
-    if (!confirmed) return
+  const handleRequestReset = () => {
+    setConfirmState({ type: 'reset' })
+  }
+
+  const handleCloseConfirm = () => {
+    setConfirmState({ type: null })
+  }
+
+  const handleConfirmReset = async () => {
     await resetProgress()
+  }
+
+  const handleConfirmPlanChange = async () => {
+    if (confirmState.pendingPlanId) {
+      await setActivePlan(confirmState.pendingPlanId)
+    }
   }
 
   const planName = planWithMeta?.name ?? DEFAULT_PLAN_NAME
@@ -66,7 +81,7 @@ export function SettingsView({ username, onLogout }: SettingsViewProps) {
             onPlanChange={handlePlanChange}
           />
 
-          <ResetProgressSection onResetProgress={handleResetProgress} />
+          <ResetProgressSection onRequestReset={handleRequestReset} />
 
           <UserProfileCard username={username} />
 
@@ -86,6 +101,30 @@ export function SettingsView({ username, onLogout }: SettingsViewProps) {
         activeTab="settings"
         onTrainingClick={() => navigate('/')}
         onSettingsClick={() => {}}
+      />
+
+      <ConfirmResetModal
+        isOpen={confirmState.type === 'reset'}
+        onClose={handleCloseConfirm}
+        onConfirm={handleConfirmReset}
+        title="Reset progress"
+        message={
+          <>
+            This will clear all progress for this plan. Type <strong className="text-on-surface">reset</strong> to confirm.
+          </>
+        }
+      />
+
+      <ConfirmResetModal
+        isOpen={confirmState.type === 'planChange'}
+        onClose={handleCloseConfirm}
+        onConfirm={handleConfirmPlanChange}
+        title="Change training plan"
+        message={
+          <>
+            Changing plan will reset your progress. Type <strong className="text-on-surface">reset</strong> to confirm.
+          </>
+        }
       />
     </div>
   )

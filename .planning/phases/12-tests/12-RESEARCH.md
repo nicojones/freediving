@@ -25,6 +25,12 @@ Phase 12 adds unit tests and E2E tests with isolated test database. The stack is
 - Co-located (`src/**/*.test.ts`) vs `tests/unit/` mirroring src — co-located preferred for small modules
 - Port for E2E backend: fixed (e.g. 3099) or PORT=0 — use fixed test port to avoid clashes
 
+### Test Selectors (User Requirement)
+- **Never** use class names to target elements
+- Use `data-testid="foo"` for element identification
+- Use `data-testid-value="..."` for values (e.g. displayed/computed values)
+- Use `data-testid-*` for any test-related attribute
+
 ### Deferred Ideas (OUT OF SCOPE)
 - 100% coverage mandate
 - Visual regression tests
@@ -187,8 +193,9 @@ describe('timerEngine', () => {
 | Time control for timer | sleep() or real waits | vi.useFakeTimers | Deterministic, fast |
 | Fetch mocking | Manual XMLHttpRequest | vi.stubGlobal('fetch', vi.fn()) or vi.mock | Simpler, consistent |
 | E2E server startup | Custom scripts | Playwright webServer | Built-in, env support, reuseExistingServer |
+| Element targeting in tests | class names, text selectors | data-testid, data-testid-value | Stable, decoupled from styles |
 
-**Key insight:** IndexedDB, timers, and fetch are deceptively complex. Use established mocks.
+**Key insight:** IndexedDB, timers, and fetch are deceptively complex. Use established mocks. Never target by class name.
 
 ## Common Pitfalls
 
@@ -222,13 +229,30 @@ describe('timerEngine', () => {
 **How to avoid:** Wrap with providers in test: `<MemoryRouter><TrainingProvider>{children}</TrainingProvider></MemoryRouter>`. Or test leaf components (StatusBanner, PrimaryButton) that don't need context.
 **Warning signs:** "Invalid hook call" or "useX must be used within Y".
 
+### Pitfall 6: Targeting by Class Name
+**What goes wrong:** Tests break when styles change; coupling to implementation.
+**Why it happens:** Using `className` or `class` selectors in tests.
+**How to avoid:** Use `data-testid`, `data-testid-value`, `data-testid-*` only. Add these attributes to components; tests use `getByTestId`, `page.getByTestId`, or `page.locator('[data-testid="foo"]')`.
+**Warning signs:** Tests fail after CSS refactor; selectors like `.btn-primary` or `[class*="error"]`.
+
+## Test Selectors: data-testid (Don't Hand-Roll)
+
+| Problem | Don't Use | Use Instead | Why |
+|---------|-----------|-------------|-----|
+| Element identification | class names, text content | `data-testid="foo"` | Stable, semantic, decoupled from styles |
+| Value assertion | text content (brittle) | `data-testid-value="..."` | Explicit contract for displayed values |
+| Compound selectors | `[class*="..."]` | `data-testid-*` attributes | Clear intent, no implementation coupling |
+
+**Rule:** Never target elements by class name in tests. Add `data-testid` (and `data-testid-value` where needed) to components; tests use these exclusively.
+
 ## Code Examples
 
 Verified patterns from official sources:
 
-### React Component Test
+### React Component Test (data-testid)
 ```typescript
 // src/components/StatusBanner.test.tsx
+// StatusBanner must have data-testid on elements; data-testid-value for dynamic values
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { StatusBanner } from './StatusBanner'
@@ -236,15 +260,16 @@ import { StatusBanner } from './StatusBanner'
 describe('StatusBanner', () => {
   it('renders error when progressError provided', () => {
     render(<StatusBanner progressError="Network error" />)
-    expect(screen.getByText('Network error')).toBeInTheDocument()
+    const el = screen.getByTestId('status-banner-error')
+    expect(el).toHaveAttribute('data-testid-value', 'Network error')
   })
   it('renders Saved when savedMessage true', () => {
     render(<StatusBanner savedMessage />)
-    expect(screen.getByText('Saved')).toBeInTheDocument()
+    expect(screen.getByTestId('status-banner-saved')).toBeInTheDocument()
   })
   it('renders nothing when neither', () => {
     const { container } = render(<StatusBanner />)
-    expect(container.firstChild).toBeNull()
+    expect(screen.queryByTestId('status-banner')).toBeNull()
   })
 })
 ```
@@ -273,18 +298,19 @@ describe('progressService', () => {
 })
 ```
 
-### Playwright E2E Login Flow
+### Playwright E2E Login Flow (data-testid)
 ```typescript
 // e2e/login.spec.ts
+// LoginPage must have data-testid="login-username", "login-password", "login-submit"
+// Dashboard must have data-testid="dashboard-day-list" or similar
 import { test, expect } from '@playwright/test'
 
 test('user can log in', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: /fishly/i })).toBeVisible()
-  await page.getByLabel(/username/i).fill('nico')
-  await page.getByLabel(/password/i).fill('password')
-  await page.getByRole('button', { name: /log in/i }).click()
-  await expect(page.getByText(/day 1/i)).toBeVisible({ timeout: 5000 })
+  await page.getByTestId('login-username').fill('nico')
+  await page.getByTestId('login-password').fill('password')
+  await page.getByTestId('login-submit').click()
+  await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
 })
 ```
 
