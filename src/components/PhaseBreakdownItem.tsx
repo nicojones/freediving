@@ -54,7 +54,7 @@ export const PhaseBreakdownItem = memo(function PhaseBreakdownItem({
       <div
         className={clsx(
           'absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 bg-background z-10',
-          item.type === 'hold' ? 'border-primary' : 'border-secondary'
+          { 'border-primary': item.type === 'hold', 'border-secondary': item.type !== 'hold' }
         )}
       />
       <div
@@ -67,7 +67,7 @@ export const PhaseBreakdownItem = memo(function PhaseBreakdownItem({
           <p
             className={clsx(
               'font-headline font-bold text-lg',
-              item.type === 'hold' ? 'text-primary' : 'text-secondary'
+              { 'text-primary': item.type === 'hold', 'text-secondary': item.type !== 'hold' }
             )}
           >
             {formatDuration(item.seconds)} {formatPhaseShortLabel(item)}
@@ -79,7 +79,10 @@ export const PhaseBreakdownItem = memo(function PhaseBreakdownItem({
         <span
           className={clsx(
             'material-symbols-outlined',
-            item.type === 'hold' ? 'text-primary' : 'text-secondary opacity-40'
+            {
+              'text-primary': item.type === 'hold',
+              'text-secondary opacity-40': item.type !== 'hold',
+            }
           )}
           style={
             isTargetPeak ? { fontVariationSettings: "'FILL' 1" } : undefined

@@ -1,3 +1,4 @@
+import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { PrimaryButton } from './PrimaryButton'
 import { TopAppBar } from './TopAppBar'
 import { BottomNavBar } from './BottomNavBar'
@@ -13,7 +14,7 @@ export function SessionCompleteView({
   onSettingsClick,
 }: SessionCompleteViewProps) {
   const { planWithMeta } = useTraining()
-  const planName = planWithMeta?.name ?? 'CO2 Tolerance III'
+  const planName = planWithMeta?.name ?? DEFAULT_PLAN_NAME
 
   return (
     <div className="min-h-screen bg-background">

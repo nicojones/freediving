@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from 'react'
 import clsx from 'clsx'
 import { useNavigate, useParams } from 'react-router-dom'
+import isNil from 'lodash/isNil'
+import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { getPhasesForDay, getCurrentDay, getDayIndexById, getDayId } from '../services/planService'
 import { useTraining } from '../contexts/TrainingContext'
 import { isDayCompleted } from '../utils/completions'
@@ -10,7 +12,10 @@ import { InstallPrompt } from '../components/InstallPrompt'
 import { DayListSection } from '../components/DayListSection'
 import { SessionPreviewSection } from '../components/SessionPreviewSection'
 import { RestDayCard } from '../components/RestDayCard'
+import { StatusBanner } from '../components/StatusBanner'
+import { PlanCompleteMessage } from '../components/PlanCompleteMessage'
 
+/** Dashboard: ~162 lines. Slightly over 150; further extraction would split cohesive day/session routing logic. */
 export function Dashboard() {
   const navigate = useNavigate()
   const { dayId: urlDayId } = useParams<{ dayId?: string }>()
@@ -35,7 +40,7 @@ export function Dashboard() {
 
   const handleSelectDay = useCallback(
     (index: number) => {
-      if (!plan) return
+      if (isNil(plan)) return
       const id = getDayId(plan, index)
       if (id) {
         navigate(`/day/${id}`)
@@ -62,10 +67,9 @@ export function Dashboard() {
     [navigate]
   )
 
-  if (!plan) return null
-
   // Sync URL dayId to selected day; invalid dayId → redirect to /
   useEffect(() => {
+    if (isNil(plan)) return
     if (urlDayId) {
       const idx = getDayIndexById(plan, urlDayId)
       if (idx === null) {
@@ -77,18 +81,21 @@ export function Dashboard() {
     }
   }, [urlDayId, plan, navigate, setSelectedDayIndex, setViewMode])
 
-  const currentDayIndex = getCurrentDay(plan, completions)
+  if (isNil(plan)) return null
+
+  const p = plan!
+  const currentDayIndex = getCurrentDay(p, completions)
   const selectedPhases =
-    selectedDayIndex !== null ? getPhasesForDay(plan, selectedDayIndex) : null
+    selectedDayIndex !== null ? getPhasesForDay(p, selectedDayIndex) : null
   const isRestDay = selectedPhases === null && selectedDayIndex !== null
-  const isPlanComplete = selectedDayIndex === null && plan.length > 0
+  const isPlanComplete = selectedDayIndex === null && p.length > 0
   const showSessionPreview =
     viewMode === 'session-preview' &&
     selectedDayIndex !== null &&
     selectedPhases !== null &&
     !isRestDay
   const showDayDetail = selectedDayIndex !== null
-  const planName = planWithMeta?.name ?? 'CO2 Tolerance III'
+  const planName = planWithMeta?.name ?? DEFAULT_PLAN_NAME
 
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
@@ -104,16 +111,7 @@ export function Dashboard() {
             'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
         }}
       >
-        {progressError && (
-          <p className="px-6 py-3 w-full text-center text-error bg-error/20 rounded-lg text-sm font-body mb-4">
-            {progressError}
-          </p>
-        )}
-        {savedMessage  && (
-          <p className="px-6 py-3 w-full text-center text-primary bg-primary/20 rounded-lg text-sm font-body mb-4">
-            Saved
-          </p>
-        )}
+        <StatusBanner progressError={progressError} savedMessage={savedMessage} />
 
         {!showSessionPreview && (
           <InstallPrompt hasEngaged={completions.length > 0} />
@@ -122,12 +120,12 @@ export function Dashboard() {
         {showDayDetail && isRestDay ? (
           <RestDayCard
             dayIndex={selectedDayIndex!}
-            isCompleted={isDayCompleted(completions, getDayId(plan, selectedDayIndex!) ?? undefined)}
+            isCompleted={isDayCompleted(completions, getDayId(p, selectedDayIndex!) ?? undefined)}
             onBack={handleBack}
           />
         ) : !showSessionPreview ? (
           <DayListSection
-            plan={plan}
+            plan={p}
             completions={completions}
             currentDayIndex={currentDayIndex}
             onSelectDay={handleSelectDay}
@@ -150,11 +148,7 @@ export function Dashboard() {
           )
         )}
 
-        {isPlanComplete && (
-          <p className="text-on-surface-variant py-8 font-body">
-            Plan complete — no session to run.
-          </p>
-        )}
+        {isPlanComplete && <PlanCompleteMessage />}
       </main>
 
       {!showSessionPreview && (

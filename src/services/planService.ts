@@ -1,3 +1,5 @@
+import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
 import type { Plan, PlanWithMeta, Phase } from '../types/plan'
 
 const planModules = import.meta.glob<{ default: PlanWithMeta }>('../data/*-plan.json', {
@@ -29,10 +31,10 @@ export function getAvailablePlans(): PlanWithMeta[] {
 export function loadPlanById(planId: string): PlanWithMeta | { error: string } {
   const plans = getAvailablePlans()
   const plan = plans.find((p) => p.id === planId)
-  if (!plan) {
+  if (isNil(plan)) {
     return { error: `Plan not found: ${planId}` }
   }
-  return plan
+  return plan as PlanWithMeta
 }
 
 /**
@@ -45,7 +47,7 @@ export async function loadPlan(planId?: string): Promise<PlanWithMeta | { error:
       return loadPlanById(planId)
     }
     const plans = getAvailablePlans()
-    if (plans.length === 0) {
+    if (isEmpty(plans)) {
       return { error: 'No plans available' }
     }
     return plans[0]
@@ -117,7 +119,7 @@ export function getCurrentDay(
   plan: Plan,
   completions: CompletionForPlan[]
 ): number | null {
-  if (!Array.isArray(plan) || plan.length === 0) return null
+  if (!Array.isArray(plan) || isEmpty(plan)) return null
 
   let lastCompletedDayIndex = -1
   if (completions.length > 0) {

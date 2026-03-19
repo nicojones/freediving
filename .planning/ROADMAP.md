@@ -18,6 +18,8 @@
 - [x] **Phase 8: Session UX Enhancements** - One session per day, visible completion flow, test toggle, recovery ring animation
 - [x] **Phase 9: Refactor Code** - Code quality improvements and refactoring
 - [ ] **Phase 10: Reset + Plan Change** - Reset progress from settings; multiple plans; active plan in DB; plan-change warning
+- [ ] **Phase 11: Refactor Code (Quality Pass)** - clsx correctness; small components; extract sub-components for clarity and testability
+- [ ] **Phase 12: Tests** - Unit tests across the app; simple E2E tests with isolated test DB
 
 ---
 
@@ -204,6 +206,42 @@
 
 ---
 
+### Phase 11: Refactor Code (Quality Pass)
+
+**Goal:** Improve code quality through a second refactor pass: enforce clsx correctness, keep components logically small, and extract even small UI blocks into sub-components for clarity and testability.
+
+**Depends on:** Phase 10 (Reset + Plan Change)
+
+**Requirements:** (Enhancement — no new v1 requirement)
+
+**Success Criteria** (what must be TRUE):
+1. clsx used correctly for all conditional class names (no string concatenation or inline ternaries where clsx fits)
+2. Components stay logically small; no component exceeds ~150 lines
+3. Small UI blocks (e.g. status banners, inline messages) extracted to named sub-components for clarity and testability
+
+**Plans:** `.planning/11-PLAN.md` (6 tasks: rules of hooks + StatusBanner → constants → lodash/type-fest → clsx audit → SettingsView sections → size audit)
+
+---
+
+### Phase 12: Tests
+
+**Goal:** Add unit tests across the application; add simple E2E tests that use an isolated test database (never touch user data).
+
+**Depends on:** Phase 11 (Refactor Code Quality Pass)
+
+**Requirements:** (Enhancement — quality assurance)
+
+**Success Criteria** (what must be TRUE):
+1. Unit test framework installed and configured (e.g. Vitest)
+2. Pure logic (timer engine, plan service, utils) covered by unit tests
+3. Critical services and components have unit tests
+4. E2E tests run against a separate test DB (in-memory or temp file)
+5. E2E tests never modify user's production data
+
+**Plans:** `.planning/12-PLAN.md` (8 tasks: scaffold → timerEngine → planService → utils → services → components → E2E login → E2E session)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -218,6 +256,8 @@
 | 8. Session UX Enhancements | 5/5 | Complete | 8-PLAN.md |
 | 9. Refactor Code | 4/4 | Complete | 9-PLAN.md |
 | 10. Reset + Plan Change | 0/6 | Pending | 10-PLAN.md |
+| 11. Refactor Code (Quality Pass) | 0/6 | Pending | 11-PLAN.md |
+| 12. Tests | 0/TBD | Pending | 12-PLAN.md |
 
 ---
 

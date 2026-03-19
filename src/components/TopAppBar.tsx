@@ -1,3 +1,4 @@
+import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { FishIcon } from './FishIcon'
 
 type TopAppBarVariant = 'dashboard' | 'session-preview' | 'active-session'
@@ -14,7 +15,7 @@ interface TopAppBarProps {
 export function TopAppBar({
   variant,
   weekLabel = 'Current Week',
-  planName = 'CO2 Tolerance III',
+  planName = DEFAULT_PLAN_NAME,
   onBack,
   onShare,
   onMore,

@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import isNil from 'lodash/isNil'
+import { DEFAULT_USERNAME } from './constants/app'
 import { FishIcon } from './components/FishIcon'
 import { getCurrentDay } from './services/planService'
 import { LoginPage } from './pages/LoginPage'
@@ -81,7 +83,7 @@ function AppContent() {
     )
   }
 
-  if (!plan) {
+  if (isNil(plan)) {
     return (
       <main className="min-h-screen bg-background text-on-surface p-8 max-w-2xl mx-auto">
         <TopAppBar variant="dashboard" />
@@ -123,7 +125,7 @@ function AppContent() {
         path="/settings"
         element={
           <SettingsView
-            username={user?.username ?? 'Unknown'}
+            username={user?.username ?? DEFAULT_USERNAME}
             onLogout={handleLogout}
           />
         }

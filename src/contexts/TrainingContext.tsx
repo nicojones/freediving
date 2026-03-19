@@ -8,6 +8,9 @@ import {
   type ReactNode,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
+import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
+import { DEFAULT_PLAN_ID } from '../constants/app'
 import {
   loadPlanById,
   getAvailablePlans,
@@ -128,7 +131,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     const run = async () => {
       const available = getAvailablePlans()
       setAvailablePlans(available)
-      if (available.length === 0) {
+      if (isEmpty(available)) {
         setError('No plans available')
         return
       }
@@ -183,16 +186,16 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   }, [user, activePlanId])
 
   useEffect(() => {
-    if (plan && completions.length >= 0) {
+    if (plan) {
       const current = getCurrentDay(plan, completions)
       setSelectedDayIndex((prev) => (prev === null ? current : prev))
     }
   }, [plan, completions])
 
   const handleStartSession = useCallback(async () => {
-    if (!plan || selectedDayIndex === null) return
+    if (isNil(plan) || selectedDayIndex === null) return
     if (hasCompletedToday(completions)) return
-    const phases = getPhasesForDay(plan, selectedDayIndex)
+    const phases = getPhasesForDay(plan!, selectedDayIndex)
     if (!phases) return
 
     sessionDayIndexRef.current = selectedDayIndex
@@ -214,7 +217,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const resetProgress = useCallback(async () => {
-    const planId = activePlanId ?? 'default'
+    const planId = activePlanId ?? DEFAULT_PLAN_ID
     const res = await apiResetProgress(planId)
     if ('ok' in res) {
       const c = await fetchCompletions(planId)
@@ -250,16 +253,16 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   const handleCompleteSession = useCallback(async () => {
     const dayToRecord = sessionDayIndexRef.current
     const p = plan
-    if (dayToRecord === null || !p) {
+    if (dayToRecord === null || isNil(p)) {
       setProgressError('Day not found')
       return
     }
-    const dayId = getDayId(p, dayToRecord)
+    const dayId = getDayId(p!, dayToRecord)
     if (!dayId) {
       setProgressError('Day not found in plan — cannot record progress')
       return
     }
-    const planId = activePlanId ?? 'default'
+    const planId = activePlanId ?? DEFAULT_PLAN_ID
     const result = await recordCompletion(planId, dayId, dayToRecord)
     if ('ok' in result) {
       setProgressError(null)

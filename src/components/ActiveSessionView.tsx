@@ -5,8 +5,8 @@ import { formatMmSs } from '../utils/formatMmSs'
 import { formatPhaseDisplayName, formatPhaseShortLabel } from '../utils/phaseLabels'
 import { useTraining } from '../contexts/TrainingContext'
 import { TopAppBar } from './TopAppBar'
-import { SpeedMultiplierSelector } from './SpeedMultiplierSelector'
 import { HoldProgressRing } from './HoldProgressRing'
+import { SessionActionButtons } from './SessionActionButtons'
 
 export function ActiveSessionView() {
   const {
@@ -20,8 +20,6 @@ export function ActiveSessionView() {
     handleCompleteSession,
   } = useTraining()
 
-  if (!plan || sessionDayIndex === null) return null
-
   const {
     phases,
     totalRounds,
@@ -29,6 +27,8 @@ export function ActiveSessionView() {
     progressPercent,
     nextItem,
   } = useSessionProgress(plan, sessionDayIndex, timerState)
+
+  if (!plan || sessionDayIndex === null) return null
 
 
   return (
@@ -114,44 +114,13 @@ export function ActiveSessionView() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col gap-6 mb-12">
-          {sessionStatus === 'awaitingCompletionConfirm' ? (
-            <button
-              type="button"
-              onClick={handleCompleteSession}
-              className="completion-gradient h-24 w-full rounded-xl flex items-center justify-center gap-4 active:scale-95 transition-transform duration-400"
-            >
-              <span
-                className="material-symbols-outlined text-on-primary text-3xl"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                check_circle
-              </span>
-              <span className="text-on-primary font-headline text-2xl font-extrabold uppercase tracking-tight">
-                Complete session
-              </span>
-            </button>
-          ) : (
-            <>
-              <SpeedMultiplierSelector value={speedMultiplier} onChange={setSpeedMultiplier} />
-              <button
-                type="button"
-                onClick={handleAbortSession}
-                className="primary-pulse-gradient h-24 w-full rounded-xl flex items-center justify-center gap-4 active:scale-95 transition-transform duration-400"
-              >
-                <span
-                  className="material-symbols-outlined text-on-primary text-3xl"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  stop_circle
-                </span>
-                <span className="text-on-primary font-headline text-2xl font-extrabold uppercase tracking-tight">
-                  Abort Session
-                </span>
-              </button>
-            </>
-          )}
-        </div>
+        <SessionActionButtons
+          sessionStatus={sessionStatus}
+          speedMultiplier={speedMultiplier}
+          onSpeedMultiplierChange={setSpeedMultiplier}
+          onCompleteSession={handleCompleteSession}
+          onAbortSession={handleAbortSession}
+        />
       </main>
     </div>
   )
