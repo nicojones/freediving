@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-20 — Phase 17 added
+**Last updated:** 2025-03-20 — Phase 18 added
 
 ---
 
@@ -8,7 +8,7 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 17 — Test Controls (dev mode toggle, default OFF)
+**Current focus:** Phase 18 — Dynamic Version Display & Semantic Release
 
 ---
 
@@ -16,8 +16,8 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 17. Test Controls |
-| Plan | 17-PLAN.md |
+| Phase | 18. Dynamic Version Display & Semantic Release |
+| Plan | 18-PLAN.md |
 | Status | Pending |
 | Progress | 0/? phases |
 
@@ -32,7 +32,7 @@
 | Metric | Value |
 |--------|-------|
 | Phases complete | 16 |
-| Phases total | 17 |
+| Phases total | 18 |
 | Requirements mapped | 17/17 |
 | Plans executed | 16 |
 
@@ -68,6 +68,7 @@
 - [x] Phase 15: Refactor Code (Cleanup) (15-PLAN.md)
 - [x] Phase 16: Alias Imports, Component Folders & Extended Tests (16-PLAN.md)
 - [ ] Phase 17: Test Controls (17-PLAN.md)
+- [ ] Phase 18: Dynamic Version Display & Semantic Release (18-PLAN.md)
 
 ### Blockers
 
@@ -77,4 +78,4 @@ None.
 
 ## Session Continuity
 
-Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 added — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible.
+Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 added — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible. Phase 18 added — Dynamic version from package.json on login; semantic-release for fix→patch, feat→minor, chore→no bump on push to main.

@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { login } from '../services/authService'
+import packageJson from '../../package.json'
 import { FishIcon } from '../components/ui/FishIcon'
 import { TextInput } from '../components/ui/TextInput'
 import { PrimaryButton } from '../components/ui/PrimaryButton'
@@ -91,7 +92,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
         <footer className="mt-24 text-center">
           <p className="font-label text-on-surface-variant/40 text-[0.6rem] uppercase tracking-widest">
-            Version 2.0.4 • Deep Flow Encrypted
+            Version {packageJson.version} • Deep Flow Encrypted
           </p>
         </footer>
       </div>

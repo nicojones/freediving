@@ -25,6 +25,7 @@
 - [ ] **Phase 15: Refactor Code (Cleanup)** - Remove all unused variables, functions, imports; no dead code
 - [ ] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
 - [ ] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
+- [ ] **Phase 18: Dynamic Version Display & Semantic Release** - Version from package.json on login; fix→patch, feat→minor, chore→no bump on push to main; major manual
 
 ---
 
@@ -338,6 +339,25 @@
 
 ---
 
+### Phase 18: Dynamic Version Display & Semantic Release
+
+**Goal:** Display app version dynamically from package.json; automate version bumping on push to main using conventional commits (fix→patch, feat→minor, chore→no bump, major→manual).
+
+**Depends on:** Phase 17 (Test Controls)
+
+**Requirements:** (Enhancement — release automation)
+
+**Success Criteria** (what must be TRUE):
+1. Login page shows version from package.json
+2. Push to main with fix: bumps patch version
+3. Push to main with feat: bumps minor version
+4. Push to main with chore: no version bump
+5. Major versions updated manually (BREAKING CHANGE or feat!:)
+
+**Plans:** `.planning/18-PLAN.md` (4 tasks: dynamic version → semantic-release config → GitHub Action → sync version)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -359,6 +379,7 @@
 | 15. Refactor Code (Cleanup) | 0/5 | Pending | 15-PLAN.md |
 | 16. Alias Imports, Component Folders & Extended Tests | 0/6 | Pending | 16-PLAN.md |
 | 17. Test Controls | 0/4 | Pending | 17-PLAN.md |
+| 18. Dynamic Version Display & Semantic Release | 0/4 | Pending | 18-PLAN.md |
 
 ---
 
