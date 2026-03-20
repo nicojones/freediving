@@ -1,14 +1,19 @@
 /**
- * E2E tests: Create plan via JSON paste, file upload, manual typing, and Describe (AI) flow.
+ * E2E tests: Create plan via JSON paste, file upload, manual typing, Describe (AI text), and voice.
  * Verifies plan creation, switching to the new plan, and Training tab shows it.
- * AI voice tests are separate.
  */
 import { test, expect } from '@playwright/test';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 import { loginAsNico, loginAsAthena } from './helpers/login';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+/** 14-day plan fixture matching e2e/fixtures/1:30 to 2:00 14-day plan.m4a description */
+const VOICE_14DAY_PLAN = JSON.parse(
+  readFileSync(join(__dirname, 'fixtures', '1-30-to-2-00-14-day-plan.json'), 'utf-8')
+);
 
 const PASTE_PLAN = {
   id: 'e2e-paste-plan',
@@ -144,6 +149,7 @@ test.describe('Create plan', () => {
       ],
     };
 
+    // Set route before any navigation so it reliably intercepts the request
     await page.route('**/api/plans/transcribe-from-text', async (route) => {
       if (route.request().method() === 'POST') {
         await route.fulfill({
@@ -159,16 +165,98 @@ test.describe('Create plan', () => {
     await loginAsAthena(page);
     await goToCreatePlanSection(page);
 
+    await expect(page.getByTestId('create-plan-describe-textarea')).toBeVisible({ timeout: 5000 });
     await page
       .getByTestId('create-plan-describe-textarea')
       .fill('3 days of holds, 2 min each, 2 min recovery');
+    await expect(page.getByTestId('create-plan-create-draft-button')).toBeEnabled({
+      timeout: 3000,
+    });
     await page.getByTestId('create-plan-create-draft-button').click();
 
-    await expect(page.getByTestId('create-plan-preview')).toBeVisible({ timeout: 10000 });
+    // Wait for API response before asserting UI; reduces flakiness from async timing
+    await page.waitForResponse(
+      (res) => res.url().includes('transcribe-from-text') && res.status() === 200,
+      { timeout: 10000 }
+    );
+    await expect(page.getByTestId('create-plan-preview')).toBeVisible({ timeout: 5000 });
     await page.getByTestId('create-plan-confirm-button').click();
-    await expect(page.getByTestId('confirm-plan-name')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByTestId('confirm-plan-name')).toBeVisible({ timeout: 5000 });
     await page.getByTestId('confirm-plan-submit').click();
 
     await verifyPlanCreation(page, 'E2E Text Plan', true);
+  });
+
+  test('Describe tab: voice create via mocked transcribe, preview, confirm, create plan', async ({
+    page,
+  }) => {
+    // Stub getUserMedia and MediaRecorder so voice flow can run in CI (no real mic)
+    await page.addInitScript(() => {
+      const getFakeStream = () => {
+        try {
+          const Ctx =
+            window.AudioContext ||
+            (window as unknown as { webkitAudioContext: new () => AudioContext })
+              .webkitAudioContext;
+          return new Ctx().createMediaStreamDestination().stream;
+        } catch {
+          return new MediaStream();
+        }
+      };
+      navigator.mediaDevices.getUserMedia = async () => getFakeStream();
+
+      (window as unknown as { MediaRecorder: typeof MediaRecorder }).MediaRecorder = class FakeMR {
+        ondataavailable: ((e: BlobEvent) => void) | null = null;
+        onstop: (() => void) | null = null;
+        _state: 'inactive' | 'recording' = 'inactive';
+        constructor(_stream: MediaStream) {}
+        start() {
+          this._state = 'recording';
+        }
+        stop() {
+          this._state = 'inactive';
+          this.ondataavailable?.({ data: new Blob(['x'], { type: 'audio/webm' }) } as BlobEvent);
+          this.onstop?.();
+        }
+        get state() {
+          return this._state;
+        }
+      } as unknown as typeof MediaRecorder;
+    });
+
+    await page.route('**/api/plans/transcribe', async (route) => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(VOICE_14DAY_PLAN),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await loginAsAthena(page);
+    await goToCreatePlanSection(page);
+
+    await expect(page.getByTestId('create-plan-describe-textarea')).toBeVisible({ timeout: 5000 });
+    const explainBtn = page.getByRole('button', { name: /explain with voice/i });
+    await expect(explainBtn).toBeVisible({ timeout: 3000 });
+    await explainBtn.click();
+    await expect(page.getByRole('button', { name: /stop recording/i })).toBeVisible({
+      timeout: 3000,
+    });
+    await page.getByRole('button', { name: /stop recording/i }).click();
+
+    await page.waitForResponse(
+      (res) => res.url().includes('/api/plans/transcribe') && res.status() === 200,
+      { timeout: 15000 }
+    );
+    await expect(page.getByTestId('create-plan-preview')).toBeVisible({ timeout: 10000 });
+    await page.getByTestId('create-plan-confirm-button').click();
+    await expect(page.getByTestId('confirm-plan-name')).toBeVisible({ timeout: 5000 });
+    await page.getByTestId('confirm-plan-submit').click();
+
+    await verifyPlanCreation(page, '1:30 to 2:00 14-Day Plan', true);
   });
 });

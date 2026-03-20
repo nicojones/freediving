@@ -34,8 +34,10 @@
 - [x] **Phase 24: AI Plan Input Enhancements** - Dynamic prompt from plan types; text/description-to-plan via LLM; optional dedicated plan creation screen
 - [x] **Phase 25: Component Library (Radix/Headless UI)** - Add Radix UI or Headless UI; replace custom modals/dialogs; establish primitives for tabs, buttons
 - [x] **Phase 26: Plan Creation UX** - Tab (natural language vs JSON); Preview instead of raw JSON; refine flow; confirm modal (name/description)
-- [ ] **Phase 27: Refactor CreatePlanSection (Component Size)** - Reduce CreatePlanSection component size; prepare for eventual migration to its own page
-- [ ] **Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback** - Move CreatePlanSection to its own bottom tab (+); allow create and refine via voice and/or text (mix and match); improve Preview feedback so users know when preview was updated after refinement
+- [x] **Phase 27: Refactor CreatePlanSection (Component Size)** - Reduce CreatePlanSection component size; prepare for eventual migration to its own page
+- [x] **Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback** - Move CreatePlanSection to its own bottom tab (+); allow create and refine via voice and/or text (mix and match); improve Preview feedback so users know when preview was updated after refinement
+- [x] **Phase 29: E2E Tests** - Add comprehensive E2E tests; fix flaky create-plan Describe test; add voice/audio create-plan E2E using fixture; add missing unit tests for coverage
+- [ ] **Phase 30: Dockerize MySQL + Change Database Type** - Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; server has MySQL but lacks "freediving" DB and migrations; guide server setup
 
 ---
 
@@ -577,6 +579,45 @@
 
 ---
 
+### Phase 29: E2E Tests
+
+**Goal:** Add comprehensive E2E tests; fix flaky create-plan Describe test; add voice/audio create-plan E2E using fixture; add missing unit tests for coverage.
+
+**Depends on:** Phase 28 (Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback)
+
+**Requirements:** (Enhancement — test coverage)
+
+**Success Criteria** (what must be TRUE):
+
+1. Flaky Describe tab E2E test is fixed (create-plan.spec.ts)
+2. E2E test for voice/audio create-plan using `e2e/fixtures/1:30 to 2:00 14-day plan.m4a` (mock transcribe API)
+3. Additional E2E tests for create-plan refine flow, error paths, and critical user journeys
+4. Missing unit tests added for components/services without coverage; aim for reasonable coverage
+
+**Plans:** `.planning/29-PLAN.md` (TBD — task breakdown)
+
+---
+
+### Phase 30: Dockerize MySQL + Change Database Type
+
+**Goal:** Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; production server already has MySQL but lacks the "freediving" database and migrations. Provide server setup guidance.
+
+**Depends on:** Phase 29 (E2E Tests)
+
+**Requirements:** (Enhancement — database infrastructure)
+
+**Success Criteria** (what must be TRUE):
+
+1. App uses MySQL instead of SQLite for backend persistence
+2. MySQL runs in Docker for local/dev; `docker-compose` or similar for one-command dev DB
+3. Migrations create and update schema (replace ad-hoc `runSchema` + inline migrations)
+4. Production server: "freediving" database exists; migrations run on deploy or documented manual step
+5. Server setup guide documents: create DB, run migrations, env vars (connection string)
+
+**Plans:** `.planning/30-PLAN.md` (TBD — task breakdown)
+
+---
+
 ## Progress
 
 | Phase                                                              | Plans Complete | Status   | Completed  |
@@ -607,8 +648,10 @@
 | 24. AI Plan Input Enhancements                                     | 7/7            | Complete | 24-PLAN.md |
 | 25. Component Library (Radix/Headless UI)                          | 7/7            | Complete | 25-PLAN.md |
 | 26. Plan Creation UX                                               | 7/7            | Complete | 26-PLAN.md |
-| 27. Refactor CreatePlanSection (Component Size)                    | 0/4            | Pending  | 27-PLAN.md |
-| 28. Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback | 0/0            | Pending  | 28-PLAN.md |
+| 27. Refactor CreatePlanSection (Component Size)                    | 4/4            | Complete | 27-PLAN.md |
+| 28. Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback | 7/7            | Complete | 28-PLAN.md |
+| 29. E2E Tests                                                      | 4/4            | Complete | 29-PLAN.md |
+| 30. Dockerize MySQL + Change Database Type                         | 0/0            | Pending  | 30-PLAN.md |
 
 ---
 

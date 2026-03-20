@@ -1,0 +1,119 @@
+{
+  "id": "e2e-voice-14day",
+  "name": "1:30 to 2:00 14-Day Plan",
+  "description": "14-day plan with holds progressing from 1:30 to 2:00",
+  "days": [
+    {
+      "id": "e2ev14d01",
+      "day": 1,
+      "phases": [
+        { "type": "hold", "duration": 90 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d02",
+      "day": 2,
+      "phases": [
+        { "type": "hold", "duration": 93 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d03",
+      "day": 3,
+      "phases": [
+        { "type": "hold", "duration": 96 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d04",
+      "day": 4,
+      "phases": [
+        { "type": "hold", "duration": 99 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d05",
+      "day": 5,
+      "phases": [
+        { "type": "hold", "duration": 102 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d06",
+      "day": 6,
+      "phases": [
+        { "type": "hold", "duration": 105 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d07",
+      "day": 7,
+      "phases": [
+        { "type": "hold", "duration": 108 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d08",
+      "day": 8,
+      "phases": [
+        { "type": "hold", "duration": 111 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d09",
+      "day": 9,
+      "phases": [
+        { "type": "hold", "duration": 114 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d10",
+      "day": 10,
+      "phases": [
+        { "type": "hold", "duration": 117 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d11",
+      "day": 11,
+      "phases": [
+        { "type": "hold", "duration": 120 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d12",
+      "day": 12,
+      "phases": [
+        { "type": "hold", "duration": 120 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d13",
+      "day": 13,
+      "phases": [
+        { "type": "hold", "duration": 120 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    },
+    {
+      "id": "e2ev14d14",
+      "day": 14,
+      "phases": [
+        { "type": "hold", "duration": 120 },
+        { "type": "recovery", "duration": 120 }
+      ]
+    }
+  ]
+}
