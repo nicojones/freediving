@@ -117,7 +117,7 @@ export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVo
             <span className="material-symbols-outlined text-xl" aria-hidden>
               mic
             </span>
-            AI voice (PRO)
+            AI voice
           </>
         )}
       </button>

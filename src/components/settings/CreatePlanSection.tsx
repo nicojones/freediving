@@ -20,7 +20,7 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) {return}
+    if (!file) { return }
     setError(null)
     setSuccess(false)
     const reader = new FileReader()
@@ -137,6 +137,30 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
           <>
             <button
               type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className={btnBase}
+              data-testid="create-plan-upload-button"
+            >
+              <span className="material-symbols-outlined text-xl" aria-hidden>
+                upload_file
+              </span>
+              Upload JSON
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePaste}
+              className={btnBase}
+              data-testid="create-plan-paste-button"
+            >
+              <span className="material-symbols-outlined text-xl" aria-hidden>
+                content_paste
+              </span>
+              Paste
+            </button>
+
+            <button
+              type="button"
               onClick={() => {
                 setJsonText('')
                 setError(null)
@@ -151,28 +175,7 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
               </span>
               Clear
             </button>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className={btnBase}
-              data-testid="create-plan-upload-button"
-            >
-              <span className="material-symbols-outlined text-xl" aria-hidden>
-                upload_file
-              </span>
-              Upload JSON
-            </button>
-            <button
-              type="button"
-              onClick={handlePaste}
-              className={btnBase}
-              data-testid="create-plan-paste-button"
-            >
-              <span className="material-symbols-outlined text-xl" aria-hidden>
-                content_paste
-              </span>
-              Paste
-            </button>
+
           </>
         )}
       </div>
