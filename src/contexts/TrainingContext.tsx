@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation'
 import { DEFAULT_PLAN_ID } from '../constants/app'
 import {
   loadPlanById,
-  getAvailablePlans,
+  getBundledPlans,
+  fetchPlansFromApi,
   getPhasesForDay,
   getCurrentDay,
   getDayId,
@@ -68,12 +69,21 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     refreshUser()
   }, [refreshUser])
 
+  const refreshAvailablePlans = useCallback(async () => {
+    const bundled = getBundledPlans()
+    const dbPlans = await fetchPlansFromApi()
+    const merged = [...bundled, ...dbPlans]
+    setAvailablePlans(merged)
+  }, [])
+
   useEffect(() => {
     if (!user) {return}
 
     let cancelled = false
     const run = async () => {
-      const available = getAvailablePlans()
+      const bundled = getBundledPlans()
+      const dbPlans = await fetchPlansFromApi()
+      const available = [...bundled, ...dbPlans]
       setAvailablePlans(available)
       if (isEmpty(available)) {
         setError('No plans available')
@@ -92,7 +102,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       if (cancelled) {return}
       setActivePlanId(planId)
 
-      const planResult = loadPlanById(planId)
+      const planResult = loadPlanById(planId, available)
       if ('error' in planResult) {
         setError(planResult.error)
         return
@@ -116,7 +126,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [user])
+  }, [user, refreshAvailablePlans])
 
   useEffect(() => {
     if (!user || !activePlanId) {return}
@@ -178,7 +188,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       return
     }
     await apiResetProgress(planId)
-    const planResult = loadPlanById(planId)
+    const planResult = loadPlanById(planId, availablePlans)
     if ('error' in planResult) {
       setError(planResult.error)
       return
@@ -188,7 +198,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     setPlan(planResult.days)
     const c = await fetchCompletions(planId)
     setCompletions(c)
-  }, [])
+  }, [availablePlans])
 
   const handleBackFromComplete = useCallback(() => {
     engineResetToIdle()
@@ -258,6 +268,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     progressError,
     resetProgress,
     setActivePlan,
+    refreshAvailablePlans,
     selectedDayIndex,
     viewMode,
     savedMessage,

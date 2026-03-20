@@ -21,6 +21,7 @@ export interface TrainingContextValue {
   progressError: string | null
   resetProgress: () => Promise<void>
   setActivePlan: (planId: string) => Promise<void>
+  refreshAvailablePlans: () => Promise<void>
 
   // UI
   selectedDayIndex: number | null

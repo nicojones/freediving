@@ -21,3 +21,12 @@ CREATE TABLE IF NOT EXISTS user_active_plan (
   plan_id TEXT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- User-created plans (bundled plans remain in src/data)
+CREATE TABLE IF NOT EXISTS plans (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  days_json TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);

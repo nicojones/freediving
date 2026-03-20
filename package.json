@@ -15,6 +15,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
+    "@google/genai": "^1.46.0",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.10.0",
     "clsx": "^2.1.1",
@@ -24,11 +25,13 @@
     "lodash": "^4.17.23",
     "next": "^15.5.14",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@playwright/test": "^1.58.2",
+    "@semantic-release/git": "^10.0.1",
     "@serwist/next": "^9.5.7",
     "@tailwindcss/postcss": "^4.2.2",
     "@tailwindcss/vite": "^4.2.2",
@@ -52,14 +55,13 @@
     "globals": "^17.4.0",
     "jsdom": "^29.0.1",
     "postcss": "^8.5.8",
+    "semantic-release": "^24.2.0",
     "serwist": "^9.5.7",
     "tailwindcss": "^4.2.2",
     "type-fest": "^5.5.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.0",
-    "semantic-release": "^24.2.0",
-    "@semantic-release/git": "^10.0.1"
+    "vitest": "^4.1.0"
   }
 }

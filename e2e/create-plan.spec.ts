@@ -1,0 +1,131 @@
+/**
+ * E2E tests: Create plan via JSON paste, file upload, and manual typing.
+ * Verifies plan creation, switching to the new plan, and Training tab shows it.
+ * AI voice tests are separate.
+ */
+import { test, expect } from '@playwright/test'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+const PASTE_PLAN = {
+  id: 'e2e-paste-plan',
+  name: 'E2E Paste Plan',
+  description: 'Plan created via paste',
+  days: [
+    {
+      id: 'e2epst1',
+      day: 1,
+      phases: [
+        { type: 'hold' as const, duration: 6 },
+        { type: 'recovery' as const, duration: 12 },
+      ],
+    },
+  ],
+}
+
+const TYPE_PLAN = {
+  id: 'e2e-type-plan',
+  name: 'E2E Type Plan',
+  description: 'Plan created via manual typing',
+  days: [
+    {
+      id: 'e2etyp1',
+      day: 1,
+      phases: [
+        { type: 'hold' as const, duration: 7 },
+        { type: 'recovery' as const, duration: 14 },
+      ],
+    },
+  ],
+}
+
+async function login(page: import('@playwright/test').Page) {
+  await page.goto('/')
+  await page.getByTestId('login-username').fill('nico')
+  await page.getByTestId('login-password').fill('password')
+  await page.getByTestId('login-submit').click()
+  await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
+}
+
+async function goToSettingsAndCreatePlanSection(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: /settings/i }).click()
+  await page.waitForURL(/\/settings/)
+  await expect(page.getByTestId('create-plan-json-textarea')).toBeVisible({ timeout: 5000 })
+}
+
+async function createPlanAndVerify(
+  page: import('@playwright/test').Page,
+  planName: string,
+  switchAndVerifyTraining: boolean
+) {
+  await page.getByTestId('create-plan-create-button').click()
+  await expect(page.getByTestId('create-plan-success')).toBeVisible({ timeout: 5000 })
+
+  const planSelector = page.getByTestId('plan-selector')
+  await expect(planSelector.locator(`option:has-text("${planName}")`)).toHaveCount(1)
+
+  if (switchAndVerifyTraining) {
+    await planSelector.selectOption({ label: planName })
+    await page.getByTestId('confirm-reset-input').fill('reset')
+    await page.getByTestId('confirm-reset-confirm').click()
+    await expect(page.getByTestId('confirm-reset-input')).not.toBeVisible()
+
+    await expect(page.getByTestId('header-plan-name')).toHaveText(planName, { timeout: 5000 })
+    await page.getByRole('button', { name: /training/i }).click()
+    await page.waitForURL(/\/(?!settings)/)
+    await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
+  }
+}
+
+test.describe('Create plan', () => {
+  test('paste JSON, create plan, switch to it, verify Training tab', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+    await login(page)
+    await goToSettingsAndCreatePlanSection(page)
+
+    const jsonStr = JSON.stringify(PASTE_PLAN, null, 2)
+    await page.evaluate(async (json) => {
+      await navigator.clipboard.writeText(json)
+    }, jsonStr)
+    await page.getByTestId('create-plan-paste-button').click()
+    await expect(page.getByTestId('create-plan-json-textarea')).toContainText(
+      'e2e-paste-plan',
+      { timeout: 5000 }
+    )
+
+    await createPlanAndVerify(page, 'E2E Paste Plan', true)
+  })
+
+  test('upload JSON file, create plan, switch to it, verify Training tab', async ({
+    page,
+  }) => {
+    await login(page)
+    await goToSettingsAndCreatePlanSection(page)
+
+    const fixturePath = join(__dirname, 'fixtures', 'e2e-upload-plan.json')
+    await page.getByTestId('create-plan-file-input').setInputFiles(fixturePath)
+    await expect(page.getByTestId('create-plan-json-textarea')).toContainText(
+      'e2e-upload-plan',
+      { timeout: 3000 }
+    )
+
+    await createPlanAndVerify(page, 'E2E Upload Plan', true)
+  })
+
+  test('type JSON manually, create plan, switch to it, verify Training tab', async ({
+    page,
+  }) => {
+    await login(page)
+    await goToSettingsAndCreatePlanSection(page)
+
+    const jsonText = JSON.stringify(TYPE_PLAN, null, 2)
+    await page.getByTestId('create-plan-json-textarea').fill(jsonText)
+
+    await createPlanAndVerify(page, 'E2E Type Plan', true)
+  })
+})

@@ -19,20 +19,46 @@ export function getPlanDays(plan: Plan | PlanWithMeta): Plan {
 }
 
 /**
- * Returns all available plans from bundled JSON files.
+ * Returns bundled plans only (from src/data).
  */
-export function getAvailablePlans(): PlanWithMeta[] {
+export function getBundledPlans(): PlanWithMeta[] {
   return planModules.filter(
     (p): p is PlanWithMeta => Boolean(p && 'id' in p && 'days' in p)
   )
 }
 
 /**
- * Loads a plan by id. Returns the plan or an error object if not found.
+ * Fetches plans from DB via API. Returns [] when not authenticated or on error.
  */
-export function loadPlanById(planId: string): PlanWithMeta | { error: string } {
-  const plans = getAvailablePlans()
-  const plan = plans.find((p) => p.id === planId)
+export async function fetchPlansFromApi(): Promise<PlanWithMeta[]> {
+  try {
+    const res = await fetch('/api/plans', { credentials: 'include' })
+    if (!res.ok) {return []}
+    const data = (await res.json()) as { plans?: PlanWithMeta[] }
+    return (data.plans ?? []) as PlanWithMeta[]
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Returns all available plans (bundled + DB). Use plans param when available from context.
+ */
+export function getAvailablePlans(plans?: PlanWithMeta[]): PlanWithMeta[] {
+  if (plans) {return plans}
+  return getBundledPlans()
+}
+
+/**
+ * Loads a plan by id. Returns the plan or an error object if not found.
+ * Pass plans from context when user is logged in (includes DB plans).
+ */
+export function loadPlanById(
+  planId: string,
+  plans?: PlanWithMeta[]
+): PlanWithMeta | { error: string } {
+  const list = getAvailablePlans(plans)
+  const plan = list.find((p) => p.id === planId)
   if (isNil(plan)) {
     return { error: `Plan not found: ${planId}` }
   }
@@ -43,16 +69,19 @@ export function loadPlanById(planId: string): PlanWithMeta | { error: string } {
  * Loads the training plan. If planId is provided, loads that plan; otherwise loads the first available.
  * Returns PlanWithMeta or an error object if loading fails.
  */
-export async function loadPlan(planId?: string): Promise<PlanWithMeta | { error: string }> {
+export async function loadPlan(
+  planId?: string,
+  plans?: PlanWithMeta[]
+): Promise<PlanWithMeta | { error: string }> {
   try {
     if (planId) {
-      return loadPlanById(planId)
+      return loadPlanById(planId, plans)
     }
-    const plans = getAvailablePlans()
-    if (isEmpty(plans)) {
+    const list = getAvailablePlans(plans)
+    if (isEmpty(list)) {
       return { error: 'No plans available' }
     }
-    return plans[0]
+    return list[0]
   } catch (e) {
     return {
       error: `Failed to load plan: ${e instanceof Error ? e.message : 'Unknown error'}`,

@@ -6,6 +6,7 @@ import { TopAppBar } from '../layout/TopAppBar'
 import { BottomNavBar } from '../layout/BottomNavBar'
 import { DevModeSection } from './DevModeSection'
 import { PlanSelectorSection } from './PlanSelectorSection'
+import { CreatePlanSection } from './CreatePlanSection'
 import { ResetProgressSection } from './ResetProgressSection'
 import { ConfirmResetModal } from './ConfirmResetModal'
 import { UserProfileCard } from './UserProfileCard'
@@ -23,6 +24,7 @@ export function SettingsView() {
     planWithMeta,
     resetProgress,
     setActivePlan,
+    refreshAvailablePlans,
     handleLogout,
   } = useTraining()
   const username = user?.username ?? DEFAULT_USERNAME
@@ -81,6 +83,8 @@ export function SettingsView() {
             activePlanId={activePlanId}
             onPlanChange={handlePlanChange}
           />
+
+          <CreatePlanSection onPlanCreated={refreshAvailablePlans} />
 
           <ResetProgressSection onRequestReset={handleRequestReset} />
 

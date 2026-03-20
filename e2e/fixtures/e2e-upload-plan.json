@@ -1,0 +1,15 @@
+{
+  "id": "e2e-upload-plan",
+  "name": "E2E Upload Plan",
+  "description": "Plan created via JSON file upload",
+  "days": [
+    {
+      "id": "e2eupd1",
+      "day": 1,
+      "phases": [
+        { "type": "hold", "duration": 8 },
+        { "type": "recovery", "duration": 15 }
+      ]
+    }
+  ]
+}

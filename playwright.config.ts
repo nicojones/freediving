@@ -15,5 +15,8 @@ export default defineConfig({
     timeout: 90000,
     reuseExistingServer: !process.env.CI,
   },
-  use: { baseURL: `http://localhost:${E2E_PORT}` },
+  use: {
+    baseURL: `http://localhost:${E2E_PORT}`,
+    permissions: ['clipboard-read', 'clipboard-write'],
+  },
 })

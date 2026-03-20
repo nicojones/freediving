@@ -45,7 +45,7 @@ export function TopAppBar({
             <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em]">
               {weekLabel}
             </span>
-            <span className="text-primary font-headline font-bold text-lg">
+            <span className="text-primary font-headline font-bold text-lg" data-testid="header-plan-name">
               {planName}
             </span>
           </div>
