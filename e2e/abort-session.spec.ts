@@ -2,7 +2,7 @@
  * E2E test: abort session flow.
  */
 import { test, expect } from '@playwright/test';
-import { loginAsNico } from './helpers/login';
+import { loginAsAthena } from './helpers/login';
 
 test.setTimeout(60000);
 
@@ -10,7 +10,7 @@ test('user can abort session', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('freediving_dev_mode', 'true');
   });
-  await loginAsNico(page);
+  await loginAsAthena(page);
 
   const firstDay = page.locator('[data-testid^="day-card-"]').first();
   await firstDay.click();

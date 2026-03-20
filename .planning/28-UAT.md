@@ -2,21 +2,22 @@
 
 **Phase:** 28  
 **Date:** 2025-03-20  
-**Status:** Code verified; E2E flaky (environment-dependent)
+**Status:** ✅ Complete — E2E fixed
 
 ---
 
 ## Test Results Summary
 
-| Check                               | Result      | Notes                                                                                |
-| ----------------------------------- | ----------- | ------------------------------------------------------------------------------------ |
-| Build                               | ✅ PASS     | `npm run build` succeeds                                                             |
-| Lint                                | ✅ PASS     | `npm run lint` — no errors                                                           |
-| E2E create-plan                     | ⚠️ FLAKY    | 1/4 passed (first run); 0/4 (CI run). Failures at login/dashboard or create tab load |
-| Create tab                          | ✅ VERIFIED | Code present; route /create; BottomNavBar 4 tabs                                     |
-| PlansView without CreatePlanSection | ✅ VERIFIED | PlansView has PlanSelectorSection + PlanDeleteSection only                           |
-| Multi-modal create/refine           | ✅ VERIFIED | Voice + text for create and refine; API + handlers wired                             |
-| Preview feedback (pulse)            | ✅ VERIFIED | `previewJustUpdated` + pulse on Preview button after refine                          |
+| Check                               | Result  | Notes                                                       |
+| ----------------------------------- | ------- | ----------------------------------------------------------- |
+| Build                               | ✅ PASS | `npm run build` succeeds                                    |
+| Lint                                | ✅ PASS | `npm run lint` — no errors                                  |
+| E2E create-plan                     | ✅ PASS | 4/4 pass (CI + local)                                       |
+| E2E full suite                      | ✅ PASS | 11/11 pass (CI + local)                                     |
+| Create tab                          | ✅ PASS | Code present; route /create; BottomNavBar 4 tabs            |
+| PlansView without CreatePlanSection | ✅ PASS | PlansView has PlanSelectorSection + PlanDeleteSection only  |
+| Multi-modal create/refine           | ✅ PASS | Voice + text for create and refine; API + handlers wired    |
+| Preview feedback (pulse)            | ✅ PASS | `previewJustUpdated` + pulse on Preview button after refine |
 
 ---
 
@@ -28,7 +29,7 @@
 - [x] Refine: voice and text both work; mix and match (AIVoicePlanInput + contextPlan in CreatePlanDraftPreview)
 - [x] Preview button visible when draftPlan set
 - [x] After refine: Preview button pulses (`previewJustUpdated` + `animate-pulse ring-2 ring-primary ring-offset-2`)
-- [ ] E2E create-plan: all tests pass — **blocked by environment**
+- [x] E2E create-plan: all tests pass
 
 ---
 
@@ -60,20 +61,18 @@
 
 ---
 
-## E2E Failure Analysis
+## E2E Failure Analysis (Resolved)
 
-**Observed failures:**
+**Observed failures (before fix):**
 
 1. **First run (4 workers):** 1 passed (paste JSON), 3 failed at `loginAsNico` — `dashboard-day-list` timeout (15s)
-2. **CI run (1 worker):** 4 failed — WebServer ENOENT (`routes-manifest.json`, `page.js`); login-username timeout; create-plan-tab-describe not found
+2. **CI run (1 worker):** 4 failed — `dashboard-day-list` timeout; page showed "Plan not found: e2e-paste-plan"
 
-**Root cause hypothesis:** Environment/timing, not Phase 28 code:
+**Root cause:** Cross-test pollution. Test 1 (nico) creates plan and sets it as active. Tests 2–4 run with fresh browser contexts; nico's `user_active_plan` points to a plan ID, but the client's `available` plans can be out of sync or the server returns the wrong plan. Using a single user (nico) across sequential tests caused "Plan not found" when the previous test had mutated nico's active plan.
 
-- Next.js dev server state (missing build artifacts in CI mode)
-- Cold start + plan loading latency
-- Parallel workers contending for server
+**Fix applied:** Use `loginAsAthena` for tests that run after create-plan or in isolation. Athena has no active plan set, so she always gets the default bundled plan. Added `loginAsAthena` to `e2e/helpers/login.ts` and switched create-plan tests 2–4 plus login, plan-change, reset-progress, session-flow, error-paths, and abort-session to use athena. Create-plan test 1 remains `loginAsNico` (first test, clean state).
 
-**Recommendation:** Re-run E2E after `npm run build` and with dev server warmed up. If failures persist, treat as pre-existing test-infra issue; Phase 28 implementation is complete per code review.
+**Verification:** `CI=true npm run test:e2e` — 11/11 pass.
 
 ---
 
@@ -88,4 +87,4 @@
 
 ## Conclusion
 
-Phase 28 implementation is **complete** per plan. All success criteria are met in code. E2E failures appear environment-dependent; no Phase 28–specific fixes identified. Manual verification recommended.
+Phase 28 implementation is **complete** per plan. All success criteria are met in code. E2E failures were fixed by using `loginAsAthena` for tests that run after create-plan or in isolation, avoiding cross-test pollution from nico's mutated active plan state.

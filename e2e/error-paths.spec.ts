@@ -2,7 +2,7 @@
  * E2E test: non-happy path flows (invalid login, invalid day, etc.).
  */
 import { test, expect } from '@playwright/test';
-import { loginAsNico } from './helpers/login';
+import { loginAsAthena } from './helpers/login';
 
 test('invalid login shows error', async ({ page }) => {
   await page.goto('/');
@@ -14,7 +14,7 @@ test('invalid login shows error', async ({ page }) => {
 });
 
 test('invalid day ID redirects to home', async ({ page }) => {
-  await loginAsNico(page);
+  await loginAsAthena(page);
 
   await page.goto('/day/invalid-day-999');
   await expect(page).toHaveURL(/\/(\?.*)?$/, { timeout: 5000 });

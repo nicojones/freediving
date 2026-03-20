@@ -6,7 +6,7 @@
 import { test, expect } from '@playwright/test';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { loginAsNico } from './helpers/login';
+import { loginAsNico, loginAsAthena } from './helpers/login';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -99,7 +99,7 @@ test.describe('Create plan', () => {
   });
 
   test('upload JSON file, create plan, switch to it, verify Training tab', async ({ page }) => {
-    await loginAsNico(page);
+    await loginAsAthena(page);
     await goToCreatePlanSection(page);
     await switchToPasteTab(page);
 
@@ -114,7 +114,7 @@ test.describe('Create plan', () => {
   });
 
   test('type JSON manually, create plan, switch to it, verify Training tab', async ({ page }) => {
-    await loginAsNico(page);
+    await loginAsAthena(page);
     await goToCreatePlanSection(page);
     await switchToPasteTab(page);
 
@@ -156,7 +156,7 @@ test.describe('Create plan', () => {
       }
     });
 
-    await loginAsNico(page);
+    await loginAsAthena(page);
     await goToCreatePlanSection(page);
 
     await page

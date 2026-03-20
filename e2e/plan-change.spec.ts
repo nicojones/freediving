@@ -2,10 +2,10 @@
  * E2E test: plan change flow.
  */
 import { test, expect } from '@playwright/test';
-import { loginAsNico } from './helpers/login';
+import { loginAsAthena } from './helpers/login';
 
 test('user can change plan', async ({ page }) => {
-  await loginAsNico(page);
+  await loginAsAthena(page);
 
   await page.getByRole('button', { name: /plans/i }).click();
   await page.waitForURL(/\/plans/);

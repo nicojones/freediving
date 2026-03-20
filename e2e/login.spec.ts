@@ -4,8 +4,8 @@
  * Playwright starts both servers via playwright.config.ts webServer.
  */
 import { test } from '@playwright/test';
-import { loginAsNico } from './helpers/login';
+import { loginAsAthena } from './helpers/login';
 
 test('user can log in', async ({ page }) => {
-  await loginAsNico(page);
+  await loginAsAthena(page);
 });
