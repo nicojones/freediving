@@ -9,6 +9,9 @@ import { test, expect } from '@playwright/test'
 test.setTimeout(90000)
 
 test('user can complete a session with test mode', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('freediving_dev_mode', 'true')
+  })
   // 1. Login
   await page.goto('/')
   await page.getByTestId('login-username').fill('nico')

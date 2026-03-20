@@ -6,6 +6,9 @@ import { test, expect } from '@playwright/test'
 test.setTimeout(60000)
 
 test('user can abort session', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('freediving_dev_mode', 'true')
+  })
   await page.goto('/')
   await page.getByTestId('login-username').fill('nico')
   await page.getByTestId('login-password').fill('password')
