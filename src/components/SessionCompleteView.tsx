@@ -1,19 +1,12 @@
+'use client'
 import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { PrimaryButton } from './PrimaryButton'
 import { TopAppBar } from './TopAppBar'
 import { BottomNavBar } from './BottomNavBar'
 import { useTraining } from '../contexts/TrainingContext'
 
-interface SessionCompleteViewProps {
-  onBackToTraining: () => void
-  onSettingsClick: () => void
-}
-
-export function SessionCompleteView({
-  onBackToTraining,
-  onSettingsClick,
-}: SessionCompleteViewProps) {
-  const { planWithMeta } = useTraining()
+export function SessionCompleteView() {
+  const { planWithMeta, handleBackToTraining, handleSettingsClick } = useTraining()
   const planName = planWithMeta?.name ?? DEFAULT_PLAN_NAME
 
   return (
@@ -33,7 +26,7 @@ export function SessionCompleteView({
           <p className="text-on-surface-variant font-body mb-6">
             Great work. Your progress has been saved.
           </p>
-          <PrimaryButton onClick={onBackToTraining} icon="arrow_forward">
+          <PrimaryButton onClick={handleBackToTraining} icon="arrow_forward">
             Back to Training
           </PrimaryButton>
         </div>
@@ -41,7 +34,7 @@ export function SessionCompleteView({
       <BottomNavBar
         activeTab="training"
         onTrainingClick={() => {}}
-        onSettingsClick={onSettingsClick}
+        onSettingsClick={handleSettingsClick}
       />
     </div>
   )

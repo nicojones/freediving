@@ -1,10 +1,13 @@
 import isEmpty from 'lodash/isEmpty'
 import isNil from 'lodash/isNil'
 import type { Plan, PlanWithMeta, Phase } from '../types/plan'
+import defaultPlanData from '../data/default-plan.json'
+import minimalPlanData from '../data/minimal-plan.json'
 
-const planModules = import.meta.glob<{ default: PlanWithMeta }>('../data/*-plan.json', {
-  eager: true,
-})
+const planModules: PlanWithMeta[] = [
+  defaultPlanData as PlanWithMeta,
+  minimalPlanData as PlanWithMeta,
+]
 
 const RELAXATION_SECONDS = 60
 
@@ -20,9 +23,9 @@ export function getPlanDays(plan: Plan | PlanWithMeta): Plan {
  * Returns all available plans from bundled JSON files.
  */
 export function getAvailablePlans(): PlanWithMeta[] {
-  return Object.values(planModules)
-    .map((m) => m?.default)
-    .filter((p): p is PlanWithMeta => Boolean(p && 'id' in p && 'days' in p))
+  return planModules.filter(
+    (p): p is PlanWithMeta => Boolean(p && 'id' in p && 'days' in p)
+  )
 }
 
 /**

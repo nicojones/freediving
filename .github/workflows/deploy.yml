@@ -39,15 +39,17 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
-      - name: Build Vite
+      - name: Build Next.js
         run: npm run build
 
       - name: Prepare Deployment Packages
         run: |
-          zip -r build.zip dist server package.json package-lock.json start_freediving.sh
-          if [ "${{ steps.changed-deps.outputs.any_changed }}" == "true" ]; then
-            zip -ry modules.zip node_modules
-          fi
+          cp -r public .next/standalone/
+          cp -r .next/static .next/standalone/.next/
+          cp start_freediving.sh .next/standalone/
+          mkdir -p .next/standalone/src
+          cp -r src/data .next/standalone/src/
+          cd .next/standalone && zip -r ../../build.zip . && cd ../..
 
       - name: Upload build to Server
         uses: appleboy/scp-action@v0.1.7
@@ -56,16 +58,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "build.zip"
-          target: "/var/www/freediving"
-
-      - name: Upload node_modules to Server
-        if: steps.changed-deps.outputs.any_changed == 'true'
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "modules.zip"
           target: "/var/www/freediving"
 
       - name: Post-deployment on VM
@@ -77,20 +69,9 @@ jobs:
           script: |
             cd /var/www/freediving
 
-            if [ -f "modules.zip" ]; then
-              rm -rf node_modules
-              unzip -q modules.zip
-              rm modules.zip
-            fi
-
             if [ -f "build.zip" ]; then
               unzip -o -q build.zip
               rm build.zip
-            fi
-
-            # Install deps when node_modules missing (first deploy or no modules.zip)
-            if [ ! -d "node_modules" ] || [ ! -f "node_modules/express/package.json" ]; then
-              npm ci --omit=dev
             fi
 
             systemctl restart freediving.service

@@ -1,7 +1,8 @@
+'use client'
 import clsx from 'clsx'
 import isNil from 'lodash/isNil'
 import { useCallback, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRouter, useParams } from 'next/navigation'
 import { BottomNavBar } from '../components/BottomNavBar'
 import { DayListSection } from '../components/DayListSection'
 import { InstallPrompt } from '../components/InstallPrompt'
@@ -17,8 +18,9 @@ import { isDayCompleted } from '../utils/completions'
 
 /** Dashboard: ~162 lines. Slightly over 150; further extraction would split cohesive day/session routing logic. */
 export function Dashboard() {
-  const navigate = useNavigate()
-  const { dayId: urlDayId } = useParams<{ dayId?: string }>()
+  const router = useRouter()
+  const params = useParams()
+  const urlDayId = params?.dayId as string | undefined
   const {
     plan,
     planWithMeta,
@@ -43,28 +45,28 @@ export function Dashboard() {
       if (isNil(plan)) return
       const id = getDayId(plan, index)
       if (id) {
-        navigate(`/day/${id}`)
+        router.push(`/day/${id}`)
       }
       setSelectedDayIndex(index)
       setViewMode('session-preview')
     },
-    [plan, navigate, setSelectedDayIndex, setViewMode]
+    [plan, router, setSelectedDayIndex, setViewMode]
   )
 
   const handleBack = useCallback(() => {
-    navigate('/')
+    router.push('/')
     setViewMode('dashboard')
-  }, [navigate, setViewMode])
+  }, [router, setViewMode])
 
   const handleStartSessionClick = useCallback(async () => {
     await handleStartSession()
-    navigate('/session')
-  }, [handleStartSession, navigate])
+    router.push('/session')
+  }, [handleStartSession, router])
 
-  const handleTrainingClick = useCallback(() => navigate('/'), [navigate])
+  const handleTrainingClick = useCallback(() => router.push('/'), [router])
   const handleSettingsClick = useCallback(
-    () => navigate('/settings'),
-    [navigate]
+    () => router.push('/settings'),
+    [router]
   )
 
   // Sync URL dayId to selected day; invalid dayId → redirect to /
@@ -73,13 +75,13 @@ export function Dashboard() {
     if (urlDayId) {
       const idx = getDayIndexById(plan, urlDayId)
       if (idx === null) {
-        navigate('/', { replace: true })
+        router.replace('/')
       } else {
         setSelectedDayIndex(idx)
         setViewMode('session-preview')
       }
     }
-  }, [urlDayId, plan, navigate, setSelectedDayIndex, setViewMode])
+  }, [urlDayId, plan, router, setSelectedDayIndex, setViewMode])
 
   if (isNil(plan)) return null
 

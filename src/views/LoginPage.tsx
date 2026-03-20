@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react'
 import { login } from '../services/authService'
 import { FishIcon } from '../components/FishIcon'

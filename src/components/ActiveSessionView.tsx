@@ -1,3 +1,4 @@
+'use client'
 import clsx from 'clsx'
 import { useSessionProgress } from '../utils/sessionProgress'
 import { formatDuration } from '../utils/formatDuration'

@@ -1,3 +1,4 @@
+'use client'
 import {
   createContext,
   useContext,
@@ -7,7 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { DEFAULT_PLAN_ID } from '../constants/app'
 import {
   loadPlanById,
@@ -83,13 +84,15 @@ interface TrainingContextValue {
   handleAbortSession: () => void
   handleCompleteSession: () => Promise<void>
   handleBackFromComplete: () => void
+  handleBackToTraining: () => void
+  handleSettingsClick: () => void
   handleLogout: () => Promise<void>
 }
 
 const TrainingContext = createContext<TrainingContextValue | null>(null)
 
 export function TrainingProvider({ children }: { children: ReactNode }) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [user, setUser] = useState<{ id: number; username: string } | null | undefined>(undefined)
   const [plan, setPlan] = useState<Plan | null>(null)
   const [planWithMeta, setPlanWithMeta] = useState<PlanWithMeta | null>(null)
@@ -250,6 +253,18 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     engineResetToIdle()
   }, [engineResetToIdle])
 
+  const handleBackToTraining = useCallback(() => {
+    handleBackFromComplete()
+    const current = plan ? getCurrentDay(plan, completions) : 0
+    setSelectedDayIndex(current)
+    router.push('/')
+  }, [handleBackFromComplete, plan, completions, router])
+
+  const handleSettingsClick = useCallback(() => {
+    handleBackFromComplete()
+    router.push('/settings')
+  }, [handleBackFromComplete, router])
+
   const handleCompleteSession = useCallback(async () => {
     const dayToRecord = sessionDayIndexRef.current
     const p = plan
@@ -268,7 +283,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       setProgressError(null)
       engineMarkComplete()
       setSessionDayIndex(null)
-      navigate('/session/complete')
+      router.push('/session/complete')
       setSavedMessage(true)
       setTimeout(() => setSavedMessage(false), 2500)
       if ('queued' in result && result.queued) {
@@ -287,7 +302,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     } else {
       setProgressError(result.error)
     }
-  }, [plan, activePlanId, navigate, engineMarkComplete])
+  }, [plan, activePlanId, router, engineMarkComplete])
 
   const value: TrainingContextValue = {
     user,
@@ -320,6 +335,8 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     handleAbortSession,
     handleCompleteSession,
     handleBackFromComplete,
+    handleBackToTraining,
+    handleSettingsClick,
     handleLogout,
   }
 

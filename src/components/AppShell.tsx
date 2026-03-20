@@ -1,31 +1,36 @@
+'use client'
+
 import { useCallback } from 'react'
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import { DEFAULT_USERNAME } from './constants/app'
-import { FishIcon } from './components/FishIcon'
-import { getCurrentDay } from './services/planService'
-import { LoginPage } from './views/LoginPage'
-import { Dashboard } from './views/Dashboard'
-import { TopAppBar } from './components/TopAppBar'
-import { ActiveSessionView } from './components/ActiveSessionView'
-import { SessionCompleteView } from './components/SessionCompleteView'
-import { SettingsView } from './components/SettingsView'
-import { TrainingProvider, useTraining } from './contexts/TrainingContext'
+import { useRouter, usePathname } from 'next/navigation'
+import type { ChildrenNode } from '@/src/types/common'
+import { FishIcon } from '@/src/components/FishIcon'
+import { getCurrentDay } from '@/src/services/planService'
+import { LoginPage } from '@/src/views/LoginPage'
+import { TopAppBar } from '@/src/components/TopAppBar'
+import { TrainingProvider, useTraining } from '@/src/contexts/TrainingContext'
 import isNil from 'lodash/isNil'
 
-function SessionRouteGuard({ children }: { children: React.ReactNode }) {
+function SessionRouteGuard({ children }: ChildrenNode) {
   const { sessionStatus } = useTraining()
-  if (sessionStatus !== 'running' && sessionStatus !== 'awaitingCompletionConfirm')
-    return <Navigate to="/" replace />
+  const router = useRouter()
+  if (sessionStatus !== 'running' && sessionStatus !== 'awaitingCompletionConfirm') {
+    router.replace('/')
+    return null
+  }
   return <>{children}</>
 }
 
-function SessionCompleteRouteGuard({ children }: { children: React.ReactNode }) {
+function SessionCompleteRouteGuard({ children }: ChildrenNode) {
   const { sessionStatus } = useTraining()
-  if (sessionStatus !== 'complete') return <Navigate to="/" replace />
+  const router = useRouter()
+  if (sessionStatus !== 'complete') {
+    router.replace('/')
+    return null
+  }
   return <>{children}</>
 }
 
-function AppContent() {
+function AppContent({ children }: ChildrenNode) {
   const {
     user,
     refreshUser,
@@ -36,19 +41,20 @@ function AppContent() {
     handleBackFromComplete,
     handleLogout,
   } = useTraining()
-  const navigate = useNavigate()
-
+  const router = useRouter()
+  const pathname = usePathname()
   const currentDayIndex = plan ? getCurrentDay(plan, completions) : 0
+
   const handleBackToTraining = useCallback(() => {
     handleBackFromComplete()
     setSelectedDayIndex(currentDayIndex)
-    navigate('/')
-  }, [handleBackFromComplete, setSelectedDayIndex, currentDayIndex, navigate])
+    router.push('/')
+  }, [handleBackFromComplete, setSelectedDayIndex, currentDayIndex, router])
 
   const handleSettingsClick = useCallback(() => {
     handleBackFromComplete()
-    navigate('/settings')
-  }, [handleBackFromComplete, navigate])
+    router.push('/settings')
+  }, [handleBackFromComplete, router])
 
   if (user === undefined) {
     return (
@@ -100,49 +106,29 @@ function AppContent() {
     )
   }
 
-  return (
-    <Routes>
-      <Route
-        path="/session"
-        element={
-          <SessionRouteGuard>
-            <ActiveSessionView />
-          </SessionRouteGuard>
-        }
-      />
-      <Route
-        path="/session/complete"
-        element={
-          <SessionCompleteRouteGuard>
-            <SessionCompleteView
-              onBackToTraining={handleBackToTraining}
-              onSettingsClick={handleSettingsClick}
-            />
-          </SessionCompleteRouteGuard>
-        }
-      />
-      <Route
-        path="/settings"
-        element={
-          <SettingsView
-            username={user?.username ?? DEFAULT_USERNAME}
-            onLogout={handleLogout}
-          />
-        }
-      />
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/day/:dayId" element={<Dashboard />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  )
+  if (pathname?.startsWith('/session/complete')) {
+    return (
+      <SessionCompleteRouteGuard>
+        {children}
+      </SessionCompleteRouteGuard>
+    )
+  }
+
+  if (pathname === '/session') {
+    return (
+      <SessionRouteGuard>
+        {children}
+      </SessionRouteGuard>
+    )
+  }
+
+  return <>{children}</>
 }
 
-function App() {
+export function AppShell({ children }: ChildrenNode) {
   return (
     <TrainingProvider>
-      <AppContent />
+      <AppContent>{children}</AppContent>
     </TrainingProvider>
   )
 }
-
-export default App

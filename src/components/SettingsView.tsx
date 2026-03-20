@@ -1,5 +1,6 @@
+'use client'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { TopAppBar } from './TopAppBar'
 import { BottomNavBar } from './BottomNavBar'
@@ -9,22 +10,22 @@ import { ConfirmResetModal } from './ConfirmResetModal'
 import { UserProfileCard } from './UserProfileCard'
 import { useTraining } from '../contexts/TrainingContext'
 
-interface SettingsViewProps {
-  username: string
-  onLogout: () => void
-}
+import { DEFAULT_USERNAME } from '../constants/app'
 
 type ConfirmType = 'reset' | 'planChange' | null
 
-export function SettingsView({ username, onLogout }: SettingsViewProps) {
-  const navigate = useNavigate()
+export function SettingsView() {
+  const router = useRouter()
   const {
+    user,
     availablePlans,
     activePlanId,
     planWithMeta,
     resetProgress,
     setActivePlan,
+    handleLogout,
   } = useTraining()
+  const username = user?.username ?? DEFAULT_USERNAME
 
   const [confirmState, setConfirmState] = useState<{
     type: ConfirmType
@@ -87,7 +88,7 @@ export function SettingsView({ username, onLogout }: SettingsViewProps) {
 
           <button
             type="button"
-            onClick={onLogout}
+            onClick={handleLogout}
             className="w-full h-16 rounded-xl border-2 border-outline-variant/60 bg-surface-container-low/50 hover:bg-surface-container-low hover:border-outline font-headline font-bold text-on-surface text-lg flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-xl" aria-hidden>
@@ -99,7 +100,7 @@ export function SettingsView({ username, onLogout }: SettingsViewProps) {
       </main>
       <BottomNavBar
         activeTab="settings"
-        onTrainingClick={() => navigate('/')}
+        onTrainingClick={() => router.push('/')}
         onSettingsClick={() => {}}
       />
 
