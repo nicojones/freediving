@@ -1,6 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
+import type { PlanWithMeta } from '../../../types/plan';
+import { AIVoicePlanInput } from '../../../features/ai-plan';
 import { CREATE_PLAN_BTN_PRIMARY, CREATE_PLAN_BTN_SECONDARY, CREATE_PLAN_TEXTAREA } from './styles';
 
 interface CreatePlanDraftPreviewProps {
@@ -8,11 +10,18 @@ interface CreatePlanDraftPreviewProps {
   setRefineText: (v: string) => void;
   isRefining: boolean;
   loading: boolean;
+  draftPlan: PlanWithMeta | null;
+  voiceActive: boolean;
   onRefine: () => void;
   onResetDraft: () => void;
   onOpenPreview: () => void;
   onOpenConfirm: () => void;
   onClearError: () => void;
+  onVoiceRefineResult: (json: string) => void;
+  onRecordingChange: (recording: boolean) => void;
+  onVoiceSubmittingChange: (v: boolean) => void;
+  getAbortSignal: () => AbortSignal;
+  previewJustUpdated?: boolean;
 }
 
 export function CreatePlanDraftPreview({
@@ -20,19 +29,32 @@ export function CreatePlanDraftPreview({
   setRefineText,
   isRefining,
   loading,
+  draftPlan,
+  voiceActive,
   onRefine,
   onResetDraft,
   onOpenPreview,
   onOpenConfirm,
   onClearError,
+  onVoiceRefineResult,
+  onRecordingChange,
+  onVoiceSubmittingChange,
+  getAbortSignal,
+  previewJustUpdated,
 }: CreatePlanDraftPreviewProps) {
+  const textDisabled = isRefining || voiceActive;
+  const voiceDisabled = isRefining; // AIVoicePlanInput receives disabled={isRefining}
   return (
     <div className="space-y-6" data-testid="create-plan-preview">
       <div className="flex items-center justify-between gap-4">
         <button
           type="button"
           onClick={onOpenPreview}
-          className="h-12 px-6 rounded-xl border-2 border-primary bg-primary/20 hover:bg-primary/30 font-headline font-bold text-primary text-base flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]"
+          className={clsx(
+            'h-12 px-6 rounded-xl border-2 border-primary bg-primary/20 hover:bg-primary/30 font-headline font-bold text-primary text-base flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]',
+            previewJustUpdated &&
+              'animate-pulse ring-2 ring-success ring-offset-0 border-success! shadow-success shadow-lg'
+          )}
           data-testid="create-plan-preview-button"
         >
           <span className="material-symbols-outlined text-xl" aria-hidden>
@@ -61,43 +83,60 @@ export function CreatePlanDraftPreview({
             setRefineText(e.target.value);
             onClearError();
           }}
+          disabled={textDisabled}
           placeholder="Change X to Y..."
           className={clsx(CREATE_PLAN_TEXTAREA, 'h-24')}
           aria-label="Refine plan"
           data-testid="create-plan-refine-textarea"
         />
-        <div className="flex gap-3 mt-0">
-          <button
-            type="button"
-            onClick={onRefine}
-            disabled={!refineText.trim() || isRefining}
-            className={clsx(CREATE_PLAN_BTN_SECONDARY, 'flex-1')}
-            data-testid="create-plan-refine-button"
-          >
-            {isRefining ? (
-              <span className="material-symbols-outlined animate-spin text-xl" aria-hidden>
-                progress_activity
-              </span>
-            ) : (
-              'Refine'
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={onOpenConfirm}
-            disabled={loading}
-            className={clsx(CREATE_PLAN_BTN_PRIMARY, 'flex-1')}
-            data-testid="create-plan-confirm-button"
-          >
-            {loading ? (
-              <span className="material-symbols-outlined animate-spin text-xl" aria-hidden>
-                progress_activity
-              </span>
-            ) : (
-              'Confirm'
-            )}
-          </button>
+        <button
+          type="button"
+          onClick={onRefine}
+          disabled={!refineText.trim() || textDisabled}
+          className={clsx(CREATE_PLAN_BTN_SECONDARY, 'w-full')}
+          data-testid="create-plan-refine-button"
+        >
+          {isRefining ? (
+            <span className="material-symbols-outlined animate-spin text-xl" aria-hidden>
+              progress_activity
+            </span>
+          ) : (
+            'Refine'
+          )}
+        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-outline-variant/40" />
+          <span className="text-on-surface-variant/70 font-body text-sm">or</span>
+          <div className="flex-1 h-px bg-outline-variant/40" />
         </div>
+        <AIVoicePlanInput
+          onResult={onVoiceRefineResult}
+          disabled={isRefining}
+          onRecordingChange={onRecordingChange}
+          onVoiceSubmittingChange={onVoiceSubmittingChange}
+          getAbortSignal={getAbortSignal}
+          contextPlan={draftPlan ?? undefined}
+        />
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-outline-variant/40" />
+          <span className="text-on-surface-variant/70 font-body text-sm">then</span>
+          <div className="flex-1 h-px bg-outline-variant/40" />
+        </div>
+        <button
+          type="button"
+          onClick={onOpenConfirm}
+          disabled={loading || textDisabled || voiceDisabled}
+          className={clsx(CREATE_PLAN_BTN_PRIMARY, 'w-full')}
+          data-testid="create-plan-confirm-button"
+        >
+          {loading ? (
+            <span className="material-symbols-outlined animate-spin text-xl" aria-hidden>
+              progress_activity
+            </span>
+          ) : (
+            'Confirm'
+          )}
+        </button>
       </div>
     </div>
   );

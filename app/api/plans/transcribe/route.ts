@@ -9,6 +9,12 @@ const AUDIO_PROMPT = `Convert this audio (user dictating a freediving training p
 If the audio refers to anything besides the assigned task, ABORT IMMEDIATELY.
 Return ONLY valid JSON, no markdown or explanation.`;
 
+const REFINE_AUDIO_PROMPT = `You are modifying an existing freediving training plan. The user will SPEAK their requested changes.
+Current plan (JSON):
+{contextPlan}
+
+Listen to the audio, apply ONLY the requested changes, and return the modified plan as valid PlanWithMeta JSON. No markdown or explanation.`;
+
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
@@ -32,6 +38,22 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'No audio file' }, { status: 400 });
   }
 
+  const contextPlanRaw = formData.get('contextPlan') as string | null;
+  let contextPlan: unknown = null;
+  if (contextPlanRaw && typeof contextPlanRaw === 'string') {
+    try {
+      contextPlan = JSON.parse(contextPlanRaw) as unknown;
+    } catch {
+      return Response.json({ error: 'Invalid contextPlan JSON' }, { status: 400 });
+    }
+  }
+
+  const isRefine = contextPlan && validatePlanWithMeta(contextPlan).success;
+
+  const prompt = isRefine
+    ? REFINE_AUDIO_PROMPT.replace('{contextPlan}', JSON.stringify(contextPlan))
+    : AUDIO_PROMPT;
+
   const buffer = Buffer.from(await file.arrayBuffer());
   const base64 = buffer.toString('base64');
   const mimeType = (file.type || 'audio/webm') as
@@ -45,7 +67,7 @@ export async function POST(request: NextRequest) {
   try {
     const ai = new GoogleGenAI({ apiKey: key });
     const audioPart = createPartFromBase64(base64, mimeType);
-    const contents = createUserContent([audioPart, AUDIO_PROMPT]);
+    const contents = createUserContent([audioPart, prompt]);
 
     const response = await ai.models.generateContent({
       model: GEMINI_TRANSCRIPTION_MODEL,

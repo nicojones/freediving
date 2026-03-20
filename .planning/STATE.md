@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-20 — Phase 26 (Plan Creation UX) executed; phases 1–26 complete
+**Last updated:** 2025-03-20 — Phase 26 (Plan Creation UX) executed; phases 1–26 complete; Phase 28 added
 
 ---
 
@@ -8,7 +8,7 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 27 — Refactor CreatePlanSection (next)
+**Current focus:** Phase 27 — Refactor CreatePlanSection (next); Phase 28 — Create Plan Tab + Multi-Modal + Preview Feedback (added)
 
 ---
 
@@ -32,7 +32,7 @@
 | Metric              | Value |
 | ------------------- | ----- |
 | Phases complete     | 26    |
-| Phases total        | 27    |
+| Phases total        | 28    |
 | Requirements mapped | 17/17 |
 | Plans executed      | 26    |
 
@@ -77,6 +77,7 @@
 - [x] Phase 24: AI Plan Input Enhancements (24-PLAN.md)
 - [x] Phase 25: Component Library (Radix/Headless UI) (25-PLAN.md)
 - [x] Phase 26: Plan Creation UX (26-PLAN.md)
+- [ ] Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback (28-CONTEXT.md)
 
 ### Blockers
 

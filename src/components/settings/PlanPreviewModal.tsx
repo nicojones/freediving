@@ -2,6 +2,7 @@
 
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import type { PlanWithMeta } from '../../types/plan';
+import { ModalBackdrop } from '../ui/ModalBackdrop';
 import { getPhasesForDay, getDaySummary } from '../../services/planService';
 import { SessionBreakdown } from '../session/SessionBreakdown';
 
@@ -18,7 +19,7 @@ export function PlanPreviewModal({ isOpen, onClose, plan }: PlanPreviewModalProp
         className="fixed inset-0 flex items-center justify-center p-4 bg-black/60"
         aria-hidden="true"
       />
-      <div className="fixed inset-0 flex items-center justify-center p-4">
+      <ModalBackdrop>
         <DialogPanel className="bg-surface-container-low rounded-3xl p-6 max-w-lg w-full max-h-[85vh] flex flex-col border border-outline-variant/30 shadow-xl">
           <DialogTitle
             id="plan-preview-title"
@@ -70,7 +71,7 @@ export function PlanPreviewModal({ isOpen, onClose, plan }: PlanPreviewModalProp
             </button>
           </div>
         </DialogPanel>
-      </div>
+      </ModalBackdrop>
     </Dialog>
   );
 }

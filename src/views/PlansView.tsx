@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { TopAppBar } from '@/src/components/layout/TopAppBar';
 import { BottomNavBar } from '@/src/components/layout/BottomNavBar';
 import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSection';
-import { CreatePlanSection } from '@/src/components/settings/CreatePlanSection';
-import { PlanDeleteSection } from '@/src/components/settings/PlanDeleteSection';
 import { ConfirmResetModal } from '@/src/components/settings/ConfirmResetModal';
 import { useTraining } from '@/src/hooks/useTraining';
 
@@ -14,7 +12,7 @@ import { useTraining } from '@/src/hooks/useTraining';
  * Plans tab: change plan, add plan, delete plan (user-created, non-active).
  *
  * Future enhancement: explore plans without switching active plan.
- * Structure (plan list, selector, PlanDeleteSection) leaves room for adding
+ * Structure (plan list with select + delete) leaves room for adding
  * a "preview/explore" mode — user could browse plan details without changing
  * their active plan. Do not implement; only ensure no dead ends block this.
  */
@@ -60,21 +58,14 @@ export function PlansView() {
             Plans
           </h1>
           <p className="text-on-surface-variant font-body text-sm max-w-[80%] mb-10">
-            Choose your training plan or create a new one.
+            Choose your training plan or create a new one in the Create tab.
           </p>
 
           <PlanSelectorSection
             availablePlans={availablePlans}
             activePlanId={activePlanId}
-            onPlanChange={handlePlanChange}
-          />
-
-          <CreatePlanSection onPlanCreated={refreshAvailablePlans} />
-
-          <PlanDeleteSection
-            plans={availablePlans}
-            activePlanId={activePlanId}
             currentUserId={user?.id}
+            onPlanChange={handlePlanChange}
             onPlanDeleted={refreshAvailablePlans}
           />
         </section>
@@ -83,6 +74,7 @@ export function PlansView() {
         activeTab="plans"
         onTrainingClick={() => router.push('/')}
         onPlansClick={() => {}}
+        onCreateClick={() => router.push('/create')}
         onSettingsClick={() => router.push('/settings')}
       />
 

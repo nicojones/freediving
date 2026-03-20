@@ -44,7 +44,7 @@ export function ConfirmResetModal({
         aria-hidden="true"
       />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="bg-surface-container-low rounded-3xl p-6 max-w-sm w-full border border-outline-variant/30 shadow-xl">
+        <DialogPanel className="bg-surface-container-low rounded-3xl p-6 max-w-md w-full border border-outline-variant/30 shadow-xl">
           <DialogTitle
             id="confirm-reset-title"
             className="font-headline text-xl font-bold text-on-surface mb-2"

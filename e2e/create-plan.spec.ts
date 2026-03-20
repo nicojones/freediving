@@ -42,9 +42,9 @@ const TYPE_PLAN = {
   ],
 };
 
-async function goToPlansAndCreatePlanSection(page: import('@playwright/test').Page) {
-  await page.getByRole('button', { name: /plans/i }).click();
-  await page.waitForURL(/\/plans/);
+async function goToCreatePlanSection(page: import('@playwright/test').Page) {
+  await page.getByTestId('nav-create').click();
+  await page.waitForURL(/\/create/);
   await expect(page.getByTestId('create-plan-tab-describe')).toBeVisible({ timeout: 5000 });
 }
 
@@ -63,8 +63,10 @@ async function verifyPlanCreation(
   const planSelector = page.getByTestId('plan-selector');
 
   if (switchAndVerifyTraining) {
-    await planSelector.click();
-    await page.getByRole('option', { name: planName }).click();
+    await page.getByTestId('nav-plans').click();
+    await page.waitForURL(/\/plans/);
+    await expect(planSelector).toBeVisible({ timeout: 5000 });
+    await page.locator(`[data-plan-name="${planName}"]`).click();
     await page.getByTestId('confirm-reset-input').fill('reset');
     await page.getByTestId('confirm-reset-confirm').click();
     await expect(page.getByTestId('confirm-reset-input')).not.toBeVisible();
@@ -80,7 +82,7 @@ test.describe('Create plan', () => {
   test('paste JSON, create plan, switch to it, verify Training tab', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await loginAsNico(page);
-    await goToPlansAndCreatePlanSection(page);
+    await goToCreatePlanSection(page);
     await switchToPasteTab(page);
 
     const jsonStr = JSON.stringify(PASTE_PLAN, null, 2);
@@ -98,7 +100,7 @@ test.describe('Create plan', () => {
 
   test('upload JSON file, create plan, switch to it, verify Training tab', async ({ page }) => {
     await loginAsNico(page);
-    await goToPlansAndCreatePlanSection(page);
+    await goToCreatePlanSection(page);
     await switchToPasteTab(page);
 
     const fixturePath = join(__dirname, 'fixtures', 'e2e-upload-plan.json');
@@ -113,7 +115,7 @@ test.describe('Create plan', () => {
 
   test('type JSON manually, create plan, switch to it, verify Training tab', async ({ page }) => {
     await loginAsNico(page);
-    await goToPlansAndCreatePlanSection(page);
+    await goToCreatePlanSection(page);
     await switchToPasteTab(page);
 
     const jsonText = JSON.stringify(TYPE_PLAN, null, 2);
@@ -155,7 +157,7 @@ test.describe('Create plan', () => {
     });
 
     await loginAsNico(page);
-    await goToPlansAndCreatePlanSection(page);
+    await goToCreatePlanSection(page);
 
     await page
       .getByTestId('create-plan-describe-textarea')

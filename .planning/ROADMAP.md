@@ -34,6 +34,8 @@
 - [x] **Phase 24: AI Plan Input Enhancements** - Dynamic prompt from plan types; text/description-to-plan via LLM; optional dedicated plan creation screen
 - [x] **Phase 25: Component Library (Radix/Headless UI)** - Add Radix UI or Headless UI; replace custom modals/dialogs; establish primitives for tabs, buttons
 - [x] **Phase 26: Plan Creation UX** - Tab (natural language vs JSON); Preview instead of raw JSON; refine flow; confirm modal (name/description)
+- [ ] **Phase 27: Refactor CreatePlanSection (Component Size)** - Reduce CreatePlanSection component size; prepare for eventual migration to its own page
+- [ ] **Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback** - Move CreatePlanSection to its own bottom tab (+); allow create and refine via voice and/or text (mix and match); improve Preview feedback so users know when preview was updated after refinement
 
 ---
 
@@ -556,37 +558,57 @@
 
 ---
 
+### Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback
+
+**Goal:** Move CreatePlanSection to its own bottom tab (+); allow create and refine via voice and/or text (mix and match); improve Preview feedback so users know when preview was updated after refinement.
+
+**Depends on:** Phase 27 (Refactor CreatePlanSection)
+
+**Requirements:** (Enhancement — plan creation cornerstone)
+
+**Success Criteria** (what must be TRUE):
+
+1. CreatePlanSection lives in its own bottom tab (+), not inside Plans tab
+2. User can create via voice OR text; refine via voice OR text; mix and match (e.g. create by voice → preview → refine with text → refine with voice → save)
+3. "Preview" button appears when user types/submits or audio is sent/re-sent
+4. After refinement, user clearly sees that preview was updated (attention brought back to Preview — not just loading stop)
+
+**Plans:** `.planning/28-PLAN.md` (7 tasks: Create tab + route + nav → multi-modal refine → Preview feedback + E2E)
+
+---
+
 ## Progress
 
-| Phase                                                 | Plans Complete | Status   | Completed  |
-| ----------------------------------------------------- | -------------- | -------- | ---------- |
-| 1. Plan Service                                       | 5/5            | Complete | 1-PLAN.md  |
-| 2. Progress + Profile Services                        | 2/2            | Complete | 2-PLAN.md  |
-| 3. Timer Engine                                       | 3/3            | Complete | 3-PLAN.md  |
-| 4. Audio Service                                      | 2/2            | Complete | 4-PLAN.md  |
-| 5. Session Runner + Plan/Day Selector                 | 4/4            | Complete | 5-PLAN.md  |
-| 6. PWA + Offline                                      | 4/4            | Complete | 6-PLAN.md  |
-| 7. Day IDs + Routing                                  | 5/5            | Complete | 7-PLAN.md  |
-| 8. Session UX Enhancements                            | 5/5            | Complete | 8-PLAN.md  |
-| 9. Refactor Code                                      | 4/4            | Complete | 9-PLAN.md  |
-| 10. Reset + Plan Change                               | 6/6            | Complete | 10-PLAN.md |
-| 11. Refactor Code (Quality Pass)                      | 6/6            | Complete | 11-PLAN.md |
-| 12. Tests                                             | 8/8            | Complete | 12-PLAN.md |
-| 13. Deployment                                        | 6/6            | Complete | 13-PLAN.md |
-| 14. Next.js Migration                                 | 9/9            | Complete | 14-PLAN.md |
-| 15. Refactor Code (Cleanup)                           | 5/5            | Complete | 15-PLAN.md |
-| 16. Alias Imports, Component Folders & Extended Tests | 6/6            | Complete | 16-PLAN.md |
-| 17. Test Controls                                     | 4/4            | Complete | 17-PLAN.md |
-| 18. Dynamic Version Display & Semantic Release        | 4/4            | Complete | 18-PLAN.md |
-| 19. Create Plan in Settings                           | 9/9            | Complete | 19-PLAN.md |
-| 20. Preview Future Days                               | 1/1            | Complete | 20-PLAN.md |
-| 21. UI                                                | 3/3            | Complete | 21-PLAN.md |
-| 22. Plans Tab + Settings Cleanup                      | 5/5            | Complete | 22-PLAN.md |
-| 23. Prettier + Lefthook + CI                          | 5/5            | Complete | 23-PLAN.md |
-| 24. AI Plan Input Enhancements                        | 7/7            | Complete | 24-PLAN.md |
-| 25. Component Library (Radix/Headless UI)             | 7/7            | Complete | 25-PLAN.md |
-| 26. Plan Creation UX                                  | 7/7            | Complete | 26-PLAN.md |
-| 27. Refactor CreatePlanSection (Component Size)       | 0/4            | Pending  | 27-PLAN.md |
+| Phase                                                              | Plans Complete | Status   | Completed  |
+| ------------------------------------------------------------------ | -------------- | -------- | ---------- |
+| 1. Plan Service                                                    | 5/5            | Complete | 1-PLAN.md  |
+| 2. Progress + Profile Services                                     | 2/2            | Complete | 2-PLAN.md  |
+| 3. Timer Engine                                                    | 3/3            | Complete | 3-PLAN.md  |
+| 4. Audio Service                                                   | 2/2            | Complete | 4-PLAN.md  |
+| 5. Session Runner + Plan/Day Selector                              | 4/4            | Complete | 5-PLAN.md  |
+| 6. PWA + Offline                                                   | 4/4            | Complete | 6-PLAN.md  |
+| 7. Day IDs + Routing                                               | 5/5            | Complete | 7-PLAN.md  |
+| 8. Session UX Enhancements                                         | 5/5            | Complete | 8-PLAN.md  |
+| 9. Refactor Code                                                   | 4/4            | Complete | 9-PLAN.md  |
+| 10. Reset + Plan Change                                            | 6/6            | Complete | 10-PLAN.md |
+| 11. Refactor Code (Quality Pass)                                   | 6/6            | Complete | 11-PLAN.md |
+| 12. Tests                                                          | 8/8            | Complete | 12-PLAN.md |
+| 13. Deployment                                                     | 6/6            | Complete | 13-PLAN.md |
+| 14. Next.js Migration                                              | 9/9            | Complete | 14-PLAN.md |
+| 15. Refactor Code (Cleanup)                                        | 5/5            | Complete | 15-PLAN.md |
+| 16. Alias Imports, Component Folders & Extended Tests              | 6/6            | Complete | 16-PLAN.md |
+| 17. Test Controls                                                  | 4/4            | Complete | 17-PLAN.md |
+| 18. Dynamic Version Display & Semantic Release                     | 4/4            | Complete | 18-PLAN.md |
+| 19. Create Plan in Settings                                        | 9/9            | Complete | 19-PLAN.md |
+| 20. Preview Future Days                                            | 1/1            | Complete | 20-PLAN.md |
+| 21. UI                                                             | 3/3            | Complete | 21-PLAN.md |
+| 22. Plans Tab + Settings Cleanup                                   | 5/5            | Complete | 22-PLAN.md |
+| 23. Prettier + Lefthook + CI                                       | 5/5            | Complete | 23-PLAN.md |
+| 24. AI Plan Input Enhancements                                     | 7/7            | Complete | 24-PLAN.md |
+| 25. Component Library (Radix/Headless UI)                          | 7/7            | Complete | 25-PLAN.md |
+| 26. Plan Creation UX                                               | 7/7            | Complete | 26-PLAN.md |
+| 27. Refactor CreatePlanSection (Component Size)                    | 0/4            | Pending  | 27-PLAN.md |
+| 28. Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback | 0/0            | Pending  | 28-PLAN.md |
 
 ---
 

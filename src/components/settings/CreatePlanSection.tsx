@@ -59,14 +59,19 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
               isRefining={handlers.isRefining}
               loading={handlers.loading}
               recording={handlers.recording}
+              voiceSubmitting={handlers.voiceSubmitting}
+              setVoiceSubmitting={handlers.setVoiceSubmitting}
+              getAbortSignal={handlers.getAbortSignal}
               onCreateDraft={handlers.handleCreateDraft}
               onRefine={handlers.handleRefine}
               onResetDraft={handlers.resetDraftFlow}
-              onOpenPreview={() => handlers.setPreviewModalOpen(true)}
+              onOpenPreview={handlers.openPreview}
               onOpenConfirm={() => handlers.setConfirmModalOpen(true)}
               onRecordingChange={handlers.setRecording}
               onVoiceResult={handlers.handleVoiceResult}
+              onVoiceRefineResult={handlers.handleVoiceRefineResult}
               onClearError={() => handlers.setError(null)}
+              previewJustUpdated={handlers.previewJustUpdated}
             />
           </TabPanel>
 

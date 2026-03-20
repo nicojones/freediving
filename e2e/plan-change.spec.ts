@@ -11,7 +11,6 @@ test('user can change plan', async ({ page }) => {
   await page.waitForURL(/\/plans/);
   const planSelector = page.getByTestId('plan-selector');
   await expect(planSelector).toBeVisible({ timeout: 5000 });
-  await planSelector.click();
   const optionCount = await page.getByTestId('plan-selector-option').count();
   if (optionCount > 1) {
     await page.getByTestId('plan-selector-option').nth(1).click();

@@ -20,6 +20,9 @@
   --color-outline: #8a9297;
   --color-surface-variant: #2f3638;
   --color-error: #ffb4ab;
+  --color-success: #6fe28b;
+  --color-success-container: #103821;
+  --color-on-success: #02220f;
 
   --font-headline: 'Manrope', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;

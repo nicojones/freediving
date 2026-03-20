@@ -185,6 +185,7 @@ export function Dashboard() {
           activeTab="training"
           onTrainingClick={handleTrainingClick}
           onPlansClick={handlePlansClick}
+          onCreateClick={() => router.push('/create')}
           onSettingsClick={handleSettingsClick}
         />
       )}

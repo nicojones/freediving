@@ -11,13 +11,43 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [voiceSubmitting, setVoiceSubmitting] = useState(false);
   const [draftPlan, setDraftPlan] = useState<PlanWithMeta | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const [refineText, setRefineText] = useState('');
   const [isRefining, setIsRefining] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewJustUpdated, setPreviewJustUpdated] = useState(false);
+  const previewJustUpdatedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getAbortSignal = () => {
+    abortControllerRef.current?.abort();
+    const ctrl = new AbortController();
+    abortControllerRef.current = ctrl;
+    return ctrl.signal;
+  };
+
+  const schedulePreviewJustUpdatedClear = () => {
+    if (previewJustUpdatedTimeoutRef.current) {
+      clearTimeout(previewJustUpdatedTimeoutRef.current);
+    }
+    previewJustUpdatedTimeoutRef.current = setTimeout(() => {
+      setPreviewJustUpdated(false);
+      previewJustUpdatedTimeoutRef.current = null;
+    }, 2000);
+  };
+
+  const openPreview = () => {
+    setPreviewJustUpdated(false);
+    if (previewJustUpdatedTimeoutRef.current) {
+      clearTimeout(previewJustUpdatedTimeoutRef.current);
+      previewJustUpdatedTimeoutRef.current = null;
+    }
+    setPreviewModalOpen(true);
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,12 +83,14 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     }
     setError(null);
     setIsCreatingDraft(true);
+    const signal = getAbortSignal();
     try {
       const res = await fetch('/api/plans/transcribe-from-text', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: val }),
         credentials: 'include',
+        signal,
       });
       const data = (await res.json().catch(() => ({}))) as
         | { error?: string; details?: string[] }
@@ -77,10 +109,13 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
         setDraftPlan(result.data);
         setDescribeText('');
         setError(null);
+        setPreviewJustUpdated(true);
+        schedulePreviewJustUpdatedClear();
       } else {
         setError(result.errors.join('\n'));
       }
     } catch (err) {
+      if ((err as Error).name === 'AbortError') {return;}
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
       setIsCreatingDraft(false);
@@ -94,12 +129,14 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     }
     setError(null);
     setIsRefining(true);
+    const signal = getAbortSignal();
     try {
       const res = await fetch('/api/plans/transcribe-from-text', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: val, contextPlan: draftPlan }),
         credentials: 'include',
+        signal,
       });
       const data = (await res.json().catch(() => ({}))) as
         | { error?: string; details?: string[] }
@@ -118,10 +155,13 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
         setDraftPlan(result.data);
         setRefineText('');
         setError(null);
+        setPreviewJustUpdated(true);
+        schedulePreviewJustUpdatedClear();
       } else {
         setError(result.errors.join('\n'));
       }
     } catch (err) {
+      if ((err as Error).name === 'AbortError') {return;}
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
       setIsRefining(false);
@@ -247,11 +287,31 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
         setDraftPlan(result.data);
         setDescribeText('');
         setError(null);
+        setPreviewJustUpdated(true);
+        schedulePreviewJustUpdatedClear();
       } else {
         setError(result.errors.join('\n'));
       }
     } catch {
       setError('Invalid JSON from voice');
+    }
+  };
+
+  const handleVoiceRefineResult = (json: string) => {
+    try {
+      const parsed = JSON.parse(json) as unknown;
+      const result = validatePlanWithMeta(parsed);
+      if (result.success) {
+        setDraftPlan(result.data);
+        setRefineText('');
+        setError(null);
+        setPreviewJustUpdated(true);
+        schedulePreviewJustUpdatedClear();
+      } else {
+        setError(result.errors.join('\n'));
+      }
+    } catch {
+      setError('Invalid JSON from voice refine');
     }
   };
 
@@ -272,6 +332,9 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     loading,
     recording,
     setRecording,
+    voiceSubmitting,
+    setVoiceSubmitting,
+    getAbortSignal,
     draftPlan,
     isCreatingDraft,
     refineText,
@@ -281,6 +344,7 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     setConfirmModalOpen,
     previewModalOpen,
     setPreviewModalOpen,
+    previewJustUpdated,
     fileInputRef,
     handleFileSelect,
     handleCreateDraft,
@@ -289,6 +353,8 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     handlePasteTabCreate,
     handlePaste,
     handleVoiceResult,
+    handleVoiceRefineResult,
     resetDraftFlow,
+    openPreview,
   };
 }

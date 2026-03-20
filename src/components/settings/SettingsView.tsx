@@ -77,6 +77,7 @@ export function SettingsView() {
         activeTab="settings"
         onTrainingClick={() => router.push('/')}
         onPlansClick={() => router.push('/plans')}
+        onCreateClick={() => router.push('/create')}
         onSettingsClick={() => {}}
       />
 

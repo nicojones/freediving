@@ -22,8 +22,6 @@ export function ConfirmPlanModal({ isOpen, onClose, plan, onConfirm }: ConfirmPl
     }
   }, [isOpen, plan.name, plan.description]);
 
-  const isDirty = name !== (plan.name ?? '') || description !== (plan.description ?? '');
-
   const handleConfirm = async () => {
     onClose();
     await onConfirm(name, description);
@@ -36,7 +34,7 @@ export function ConfirmPlanModal({ isOpen, onClose, plan, onConfirm }: ConfirmPl
         aria-hidden="true"
       />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="bg-surface-container-low rounded-3xl p-6 max-w-sm w-full border border-outline-variant/30 shadow-xl">
+        <DialogPanel className="bg-surface-container-low rounded-3xl p-6 max-w-md w-full border border-outline-variant/30 shadow-xl">
           <DialogTitle
             id="confirm-plan-title"
             className="font-headline text-xl font-bold text-on-surface mb-2"
@@ -56,13 +54,13 @@ export function ConfirmPlanModal({ isOpen, onClose, plan, onConfirm }: ConfirmPl
             aria-label="Plan name"
             autoComplete="off"
           />
-          <input
-            type="text"
+          <textarea
             data-testid="confirm-plan-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Plan description (optional)"
-            className="w-full h-12 px-4 rounded-xl border-2 border-outline-variant/60 bg-surface-container-low/50 text-on-surface font-body text-base focus:border-primary focus:outline-none mb-4"
+            rows={2}
+            className="w-full min-h-48 px-4 py-3 rounded-xl border-2 border-outline-variant/60 bg-surface-container-low/50 text-on-surface font-body text-base focus:border-primary focus:outline-none mb-4 resize-vertical"
             aria-label="Plan description"
             autoComplete="off"
           />
@@ -80,7 +78,7 @@ export function ConfirmPlanModal({ isOpen, onClose, plan, onConfirm }: ConfirmPl
               onClick={handleConfirm}
               className="flex-1 h-12 rounded-xl border-2 border-primary bg-primary/20 hover:bg-primary/30 font-headline font-bold text-primary text-base transition-all duration-300 active:scale-[0.98]"
             >
-              {isDirty ? 'Save' : 'Proceed with defaults'}
+              Create
             </button>
           </div>
         </DialogPanel>

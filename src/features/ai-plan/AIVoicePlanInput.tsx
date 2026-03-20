@@ -6,9 +6,22 @@ interface AIVoicePlanInputProps {
   onResult: (json: string) => void;
   disabled?: boolean;
   onRecordingChange?: (recording: boolean) => void;
+  /** Called when voice is submitting (transcribing). Parent uses this to disable text input. */
+  onVoiceSubmittingChange?: (submitting: boolean) => void;
+  /** When provided, uses refine mode: sends contextPlan to API for voice-based plan modification */
+  contextPlan?: PlanWithMeta;
+  /** Called before transcribe request; parent aborts previous requests and returns signal for this one */
+  getAbortSignal?: () => AbortSignal;
 }
 
-export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVoicePlanInputProps) {
+export function AIVoicePlanInput({
+  onResult,
+  disabled,
+  onRecordingChange,
+  onVoiceSubmittingChange,
+  contextPlan,
+  getAbortSignal,
+}: AIVoicePlanInputProps) {
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,14 +51,20 @@ export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVo
           return;
         }
         setLoading(true);
+        onVoiceSubmittingChange?.(true);
         setError(null);
         try {
           const formData = new FormData();
           formData.append('audio', blob, 'recording.webm');
+          if (contextPlan) {
+            formData.append('contextPlan', JSON.stringify(contextPlan));
+          }
+          const signal = getAbortSignal?.();
           const res = await fetch('/api/plans/transcribe', {
             method: 'POST',
             body: formData,
             credentials: 'include',
+            signal,
           });
           const data = (await res.json().catch(() => ({}))) as
             | PlanWithMeta
@@ -61,6 +80,7 @@ export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVo
           const plan = data as PlanWithMeta;
           onResult(JSON.stringify(plan, null, 2));
         } catch (err) {
+          if ((err as Error).name === 'AbortError') {return;}
           setError(
             err instanceof Error
               ? err.message
@@ -68,6 +88,7 @@ export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVo
           );
         } finally {
           setLoading(false);
+          onVoiceSubmittingChange?.(false);
         }
       };
       recorder.start();
@@ -77,7 +98,7 @@ export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVo
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not access microphone.');
     }
-  }, [onResult, onRecordingChange]);
+  }, [onResult, onRecordingChange, onVoiceSubmittingChange, contextPlan, getAbortSignal]);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {

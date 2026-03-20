@@ -2,9 +2,10 @@ import { memo } from 'react';
 import clsx from 'clsx';
 
 interface BottomNavBarProps {
-  activeTab: 'training' | 'plans' | 'settings';
+  activeTab: 'training' | 'plans' | 'create' | 'settings';
   onTrainingClick?: () => void;
   onPlansClick?: () => void;
+  onCreateClick?: () => void;
   onSettingsClick?: () => void;
 }
 
@@ -12,6 +13,7 @@ export const BottomNavBar = memo(function BottomNavBar({
   activeTab,
   onTrainingClick,
   onPlansClick,
+  onCreateClick,
   onSettingsClick,
 }: BottomNavBarProps) {
   return (
@@ -40,6 +42,7 @@ export const BottomNavBar = memo(function BottomNavBar({
       </button>
       <button
         type="button"
+        data-testid="nav-plans"
         onClick={onPlansClick}
         className={clsx(
           'flex flex-col items-center justify-center rounded-2xl px-4 py-2 min-h-[44px] min-w-[44px] transition-all duration-400',
@@ -57,6 +60,27 @@ export const BottomNavBar = memo(function BottomNavBar({
           library_books
         </span>
         <span className="font-label text-xs font-medium uppercase tracking-widest">Plans</span>
+      </button>
+      <button
+        type="button"
+        data-testid="nav-create"
+        onClick={onCreateClick}
+        className={clsx(
+          'flex flex-col items-center justify-center rounded-2xl px-4 py-2 min-h-[44px] min-w-[44px] transition-all duration-400',
+          {
+            'text-primary bg-primary/10': activeTab === 'create',
+            'text-tertiary opacity-60 hover:opacity-100 hover:text-primary': activeTab !== 'create',
+          }
+        )}
+      >
+        <span
+          className="material-symbols-outlined mb-1"
+          style={{ fontVariationSettings: activeTab === 'create' ? "'FILL' 1" : undefined }}
+          aria-hidden
+        >
+          add_circle
+        </span>
+        <span className="font-label text-xs font-medium uppercase tracking-widest">Create</span>
       </button>
       <button
         type="button"

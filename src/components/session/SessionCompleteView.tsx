@@ -1,10 +1,12 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { PrimaryButton } from '../ui/PrimaryButton';
 import { TopAppBar } from '../layout/TopAppBar';
 import { BottomNavBar } from '../layout/BottomNavBar';
 import { useTraining } from '../../hooks/useTraining';
 
 export function SessionCompleteView() {
+  const router = useRouter();
   const { handleBackToTraining, handleSettingsClick } = useTraining();
 
   return (
@@ -32,6 +34,8 @@ export function SessionCompleteView() {
       <BottomNavBar
         activeTab="training"
         onTrainingClick={() => {}}
+        onPlansClick={() => router.push('/plans')}
+        onCreateClick={() => router.push('/create')}
         onSettingsClick={handleSettingsClick}
       />
     </div>
