@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
+import type { PlanWithMeta } from '../../types/plan';
 import { validatePlanWithMeta } from '../../schemas/planSchema';
 import { AIVoicePlanInput } from '../../features/ai-plan';
 
@@ -48,35 +49,83 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
   const handleCreate = async () => {
     setError(null);
     setSuccess(false);
+    const val = jsonText.trim();
+    if (!val) {
+      return;
+    }
+
+    setLoading(true);
     try {
-      const parsed = JSON.parse(jsonText) as unknown;
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(val);
+      } catch {
+        // Not valid JSON → treat as AI prompt
+        const res = await fetch('/api/plans/transcribe-from-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: val }),
+          credentials: 'include',
+        });
+        const data = (await res.json().catch(() => ({}))) as
+          | { error?: string; details?: string[] }
+          | PlanWithMeta;
+        if (!res.ok) {
+          const err = data as { error?: string; details?: string[] };
+          const msg = err.details?.length
+            ? err.details.join('\n')
+            : (err.error ?? `Failed (${res.status})`);
+          setError(msg);
+          return;
+        }
+        setJsonText(JSON.stringify(data as PlanWithMeta, null, 2));
+        return;
+      }
+
       const result = validatePlanWithMeta(parsed);
-      if (!result.success) {
-        setError(result.errors.join('\n'));
-        return;
+      if (result.success) {
+        const res = await fetch('/api/plans', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(result.data),
+          credentials: 'include',
+        });
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          details?: string[];
+        };
+        if (!res.ok) {
+          const msg = data.details?.length
+            ? data.details.join('\n')
+            : (data.error ?? `Failed to create plan (${res.status})`);
+          setError(msg);
+          return;
+        }
+        setSuccess(true);
+        setJsonText('');
+        onPlanCreated?.();
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        // Parse succeeded but validation failed → treat as AI prompt
+        const res = await fetch('/api/plans/transcribe-from-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: val }),
+          credentials: 'include',
+        });
+        const data = (await res.json().catch(() => ({}))) as
+          | { error?: string; details?: string[] }
+          | PlanWithMeta;
+        if (!res.ok) {
+          const err = data as { error?: string; details?: string[] };
+          const msg = err.details?.length
+            ? err.details.join('\n')
+            : (err.error ?? `Failed (${res.status})`);
+          setError(msg);
+          return;
+        }
+        setJsonText(JSON.stringify(data as PlanWithMeta, null, 2));
       }
-      setLoading(true);
-      const res = await fetch('/api/plans', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(result.data),
-        credentials: 'include',
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        error?: string;
-        details?: string[];
-      };
-      if (!res.ok) {
-        const msg = data.details?.length
-          ? data.details.join('\n')
-          : (data.error ?? `Failed to create plan (${res.status})`);
-        setError(msg);
-        return;
-      }
-      setSuccess(true);
-      setJsonText('');
-      onPlanCreated?.();
-      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
@@ -112,8 +161,7 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
         Create plan
       </h2>
       <p className="text-on-surface-variant font-body text-sm mb-4">
-        Upload a JSON file or paste PlanWithMeta JSON below. Valid plans appear in the plan
-        selector.
+        Upload a JSON file, paste PlanWithMeta JSON, describe your plan in text, or use AI voice.
       </p>
 
       <input
@@ -188,7 +236,7 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
           setJsonText(e.target.value);
           setError(null);
         }}
-        placeholder='{"id": "my-plan", "name": "My Plan", "days": [...]}'
+        placeholder='Paste JSON or describe your plan in text (e.g. "3 days of holds, 2 min each, 2 min recovery")'
         className="w-full h-40 px-4 py-3 rounded-xl border-2 border-outline-variant/60 bg-surface-container-low/50 text-on-surface font-mono text-sm resize-y focus:border-primary focus:outline-none placeholder:text-on-surface-variant/50"
         aria-label="Plan JSON"
         data-testid="create-plan-json-textarea"

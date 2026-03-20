@@ -32,6 +32,9 @@
 - [x] **Phase 22: Plans Tab + Settings Cleanup** - Add Plans tab; move plan-related UI from Settings; created_by + delete non-active plans; leave room for explore-without-switching
 - [ ] **Phase 23: Prettier + Lefthook + CI** - Basic formatter (Prettier); format + lint via lefthook.yml; GitHub workflow aborts if format/lint would change files
 - [ ] **Phase 24: AI Plan Input Enhancements** - Dynamic prompt from plan types; text/description-to-plan via LLM; optional dedicated plan creation screen
+- [ ] **Phase 25: Component Library (Radix/Headless UI)** - Add Radix UI or Headless UI; replace custom modals/dialogs; establish primitives for tabs, buttons
+- [ ] **Phase 26: Plan Creation UX** - Tab (natural language vs JSON); Preview instead of raw JSON; refine flow; confirm modal (name/description)
+- [ ] **Phase 27: Plan Creation UI Polish** - Visual and interaction improvements (deferred from Phase 25)
 
 ---
 
@@ -494,6 +497,60 @@
 
 ---
 
+### Phase 25: Component Library (Radix/Headless UI)
+
+**Goal:** Add Radix UI or Headless UI to reduce maintenance burden of custom components. Replace custom modals/dialogs with accessible primitives; establish patterns for tabs, buttons, and other UI primitives that downstream phases need.
+
+**Depends on:** Phase 24 (AI Plan Input Enhancements)
+
+**Requirements:** (Enhancement — component infrastructure)
+
+**Success Criteria** (what must be TRUE):
+
+1. Radix UI or Headless UI installed and configured; compatible with Tailwind and Fishly design tokens
+2. ConfirmResetModal replaced with library Dialog primitive (styled with existing tokens)
+3. Tabs primitive available for Phase 26 (Plan Creation UX) tab input modes
+4. No behavior change for users; existing tests pass
+5. Documented patterns for future modal/dialog/tab usage
+
+**Plans:** `.planning/25-PLAN.md` (TBD — research and task breakdown)
+
+---
+
+### Phase 26: Plan Creation UX
+
+**Goal:** Make plan creation more intuitive: tab to switch between natural-language and JSON input; show Preview (using existing components) instead of raw JSON after LLM response; refine flow with contextual button labels; confirm modal for name/description before saving.
+
+**Depends on:** Phase 25 (Component Library)
+
+**Requirements:** (Enhancement — plan creation UX)
+
+**Success Criteria** (what must be TRUE):
+
+1. Tab to switch between "natural language" and "JSON" input modes (labels TBD)
+2. Natural-language path: after LLM returns valid plan, show Preview (reuse DayListSection/SessionBreakdown/etc.) instead of raw JSON
+3. Button states: empty → "Describe your plan first"; has text → "Generate" (or similar); after valid plan → "Preview" + "Refine" + "Confirm/Save plan"
+4. Refine flow: user can send new text to LLM; repeat until satisfied
+5. Confirm modal: prefilled name/description; optional edit; hint; Save button (use Phase 25 Dialog primitive)
+
+**Plans:** `.planning/26-PLAN.md` (TBD — research and task breakdown)
+
+---
+
+### Phase 27: Plan Creation UI Polish
+
+**Goal:** Visual and interaction improvements for plan creation (deferred from Phase 26 scope).
+
+**Depends on:** Phase 26 (Plan Creation UX)
+
+**Requirements:** (Enhancement — plan creation UI)
+
+**Success Criteria:** TBD
+
+**Plans:** `.planning/27-PLAN.md` (TBD)
+
+---
+
 ## Progress
 
 | Phase                                                 | Plans Complete | Status   | Completed  |
@@ -522,6 +579,9 @@
 | 22. Plans Tab + Settings Cleanup                      | 5/5            | Complete | 22-PLAN.md |
 | 23. Prettier + Lefthook + CI                          | 0/5            | Pending  | 23-PLAN.md |
 | 24. AI Plan Input Enhancements                        | 0/7            | Pending  | 24-PLAN.md |
+| 25. Component Library (Radix/Headless UI)             | 0/TBD          | Pending  | 25-PLAN.md |
+| 26. Plan Creation UX                                  | 0/TBD          | Pending  | 26-PLAN.md |
+| 27. Plan Creation UI Polish                           | 0/TBD          | Pending  | 27-PLAN.md |
 
 ---
 

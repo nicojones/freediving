@@ -117,14 +117,14 @@ export function Dashboard() {
   const isSelectedDayCompleted = showSessionPreview && isDayCompleted(completions, selectedDayId);
 
   return (
-    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
+    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden max-sm:px-1!">
       <TopAppBar
         variant={showDayDetail ? 'session-preview' : 'dashboard'}
         weekLabel="Current Week"
       />
       <main
         className={clsx(
-          'px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300',
+          'px-2 sm:px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300',
           { 'pb-12': showDayDetail },
           isSelectedDayCompleted &&
             'ring-2 ring-emerald-500/60 shadow-[0_0_32px_rgba(5,150,105,0.15)]'

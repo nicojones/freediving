@@ -112,4 +112,48 @@ test.describe('Create plan', () => {
 
     await createPlanAndVerify(page, 'E2E Type Plan', true);
   });
+
+  test('paste free-form text, convert via AI, create plan', async ({ page }) => {
+    const TEXT_TO_PLAN = {
+      id: 'e2e-text-plan',
+      name: 'E2E Text Plan',
+      description: 'Plan from free-form text',
+      days: [
+        {
+          id: 'e2etxt1',
+          day: 1,
+          phases: [
+            { type: 'hold' as const, duration: 120 },
+            { type: 'recovery' as const, duration: 120 },
+          ],
+        },
+      ],
+    };
+
+    await page.route('**/api/plans/transcribe-from-text', async (route) => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(TEXT_TO_PLAN),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await loginAsNico(page);
+    await goToPlansAndCreatePlanSection(page);
+
+    await page
+      .getByTestId('create-plan-json-textarea')
+      .fill('3 days of holds, 2 min each, 2 min recovery');
+    await page.getByTestId('create-plan-create-button').click();
+
+    await expect(page.getByTestId('create-plan-json-textarea')).toContainText('e2e-text-plan', {
+      timeout: 10000,
+    });
+
+    await createPlanAndVerify(page, 'E2E Text Plan', true);
+  });
 });

@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-20 — Phase 24 added
+**Last updated:** 2025-03-20 — Phase 25 (Component Library) inserted; 25→26, 26→27
 
 ---
 
@@ -8,21 +8,21 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 24 — AI Plan Input Enhancements (next)
+**Current focus:** Phase 25 — Component Library (Radix/Headless UI) (next)
 
 ---
 
 ## Current Position
 
-| Field    | Value                          |
-| -------- | ------------------------------ |
-| Phase    | 24. AI Plan Input Enhancements |
-| Plan     | 24-PLAN.md                     |
-| Status   | Pending                        |
-| Progress | 0/5 tasks                      |
+| Field    | Value                                     |
+| -------- | ----------------------------------------- |
+| Phase    | 25. Component Library (Radix/Headless UI) |
+| Plan     | 25-PLAN.md                                |
+| Status   | Planning                                  |
+| Progress | 0/TBD tasks                               |
 
 ```
-[████████████] 100%
+[            ] 0%
 ```
 
 ---
@@ -31,10 +31,10 @@
 
 | Metric              | Value |
 | ------------------- | ----- |
-| Phases complete     | 22    |
-| Phases total        | 24    |
+| Phases complete     | 23    |
+| Phases total        | 27    |
 | Requirements mapped | 17/17 |
-| Plans executed      | 22    |
+| Plans executed      | 23    |
 
 ---
 
@@ -74,7 +74,7 @@
 - [x] Phase 21: UI (21-PLAN.md)
 - [x] Phase 22: Plans Tab + Settings Cleanup (22-PLAN.md)
 - [x] Phase 23: Prettier + Lefthook + CI (23-PLAN.md)
-- [ ] Phase 24: AI Plan Input Enhancements (24-PLAN.md)
+- [x] Phase 24: AI Plan Input Enhancements (24-PLAN.md)
 
 ### Blockers
 
@@ -84,4 +84,4 @@ None.
 
 ## Session Continuity
 
-Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 executed — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible. Phase 18 executed — Dynamic version from package.json on login; semantic-release for fix→patch, feat→minor, chore→no bump on push to main. Phase 19 executed — Create plan in Settings: JSON upload with PlanWithMeta schema validation; optional AI voice mode (dictate → Gemini → valid JSON → auto-fill → user confirms); DB storage preferred. Phase 20 executed — Preview future days in training plan (view structure); no way to execute future days. Phase 21 executed — UI: DayListSection uses plan name/description; remove plan name from TopAppBar; move "Fishly" to constants. Phase 22 executed — Plans Tab + Settings Cleanup: three tabs (Training, Plans, Settings); PlansView with plan selector, create plan, delete user-created non-active plans; created_by on plans table; Settings cleanup (reset, dev mode, profile, logout only). Phase 23 executed — Prettier + Lefthook + CI: Prettier installed and configured; lefthook pre-commit runs format + lint + unit tests + build + e2e (when source files staged), emoji-prefixed commands; GitHub workflow runs format:check before lint, emoji-prefixed step names, aborts if code is unformatted or has lint issues. Phase 24 added — AI Plan Input Enhancements: dynamic prompt from plan types; text/description-to-plan via LLM; optional dedicated plan creation screen.
+Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 executed — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible. Phase 18 executed — Dynamic version from package.json on login; semantic-release for fix→patch, feat→minor, chore→no bump on push to main. Phase 19 executed — Create plan in Settings: JSON upload with PlanWithMeta schema validation; optional AI voice mode (dictate → Gemini → valid JSON → auto-fill → user confirms); DB storage preferred. Phase 20 executed — Preview future days in training plan (view structure); no way to execute future days. Phase 21 executed — UI: DayListSection uses plan name/description; remove plan name from TopAppBar; move "Fishly" to constants. Phase 22 executed — Plans Tab + Settings Cleanup: three tabs (Training, Plans, Settings); PlansView with plan selector, create plan, delete user-created non-active plans; created_by on plans table; Settings cleanup (reset, dev mode, profile, logout only). Phase 23 executed — Prettier + Lefthook + CI: Prettier installed and configured; lefthook pre-commit runs format + lint + unit tests + build + e2e (when source files staged), emoji-prefixed commands; GitHub workflow runs format:check before lint, emoji-prefixed step names, aborts if code is unformatted or has lint issues. Phase 24 executed — AI Plan Input Enhancements: Zod schemas in plan.ts with .describe(); dynamic responseJsonSchema for transcribe; transcribe-from-text endpoint; CreatePlanSection uses Zod validation to decide JSON vs AI path; unit tests for both endpoints and plan schema; E2E for text path. Phase 25 inserted — Component Library (Radix/Headless UI): replace custom modals/dialogs; add Tabs primitive; context in 25-CONTEXT.md. Phase 26 (Plan Creation UX) deferred from 25; Phase 27 (Plan Creation UI Polish) deferred from 26.
