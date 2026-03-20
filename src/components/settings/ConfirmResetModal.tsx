@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 
-const CONFIRM_WORD = 'reset'
-
 interface ConfirmResetModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: () => void | Promise<void>
   title: string
   message: React.ReactNode
+  /** Word user must type to confirm; defaults to 'reset' */
+  confirmWord?: string
 }
 
 export function ConfirmResetModal({
@@ -16,6 +16,7 @@ export function ConfirmResetModal({
   onConfirm,
   title,
   message,
+  confirmWord = 'reset',
 }: ConfirmResetModalProps) {
   const [confirmInput, setConfirmInput] = useState('')
 
@@ -24,12 +25,12 @@ export function ConfirmResetModal({
   }, [isOpen])
 
   const handleConfirm = async () => {
-    if (confirmInput.toLowerCase() !== CONFIRM_WORD) {return}
+    if (confirmInput.toLowerCase() !== confirmWord.toLowerCase()) {return}
     onClose()
     await onConfirm()
   }
 
-  const canConfirm = confirmInput.toLowerCase() === CONFIRM_WORD
+  const canConfirm = confirmInput.toLowerCase() === confirmWord.toLowerCase()
 
   if (!isOpen) {return null}
 
@@ -55,9 +56,9 @@ export function ConfirmResetModal({
           data-testid="confirm-reset-input"
           value={confirmInput}
           onChange={(e) => setConfirmInput(e.target.value)}
-          placeholder="Type 'reset' to confirm"
+          placeholder={`Type '${confirmWord}' to confirm`}
           className="w-full h-12 px-4 rounded-xl border-2 border-outline-variant/60 bg-surface-container-low/50 text-on-surface font-body text-base focus:border-primary focus:outline-none mb-4"
-          aria-label="Type reset to confirm"
+          aria-label={`Type ${confirmWord} to confirm`}
           autoComplete="off"
         />
         <div className="flex gap-3">

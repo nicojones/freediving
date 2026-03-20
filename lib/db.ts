@@ -20,6 +20,15 @@ export function runSchema() {
   db.exec(schema)
 }
 
+/** Add created_by to plans if missing (Phase 22 migration) */
+function migratePlansCreatedBy() {
+  const info = db.prepare('PRAGMA table_info(plans)').all() as { name: string }[]
+  if (info.some((c) => c.name === 'created_by')) {
+    return
+  }
+  db.exec('ALTER TABLE plans ADD COLUMN created_by INTEGER REFERENCES users(id)')
+}
+
 export function seedUsers() {
   const nicoPassword = process.env.USER_PASSWORD_NICO || 'password'
   const athenaPassword = process.env.USER_PASSWORD_ATHENA || 'password'
@@ -35,4 +44,5 @@ export function seedUsers() {
 }
 
 runSchema()
+migratePlansCreatedBy()
 seedUsers()

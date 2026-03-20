@@ -5,8 +5,11 @@ export function DevModeSection() {
   const [devModeEnabled, setDevModeEnabled] = useDevMode()
 
   return (
-    <section className="mb-8" data-testid="dev-mode-section">
-      <h2 className="font-headline text-lg font-bold text-on-surface mb-3">
+    <div
+      className="bg-surface-container-low rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/30"
+      data-testid="dev-mode-section"
+    >
+      <h2 className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-3">
         Developer
       </h2>
       <label className="flex items-center gap-3 cursor-pointer">
@@ -21,6 +24,6 @@ export function DevModeSection() {
           Show test controls on session preview for faster testing
         </span>
       </label>
-    </section>
+    </div>
   )
 }

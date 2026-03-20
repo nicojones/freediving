@@ -4,56 +4,33 @@ import { useRouter } from 'next/navigation'
 import { TopAppBar } from '../layout/TopAppBar'
 import { BottomNavBar } from '../layout/BottomNavBar'
 import { DevModeSection } from './DevModeSection'
-import { PlanSelectorSection } from './PlanSelectorSection'
-import { CreatePlanSection } from './CreatePlanSection'
 import { ResetProgressSection } from './ResetProgressSection'
 import { ConfirmResetModal } from './ConfirmResetModal'
 import { UserProfileCard } from './UserProfileCard'
 import { useTraining } from '../../hooks/useTraining'
 import { DEFAULT_USERNAME } from '../../constants/app'
 
-type ConfirmType = 'reset' | 'planChange' | null
-
 export function SettingsView() {
   const router = useRouter()
   const {
     user,
-    availablePlans,
-    activePlanId,
     resetProgress,
-    setActivePlan,
-    refreshAvailablePlans,
     handleLogout,
   } = useTraining()
   const username = user?.username ?? DEFAULT_USERNAME
 
-  const [confirmState, setConfirmState] = useState<{
-    type: ConfirmType
-    pendingPlanId?: string
-  }>({ type: null })
-
-  const handlePlanChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newPlanId = e.target.value
-    if (newPlanId === activePlanId) {return}
-    setConfirmState({ type: 'planChange', pendingPlanId: newPlanId })
-  }
+  const [confirmReset, setConfirmReset] = useState(false)
 
   const handleRequestReset = () => {
-    setConfirmState({ type: 'reset' })
+    setConfirmReset(true)
   }
 
   const handleCloseConfirm = () => {
-    setConfirmState({ type: null })
+    setConfirmReset(false)
   }
 
   const handleConfirmReset = async () => {
     await resetProgress()
-  }
-
-  const handleConfirmPlanChange = async () => {
-    if (confirmState.pendingPlanId) {
-      await setActivePlan(confirmState.pendingPlanId)
-    }
   }
 
   return (
@@ -73,14 +50,6 @@ export function SettingsView() {
           <p className="text-on-surface-variant font-body text-sm max-w-[80%] mb-10">
             Account and app preferences.
           </p>
-
-          <PlanSelectorSection
-            availablePlans={availablePlans}
-            activePlanId={activePlanId}
-            onPlanChange={handlePlanChange}
-          />
-
-          <CreatePlanSection onPlanCreated={refreshAvailablePlans} />
 
           <ResetProgressSection onRequestReset={handleRequestReset} />
 
@@ -103,29 +72,18 @@ export function SettingsView() {
       <BottomNavBar
         activeTab="settings"
         onTrainingClick={() => router.push('/')}
+        onPlansClick={() => router.push('/plans')}
         onSettingsClick={() => {}}
       />
 
       <ConfirmResetModal
-        isOpen={confirmState.type === 'reset'}
+        isOpen={confirmReset}
         onClose={handleCloseConfirm}
         onConfirm={handleConfirmReset}
         title="Reset progress"
         message={
           <>
             This will clear all progress for this plan. Type <strong className="text-on-surface">reset</strong> to confirm.
-          </>
-        }
-      />
-
-      <ConfirmResetModal
-        isOpen={confirmState.type === 'planChange'}
-        onClose={handleCloseConfirm}
-        onConfirm={handleConfirmPlanChange}
-        title="Change training plan"
-        message={
-          <>
-            Changing plan will reset your progress. Type <strong className="text-on-surface">reset</strong> to confirm.
           </>
         }
       />

@@ -8,6 +8,9 @@ export const APP_NAME = 'Fishly'
 export const DEFAULT_PLAN_NAME = 'CO2 Tolerance'
 /** Fallback plan ID when no active plan stored */
 export const DEFAULT_PLAN_ID = 'default'
+
+/** Plan IDs bundled in src/data; not user-deletable, not creatable via API */
+export const BUNDLED_PLAN_IDS: readonly string[] = ['default', 'minimal']
 /** Fallback username when user object missing */
 export const DEFAULT_USERNAME = 'Unknown'
 

@@ -2,6 +2,7 @@
  * E2E test: abort session flow.
  */
 import { test, expect } from '@playwright/test'
+import { loginAsNico } from './helpers/login'
 
 test.setTimeout(60000)
 
@@ -9,11 +10,7 @@ test('user can abort session', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('freediving_dev_mode', 'true')
   })
-  await page.goto('/')
-  await page.getByTestId('login-username').fill('nico')
-  await page.getByTestId('login-password').fill('password')
-  await page.getByTestId('login-submit').click()
-  await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
+  await loginAsNico(page)
 
   const firstDay = page.locator('[data-testid^="day-card-"]').first()
   await firstDay.click()

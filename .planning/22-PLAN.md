@@ -99,7 +99,7 @@ Settings is becoming too polluted. Extract plan-related functionality into a ded
 2. Ensure Plans tab structure (e.g. plan list, selection) does not block adding "preview/explore" mode later
 3. Do NOT implement explore/preview; only leave structural room
 
-**Done:** No dead ends; future upgrade path clear.
+**Done:** PlansView JSDoc documents future enhancement; structure (plan list, selector, PlanDeleteSection) allows adding preview/explore mode without refactor.
 
 ---
 

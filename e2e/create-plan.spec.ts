@@ -6,6 +6,7 @@
 import { test, expect } from '@playwright/test'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { loginAsNico } from './helpers/login'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -41,17 +42,9 @@ const TYPE_PLAN = {
   ],
 }
 
-async function login(page: import('@playwright/test').Page) {
-  await page.goto('/')
-  await page.getByTestId('login-username').fill('nico')
-  await page.getByTestId('login-password').fill('password')
-  await page.getByTestId('login-submit').click()
-  await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
-}
-
-async function goToSettingsAndCreatePlanSection(page: import('@playwright/test').Page) {
-  await page.getByRole('button', { name: /settings/i }).click()
-  await page.waitForURL(/\/settings/)
+async function goToPlansAndCreatePlanSection(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: /plans/i }).click()
+  await page.waitForURL(/\/plans/)
   await expect(page.getByTestId('create-plan-json-textarea')).toBeVisible({ timeout: 5000 })
 }
 
@@ -73,7 +66,7 @@ async function createPlanAndVerify(
     await expect(page.getByTestId('confirm-reset-input')).not.toBeVisible()
 
     await page.getByRole('button', { name: /training/i }).click()
-    await page.waitForURL(/\/(?!settings)/)
+    await page.waitForURL(/\/(?!plans|settings)/)
     await expect(page.getByTestId('plan-name')).toHaveText(planName, { timeout: 5000 })
     await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
   }
@@ -85,8 +78,8 @@ test.describe('Create plan', () => {
     context,
   }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write'])
-    await login(page)
-    await goToSettingsAndCreatePlanSection(page)
+    await loginAsNico(page)
+    await goToPlansAndCreatePlanSection(page)
 
     const jsonStr = JSON.stringify(PASTE_PLAN, null, 2)
     await page.evaluate(async (json) => {
@@ -104,8 +97,8 @@ test.describe('Create plan', () => {
   test('upload JSON file, create plan, switch to it, verify Training tab', async ({
     page,
   }) => {
-    await login(page)
-    await goToSettingsAndCreatePlanSection(page)
+    await loginAsNico(page)
+    await goToPlansAndCreatePlanSection(page)
 
     const fixturePath = join(__dirname, 'fixtures', 'e2e-upload-plan.json')
     await page.getByTestId('create-plan-file-input').setInputFiles(fixturePath)
@@ -120,8 +113,8 @@ test.describe('Create plan', () => {
   test('type JSON manually, create plan, switch to it, verify Training tab', async ({
     page,
   }) => {
-    await login(page)
-    await goToSettingsAndCreatePlanSection(page)
+    await loginAsNico(page)
+    await goToPlansAndCreatePlanSection(page)
 
     const jsonText = JSON.stringify(TYPE_PLAN, null, 2)
     await page.getByTestId('create-plan-json-textarea').fill(jsonText)

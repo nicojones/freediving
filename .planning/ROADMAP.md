@@ -29,7 +29,7 @@
 - [x] **Phase 19: Create Plan in Settings** - JSON upload with schema validation; optional AI voice mode (dictate → Gemini → PlanWithMeta JSON)
 - [x] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
 - [x] **Phase 21: UI** - Remove hardcoded text; unify plan name/description in DayListSection; move app name to constants
-- [ ] **Phase 22: Plans Tab + Settings Cleanup** - Add Plans tab; move plan-related UI from Settings; created_by + delete non-active plans; leave room for explore-without-switching
+- [x] **Phase 22: Plans Tab + Settings Cleanup** - Add Plans tab; move plan-related UI from Settings; created_by + delete non-active plans; leave room for explore-without-switching
 
 ---
 
@@ -458,7 +458,7 @@
 | 19. Create Plan in Settings | 0/9 | Pending | 19-PLAN.md |
 | 20. Preview Future Days | 0/TBD | Pending | 20-PLAN.md |
 | 21. UI | 0/3 | Pending | 21-PLAN.md |
-| 22. Plans Tab + Settings Cleanup | 0/5 | Pending | 22-PLAN.md |
+| 22. Plans Tab + Settings Cleanup | 5/5 | Complete | 22-PLAN.md |
 
 ---
 

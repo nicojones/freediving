@@ -28,5 +28,6 @@ CREATE TABLE IF NOT EXISTS plans (
   name TEXT NOT NULL,
   description TEXT,
   days_json TEXT NOT NULL,
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  created_by INTEGER REFERENCES users(id)
 );

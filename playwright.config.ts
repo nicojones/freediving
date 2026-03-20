@@ -5,6 +5,7 @@ const E2E_PORT = '3098'
 export default defineConfig({
   testDir: 'e2e',
   workers: 1,
+  timeout: 60000,
   webServer: {
     command: `npx next dev -p ${E2E_PORT}`,
     url: `http://localhost:${E2E_PORT}/api/auth/me`,

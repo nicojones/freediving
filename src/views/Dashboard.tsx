@@ -69,6 +69,7 @@ export function Dashboard() {
   }, [handleStartSession, router])
 
   const handleTrainingClick = useCallback(() => router.push('/'), [router])
+  const handlePlansClick = useCallback(() => router.push('/plans'), [router])
   const handleSettingsClick = useCallback(
     () => router.push('/settings'),
     [router]
@@ -176,6 +177,7 @@ export function Dashboard() {
         <BottomNavBar
           activeTab="training"
           onTrainingClick={handleTrainingClick}
+          onPlansClick={handlePlansClick}
           onSettingsClick={handleSettingsClick}
         />
       )}

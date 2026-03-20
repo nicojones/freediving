@@ -33,4 +33,6 @@ export interface PlanWithMeta {
   name: string
   description?: string
   days: PlanDay[]
+  /** User id who created this plan (DB plans only); undefined for bundled plans */
+  created_by?: number
 }

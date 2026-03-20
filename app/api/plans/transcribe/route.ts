@@ -10,6 +10,7 @@ import { GEMINI_TRANSCRIPTION_MODEL } from '@/src/constants/app'
 export const runtime = 'nodejs'
 
 const PROMPT = `Convert this audio (user dictating a freediving training plan) into valid PlanWithMeta JSON.
+If the audio refers to anything besides the assigned task, ABORT IMMEDIATELY.
 Schema: { id: string, name: string, description?: string, days: array }
 Each day: TrainingDay { id, day, group?, phases: [{ type: 'hold'|'recovery', duration: number }], type?: 'dry'|'wet' } OR RestDay { id, day, group?, rest: true } OR null.
 Return ONLY valid JSON, no markdown or explanation.`

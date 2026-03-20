@@ -4,6 +4,7 @@
  * Playwright starts both servers via playwright.config.ts webServer.
  */
 import { test, expect } from '@playwright/test'
+import { loginAsNico } from './helpers/login'
 
 // Session can take ~60s with 10x speed; allow up to 90s for flakiness
 test.setTimeout(90000)
@@ -12,12 +13,7 @@ test('user can complete a session with test mode', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('freediving_dev_mode', 'true')
   })
-  // 1. Login
-  await page.goto('/')
-  await page.getByTestId('login-username').fill('nico')
-  await page.getByTestId('login-password').fill('password')
-  await page.getByTestId('login-submit').click()
-  await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
+  await loginAsNico(page)
 
   // 2. Pick a day and open session preview
   const firstDayCard = page.locator('[data-testid^="day-card-"]').first()
