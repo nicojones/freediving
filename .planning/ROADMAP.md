@@ -21,6 +21,7 @@
 - [x] **Phase 11: Refactor Code (Quality Pass)** - clsx correctness; small components; extract sub-components for clarity and testability
 - [x] **Phase 12: Tests** - Unit tests across the app; simple E2E tests with isolated test DB
 - [x] **Phase 13: Deployment** - GitHub Actions deploy to DigitalOcean on push to main
+- [ ] **Phase 14: Next.js Migration** - Migrate all the code (express + react) to Next.js
 
 ---
 
@@ -261,6 +262,25 @@
 
 ---
 
+### Phase 14: Next.js Migration
+
+**Goal:** Migrate all the code (Express + React) to Next.js. Single framework for frontend and API.
+
+**Depends on:** Phase 13 (Deployment)
+
+**Requirements:** (Enhancement — framework migration)
+
+**Success Criteria** (what must be TRUE):
+1. Express API routes migrated to Next.js API routes or Route Handlers
+2. React pages/components migrated to Next.js App Router or Pages Router
+3. PWA, offline support, and audio precache preserved
+4. Deployment updated for Next.js build output (.next/)
+5. All existing functionality works as before
+
+**Plans:** `.planning/14-PLAN.md` (to be created)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -278,6 +298,7 @@
 | 11. Refactor Code (Quality Pass) | 6/6 | Complete | 11-PLAN.md |
 | 12. Tests | 8/8 | Complete | 12-PLAN.md |
 | 13. Deployment | 6/6 | Complete | 13-PLAN.md |
+| 14. Next.js Migration | 0/0 | Pending | 14-PLAN.md |
 
 ---
 

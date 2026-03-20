@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-20 — Phase 12 & 13 executed
+**Last updated:** 2025-03-20 — Phase 14 added to roadmap
 
 ---
 
@@ -8,7 +8,7 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 13 — Deployment (complete)
+**Current focus:** Phase 14 — Next.js Migration (pending)
 
 ---
 
@@ -16,13 +16,13 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 13. Deployment |
-| Plan | 13-PLAN.md |
-| Status | Executed |
-| Progress | 13/13 phases |
+| Phase | 14. Next.js Migration |
+| Plan | 14-PLAN.md |
+| Status | Pending |
+| Progress | 13/14 phases |
 
 ```
-[████████████] 100%
+[████████████░] 93%
 ```
 
 ---
@@ -32,7 +32,7 @@
 | Metric | Value |
 |--------|-------|
 | Phases complete | 13 |
-| Phases total | 13 |
+| Phases total | 14 |
 | Requirements mapped | 17/17 |
 | Plans executed | 13 |
 
@@ -64,6 +64,7 @@
 - [x] Phase 11: Refactor Code (Quality Pass) (context in 11-CONTEXT.md)
 - [x] Phase 12: Tests (12-PLAN.md)
 - [x] Phase 13: Deployment (13-PLAN.md)
+- [ ] Phase 14: Next.js Migration (14-PLAN.md)
 
 ### Blockers
 
@@ -73,4 +74,4 @@ None.
 
 ## Session Continuity
 
-Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template.
+Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) added to roadmap — migrate Express + React to Next.js.

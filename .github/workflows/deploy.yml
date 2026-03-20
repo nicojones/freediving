@@ -88,4 +88,9 @@ jobs:
               rm build.zip
             fi
 
+            # Install deps when node_modules missing (first deploy or no modules.zip)
+            if [ ! -d "node_modules" ] || [ ! -f "node_modules/express/package.json" ]; then
+              npm ci --omit=dev
+            fi
+
             systemctl restart freediving.service
