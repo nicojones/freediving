@@ -80,7 +80,9 @@ export function AIVoicePlanInput({
           const plan = data as PlanWithMeta;
           onResult(JSON.stringify(plan, null, 2));
         } catch (err) {
-          if ((err as Error).name === 'AbortError') {return;}
+          if ((err as Error).name === 'AbortError') {
+            return;
+          }
           setError(
             err instanceof Error
               ? err.message

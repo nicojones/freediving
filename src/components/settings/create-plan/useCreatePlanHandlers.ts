@@ -115,7 +115,9 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
         setError(result.errors.join('\n'));
       }
     } catch (err) {
-      if ((err as Error).name === 'AbortError') {return;}
+      if ((err as Error).name === 'AbortError') {
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
       setIsCreatingDraft(false);
@@ -161,7 +163,9 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
         setError(result.errors.join('\n'));
       }
     } catch (err) {
-      if ((err as Error).name === 'AbortError') {return;}
+      if ((err as Error).name === 'AbortError') {
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
       setIsRefining(false);
