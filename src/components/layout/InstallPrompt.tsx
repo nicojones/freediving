@@ -59,7 +59,7 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
   if (!showPrompt || dismissed || !hasEngaged) {return null}
 
   return (
-    <div className="mb-6 bg-surface-container-low rounded-3xl p-5 border border-outline-variant/30 overflow-hidden flex items-center gap-4">
+    <div className="mb-6 bg-surface-container-low rounded-3xl p-5 border border-outline-variant/30 overflow-hidden flex flex-col sm:flex-row sm:items-center gap-4">
       <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
         <span className="material-symbols-outlined text-primary text-2xl">
           {deferredPrompt ? 'download_2' : 'add_to_home_screen'}

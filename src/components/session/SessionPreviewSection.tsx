@@ -1,5 +1,10 @@
 import type { Phase } from '../../types/plan'
 import { BackButton } from '../ui/BackButton'
+
+/** Title-cases a string like "warm-up" → "Warm-up" */
+function titleCase(s: string): string {
+  return s.replace(/\b\w/g, (c) => c.toUpperCase())
+}
 import { SessionBreakdown } from './SessionBreakdown'
 import { SessionPreviewStats } from './SessionPreviewStats'
 import { SpeedMultiplierSelector } from './SpeedMultiplierSelector'
@@ -8,6 +13,8 @@ import { StartSessionCTA } from './StartSessionCTA'
 interface SessionPreviewSectionProps {
   selectedDayIndex: number
   selectedPhases: Phase[]
+  planName?: string
+  dayGroup?: string
   currentDayIndex: number | null
   speedMultiplier: number
   testMode: boolean
@@ -25,6 +32,8 @@ interface SessionPreviewSectionProps {
 export function SessionPreviewSection({
   selectedDayIndex,
   selectedPhases,
+  planName,
+  dayGroup,
   currentDayIndex,
   speedMultiplier,
   testMode,
@@ -41,6 +50,7 @@ export function SessionPreviewSection({
   const isCurrentDay = selectedDayIndex === currentDayIndex
   const showStartCTA = isCurrentDay && !isDayCompleted
   const showCompletedCTA = isDayCompleted && completedAt != null
+  const isFutureDay = !isCurrentDay && !isDayCompleted
 
   return (
     <>
@@ -50,24 +60,36 @@ export function SessionPreviewSection({
         </div>
         <section className="mb-0">
           <h1 className="font-headline text-[3.5rem] leading-[1.1] font-bold tracking-tight text-on-surface mb-2">
-            Day {selectedDayIndex + 1}: Foundation Prep
+            Day {selectedDayIndex + 1}{dayGroup ? `: ${titleCase(dayGroup)}` : ''}
           </h1>
-          <p className="text-on-surface-variant text-lg tracking-wide font-medium">
-            CO2 Tolerance Training • Level 1
-          </p>
+          {planName && (
+            <p className="text-on-surface-variant text-lg tracking-wide font-medium">
+              {planName}
+            </p>
+          )}
         </section>
       </div>
 
       <SessionPreviewStats phases={selectedPhases} />
 
-      {showTestControls && (
+      {isFutureDay && (
+        <p
+          data-testid="preview-only-message"
+          className="mb-6 font-body text-on-surface-variant bg-surface-container-low rounded-2xl p-4"
+        >
+          This is a future day. You can preview the structure but cannot start a
+          session yet.
+        </p>
+      )}
+
+      {showTestControls && isCurrentDay && (
         <SpeedMultiplierSelector
           value={speedMultiplier}
           onChange={onSpeedMultiplierChange}
         />
       )}
 
-      {showTestControls && (
+      {showTestControls && isCurrentDay && (
         <label data-testid="test-mode-toggle" className="flex items-center gap-3 cursor-pointer mb-4">
           <input
             type="checkbox"

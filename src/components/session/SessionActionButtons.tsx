@@ -4,6 +4,7 @@ interface SessionActionButtonsProps {
   sessionStatus: 'idle' | 'running' | 'awaitingCompletionConfirm' | 'complete'
   speedMultiplier: number
   onSpeedMultiplierChange: (speed: number) => void
+  showTestControls?: boolean
   onCompleteSession: () => void
   onAbortSession: () => void
 }
@@ -12,6 +13,7 @@ export function SessionActionButtons({
   sessionStatus,
   speedMultiplier,
   onSpeedMultiplierChange,
+  showTestControls = false,
   onCompleteSession,
   onAbortSession,
 }: SessionActionButtonsProps) {
@@ -36,7 +38,9 @@ export function SessionActionButtons({
         </button>
       ) : (
         <>
-          <SpeedMultiplierSelector value={speedMultiplier} onChange={onSpeedMultiplierChange} />
+          {showTestControls && (
+            <SpeedMultiplierSelector value={speedMultiplier} onChange={onSpeedMultiplierChange} />
+          )}
           <button
             type="button"
             data-testid="abort-session-button"

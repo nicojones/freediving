@@ -112,6 +112,17 @@ export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
 }
 
 /**
+ * Returns the day group at the given index (e.g. "warm-up", "deep pool"), or undefined.
+ */
+export function getDayGroup(plan: Plan, dayIndex: number): string | undefined {
+  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {return undefined}
+  const day = plan[dayIndex]
+  if (day == null || typeof day !== 'object' || !('group' in day)) {return undefined}
+  const g = (day as { group?: string }).group
+  return typeof g === 'string' ? g : undefined
+}
+
+/**
  * Returns the day id at the given index, or null if missing/invalid.
  */
 export function getDayId(plan: Plan, dayIndex: number): string | null {

@@ -39,7 +39,7 @@ export const Loader = memo(function Loader({
     return (
       <span className={clsx('flex flex-col items-center gap-2', className)}>
         {spinner}
-        <p className="text-on-surface-variant font-body text-sm">{label}</p>
+        {label && <p className="text-on-surface-variant font-body text-sm">{label}</p>}
       </span>
     )
   }

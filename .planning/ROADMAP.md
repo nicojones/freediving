@@ -27,6 +27,7 @@
 - [ ] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
 - [x] **Phase 18: Dynamic Version Display & Semantic Release** - Version from package.json on login; fix→patch, feat→minor, chore→no bump on push to main; major manual
 - [ ] **Phase 19: Create Plan in Settings** - JSON upload with schema validation; optional AI voice mode (dictate → Gemini → PlanWithMeta JSON)
+- [x] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
 
 ---
 
@@ -377,6 +378,23 @@
 
 ---
 
+### Phase 20: Preview Future Days
+
+**Goal:** User can preview future days in a training plan (view structure, hold/breathe intervals) but cannot execute them. No start-session or similar action for future days.
+
+**Depends on:** Phase 19 (Create Plan in Settings)
+
+**Requirements:** (Enhancement — plan exploration)
+
+**Success Criteria** (what must be TRUE):
+1. User can view session structure (hold/breathe intervals) for future days in the plan
+2. User cannot start or execute a session for a future day
+3. Future days are clearly differentiated from current/available days (e.g. read-only preview, no start button)
+
+**Plans:** `.planning/20-PLAN.md` (TBD — research and task breakdown)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -400,6 +418,7 @@
 | 17. Test Controls | 0/4 | Pending | 17-PLAN.md |
 | 18. Dynamic Version Display & Semantic Release | 4/4 | Complete | 18-PLAN.md |
 | 19. Create Plan in Settings | 0/9 | Pending | 19-PLAN.md |
+| 20. Preview Future Days | 5/5 | Complete | 20-PLAN.md |
 
 ---
 

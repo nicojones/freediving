@@ -13,7 +13,7 @@ import { StatusBanner } from '../components/shared/StatusBanner'
 import { TopAppBar } from '../components/layout/TopAppBar'
 import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { useTraining } from '../hooks/useTraining'
-import { getCurrentDay, getDayId, getDayIndexById, getPhasesForDay } from '../services/planService'
+import { getCurrentDay, getDayGroup, getDayId, getDayIndexById, getPhasesForDay } from '../services/planService'
 import { getCompletionDateForDay, isDayCompleted } from '../utils/completions'
 
 /** Dashboard: ~162 lines. Slightly over 150; further extraction would split cohesive day/session routing logic. */
@@ -145,6 +145,8 @@ export function Dashboard() {
             <SessionPreviewSection
               selectedDayIndex={selectedDayIndex!}
               selectedPhases={selectedPhases}
+              planName={planWithMeta?.name}
+              dayGroup={getDayGroup(p, selectedDayIndex!)}
               currentDayIndex={currentDayIndex}
               speedMultiplier={speedMultiplier}
               testMode={showTestControls ? testMode : false}

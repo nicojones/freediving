@@ -17,6 +17,7 @@ export function ActiveSessionView() {
     timerState,
     speedMultiplier,
     setSpeedMultiplier,
+    showTestControls,
     handleAbortSession,
     handleCompleteSession,
   } = useTraining()
@@ -34,7 +35,7 @@ export function ActiveSessionView() {
 
   return (
     <div className="min-h-screen bg-background font-body selection:bg-primary/30 flex flex-col">
-      <TopAppBar variant="active-session" onMore={() => {}} />
+      <TopAppBar variant="active-session" />
       <main className="flex-1 min-h-0 overflow-auto flex flex-col px-8 pt-4 pb-48 items-center">
         <div className="w-full shrink-0 mt-2 mb-4">
           <div className="flex justify-between items-end mb-3">
@@ -121,6 +122,7 @@ export function ActiveSessionView() {
           sessionStatus={sessionStatus}
           speedMultiplier={speedMultiplier}
           onSpeedMultiplierChange={setSpeedMultiplier}
+          showTestControls={showTestControls}
           onCompleteSession={handleCompleteSession}
           onAbortSession={handleAbortSession}
         />

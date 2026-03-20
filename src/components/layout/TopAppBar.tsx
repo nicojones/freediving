@@ -7,18 +7,18 @@ interface TopAppBarProps {
   variant: TopAppBarVariant
   weekLabel?: string
   planName?: string
+  showPlanName?: boolean
   onBack?: () => void
   onShare?: () => void
-  onMore?: () => void
 }
 
 export function TopAppBar({
   variant,
   weekLabel = 'Current Week',
   planName = DEFAULT_PLAN_NAME,
+  showPlanName = true,
   onBack,
   onShare,
-  onMore,
 }: TopAppBarProps) {
   return (
     <header className="bg-background h-20 w-full flex items-center justify-between px-8 z-50">
@@ -45,43 +45,21 @@ export function TopAppBar({
             <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em]">
               {weekLabel}
             </span>
-            <span className="text-primary font-headline font-bold text-lg" data-testid="header-plan-name">
-              {planName}
-            </span>
+            {showPlanName && (
+              <span className="text-primary font-headline font-bold text-lg" data-testid="header-plan-name">
+                {planName}
+              </span>
+            )}
           </div>
         )}
-        {variant === 'session-preview' && (
-          <>
-            {onShare && (
-              <button
-                type="button"
-                onClick={onShare}
-                className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-400 p-2 rounded-full"
-                aria-label="Share"
-              >
-                <span className="material-symbols-outlined">share</span>
-              </button>
-            )}
-            {onMore && (
-              <button
-                type="button"
-                onClick={onMore}
-                className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-400 p-2 rounded-full"
-                aria-label="More options"
-              >
-                <span className="material-symbols-outlined">more_vert</span>
-              </button>
-            )}
-          </>
-        )}
-        {variant === 'active-session' && onMore && (
+        {variant === 'session-preview' && onShare && (
           <button
             type="button"
-            onClick={onMore}
+            onClick={onShare}
             className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-400 p-2 rounded-full"
-            aria-label="More options"
+            aria-label="Share"
           >
-            <span className="material-symbols-outlined">more_vert</span>
+            <span className="material-symbols-outlined">share</span>
           </button>
         )}
       </div>
