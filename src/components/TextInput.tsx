@@ -7,6 +7,7 @@ interface TextInputProps {
   placeholder?: string
   autoComplete?: string
   icon?: string
+  'data-testid'?: string
 }
 
 export function TextInput({
@@ -18,6 +19,7 @@ export function TextInput({
   placeholder,
   autoComplete,
   icon = 'person',
+  'data-testid': dataTestId,
 }: TextInputProps) {
   return (
     <div className="group">
@@ -36,6 +38,7 @@ export function TextInput({
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          data-testid={dataTestId}
           placeholder={placeholder}
           autoComplete={autoComplete}
           className="w-full bg-transparent border-none py-5 pl-14 pr-6 focus:ring-0 text-on-surface placeholder:text-outline-variant font-body"

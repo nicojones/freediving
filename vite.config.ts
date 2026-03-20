@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -46,8 +47,15 @@ export default defineConfig({
     }),
   ],
   server: {
+    port: parseInt(process.env.PORT || '5173', 10),
     proxy: {
-      '/api': 'http://localhost:3001',
+      '/api': `http://localhost:${process.env.VITE_API_PORT || '3001'}`,
     },
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    globals: true,
+    exclude: ['**/node_modules/**', '**/e2e/**'],
   },
 })

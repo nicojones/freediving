@@ -30,6 +30,8 @@ export const HoldProgressRing = memo(function HoldProgressRing({
 
   return (
     <svg
+      data-testid="hold-progress-ring"
+      data-testid-value={String(remainingMs)}
       className="absolute inset-0 w-[320px] h-[320px] -rotate-90"
       aria-hidden
     >

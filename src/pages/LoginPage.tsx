@@ -59,6 +59,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               placeholder="Diver Identifier"
               autoComplete="username"
               icon="person"
+              data-testid="login-username"
             />
             <TextInput
               id="password"
@@ -69,12 +70,14 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               placeholder="••••••••"
               autoComplete="current-password"
               icon="key"
+              data-testid="login-password"
             />
           </div>
           {error && (
-            <p className="text-error text-sm font-body">{error}</p>
+            <p data-testid="login-error" className="text-error text-sm font-body">{error}</p>
           )}
           <PrimaryButton
+            data-testid="login-submit"
             type="submit"
             disabled={loading}
             loading={loading}

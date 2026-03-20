@@ -16,7 +16,7 @@ export interface PendingCompletion {
 async function getDB() {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db, oldVersion) {
-      if (oldVersion < 2) {
+      if (oldVersion < 2 && db.objectStoreNames.contains(STORE_NAME)) {
         db.deleteObjectStore(STORE_NAME)
       }
       if (!db.objectStoreNames.contains(STORE_NAME)) {

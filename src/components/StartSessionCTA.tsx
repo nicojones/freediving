@@ -24,6 +24,7 @@ export const StartSessionCTA = memo(function StartSessionCTA({
           </p>
         )}
         <PrimaryButton
+          data-testid="start-session-button"
           onClick={onStart}
           disabled={isDisabled}
           loading={loading}

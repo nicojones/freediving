@@ -19,6 +19,7 @@ export function SessionActionButtons({
     <div className="w-full flex flex-col gap-6 mb-12">
       {sessionStatus === 'awaitingCompletionConfirm' ? (
         <button
+          data-testid="complete-session-button"
           type="button"
           onClick={onCompleteSession}
           className="completion-gradient h-24 w-full rounded-xl flex items-center justify-center gap-4 active:scale-95 transition-transform duration-400"

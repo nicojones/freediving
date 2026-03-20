@@ -2,13 +2,15 @@ import { memo } from 'react'
 
 interface CurrentDayRestCardProps {
   dayIndex: number
+  dayId: string
 }
 
 export const CurrentDayRestCard = memo(function CurrentDayRestCard({
   dayIndex,
+  dayId,
 }: CurrentDayRestCardProps) {
   return (
-    <div className="relative group w-full text-left">
+    <div data-testid={`day-card-${dayId}`} className="relative group w-full text-left">
       <div className="absolute -inset-1 bg-primary/10 blur-xl rounded-full opacity-50 transition duration-1000" />
       <div className="relative bg-surface-container-high border-2 border-primary/20 rounded-[2.5rem] p-8 shadow-2xl">
         <div className="flex flex-col gap-6">

@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import isNil from 'lodash/isNil'
 import { DEFAULT_USERNAME } from './constants/app'
 import { FishIcon } from './components/FishIcon'
 import { getCurrentDay } from './services/planService'
@@ -11,6 +10,7 @@ import { ActiveSessionView } from './components/ActiveSessionView'
 import { SessionCompleteView } from './components/SessionCompleteView'
 import { SettingsView } from './components/SettingsView'
 import { TrainingProvider, useTraining } from './contexts/TrainingContext'
+import isNil from 'lodash/isNil'
 
 function SessionRouteGuard({ children }: { children: React.ReactNode }) {
   const { sessionStatus } = useTraining()

@@ -5,6 +5,7 @@ import { pluralizeHolds } from '../utils/phaseLabels'
 
 interface CurrentDayTrainingCardProps {
   dayIndex: number
+  dayId: string
   summary: string
   duration: number
   holdCount: number
@@ -13,6 +14,7 @@ interface CurrentDayTrainingCardProps {
 
 export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
   dayIndex,
+  dayId,
   summary,
   duration,
   holdCount,
@@ -20,6 +22,7 @@ export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
 }: CurrentDayTrainingCardProps) {
   return (
     <div
+      data-testid={`day-card-${dayId}`}
       role="button"
       tabIndex={0}
       onClick={onSelect}
