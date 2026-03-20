@@ -12,7 +12,7 @@ import { SessionPreviewSection } from '../components/session/SessionPreviewSecti
 import { StatusBanner } from '../components/shared/StatusBanner'
 import { TopAppBar } from '../components/layout/TopAppBar'
 import { DEFAULT_PLAN_NAME } from '../constants/app'
-import { useTraining } from '../contexts/TrainingContext'
+import { useTraining } from '../hooks/useTraining'
 import { getCurrentDay, getDayId, getDayIndexById, getPhasesForDay } from '../services/planService'
 import { isDayCompleted } from '../utils/completions'
 
@@ -33,6 +33,7 @@ export function Dashboard() {
     savedMessage,
     hasCompletedToday,
     testMode,
+    showTestControls,
     setSelectedDayIndex,
     setViewMode,
     setSpeedMultiplier,
@@ -107,7 +108,7 @@ export function Dashboard() {
         planName={planName}
       />
       <main
-        className={clsx('px-6 pt-8 max-w-2xl mx-auto', { 'pb-40': showDayDetail })}
+        className={clsx('px-6 pt-8 max-w-2xl mx-auto', { 'pb-12': showDayDetail })}
         style={{
           background:
             'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
@@ -139,12 +140,13 @@ export function Dashboard() {
               selectedPhases={selectedPhases}
               currentDayIndex={currentDayIndex}
               speedMultiplier={speedMultiplier}
-              testMode={testMode}
+              testMode={showTestControls ? testMode : false}
+              showTestControls={showTestControls}
               audioLoading={audioLoading}
               hasCompletedToday={hasCompletedToday}
               onBack={handleBack}
               onSpeedMultiplierChange={setSpeedMultiplier}
-              onTestModeChange={setTestMode}
+              onTestModeChange={showTestControls ? setTestMode : () => {}}
               onStartSession={handleStartSessionClick}
             />
           )

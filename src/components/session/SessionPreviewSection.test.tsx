@@ -16,6 +16,7 @@ describe('SessionPreviewSection', () => {
         currentDayIndex={0}
         speedMultiplier={1}
         testMode={false}
+        showTestControls={true}
         audioLoading={false}
         hasCompletedToday={false}
         onBack={() => {}}
@@ -35,6 +36,7 @@ describe('SessionPreviewSection', () => {
         currentDayIndex={0}
         speedMultiplier={1}
         testMode={false}
+        showTestControls={true}
         audioLoading={false}
         hasCompletedToday={false}
         onBack={() => {}}
@@ -55,6 +57,7 @@ describe('SessionPreviewSection', () => {
         currentDayIndex={0}
         speedMultiplier={1}
         testMode={false}
+        showTestControls={true}
         audioLoading={false}
         hasCompletedToday={false}
         onBack={onBack}
@@ -65,5 +68,47 @@ describe('SessionPreviewSection', () => {
     )
     await screen.getByRole('button', { name: /back/i }).click()
     expect(onBack).toHaveBeenCalledTimes(1)
+  })
+
+  it('hides test controls (toggle and speed selector) when showTestControls is false', () => {
+    render(
+      <SessionPreviewSection
+        selectedDayIndex={0}
+        selectedPhases={mockPhases}
+        currentDayIndex={0}
+        speedMultiplier={1}
+        testMode={true}
+        showTestControls={false}
+        audioLoading={false}
+        hasCompletedToday={false}
+        onBack={() => {}}
+        onSpeedMultiplierChange={() => {}}
+        onTestModeChange={() => {}}
+        onStartSession={() => {}}
+      />
+    )
+    expect(screen.queryByTestId('test-mode-toggle')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('speed-selector')).not.toBeInTheDocument()
+  })
+
+  it('shows test controls (toggle and speed selector) when showTestControls is true', () => {
+    render(
+      <SessionPreviewSection
+        selectedDayIndex={0}
+        selectedPhases={mockPhases}
+        currentDayIndex={0}
+        speedMultiplier={1}
+        testMode={false}
+        showTestControls={true}
+        audioLoading={false}
+        hasCompletedToday={false}
+        onBack={() => {}}
+        onSpeedMultiplierChange={() => {}}
+        onTestModeChange={() => {}}
+        onStartSession={() => {}}
+      />
+    )
+    expect(screen.getByTestId('test-mode-toggle')).toBeInTheDocument()
+    expect(screen.getByTestId('speed-selector')).toBeInTheDocument()
   })
 })

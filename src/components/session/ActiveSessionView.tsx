@@ -4,7 +4,7 @@ import { useSessionProgress } from '../../utils/sessionProgress'
 import { formatDuration } from '../../utils/formatDuration'
 import { formatMmSs } from '../../utils/formatMmSs'
 import { formatPhaseDisplayName, formatPhaseShortLabel } from '../../utils/phaseLabels'
-import { useTraining } from '../../contexts/TrainingContext'
+import { useTraining } from '../../hooks/useTraining'
 import { TopAppBar } from '../layout/TopAppBar'
 import { HoldProgressRing } from './HoldProgressRing'
 import { SessionActionButtons } from './SessionActionButtons'
@@ -33,10 +33,10 @@ export function ActiveSessionView() {
 
 
   return (
-    <div className="min-h-screen bg-background font-body selection:bg-primary/30">
+    <div className="min-h-screen bg-background font-body selection:bg-primary/30 flex flex-col">
       <TopAppBar variant="active-session" onMore={() => {}} />
-      <main className="min-h-screen flex flex-col pt-20 pb-24 px-8 items-center justify-between">
-        <div className="w-full mt-4">
+      <main className="flex-1 min-h-0 overflow-auto flex flex-col px-8 pt-4 pb-48 items-center">
+        <div className="w-full shrink-0 mt-2 mb-4">
           <div className="flex justify-between items-end mb-3">
             <span className="text-on-surface-variant font-label text-xs tracking-widest uppercase">
               Session Progress
@@ -59,10 +59,10 @@ export function ActiveSessionView() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center flex-1 w-full relative">
+        <div className="flex flex-col items-center justify-center flex-1 min-h-[280px] w-full relative">
           <div
             className={clsx(
-              'absolute w-[320px] h-[320px] rounded-full flex items-center justify-center transition-all duration-400',
+              'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(320px,75vw)] max-w-[320px] aspect-square rounded-full flex items-center justify-center transition-all duration-400',
               { 'border-transparent completion-glow': sessionStatus === 'awaitingCompletionConfirm' },
               { 'border-transparent focus-glow': sessionStatus !== 'awaitingCompletionConfirm' && timerState?.phase === 'hold' },
               { 'border-transparent recovery-breathe': sessionStatus !== 'awaitingCompletionConfirm' && timerState?.phase === 'recovery' },
@@ -81,7 +81,7 @@ export function ActiveSessionView() {
               />
             )}
           </div>
-          <div className="z-10 text-center">
+          <div className="relative z-10 text-center">
             {sessionStatus === 'awaitingCompletionConfirm' ? (
               <>
                 <p className="text-primary font-headline text-2xl font-bold tracking-widest mb-2 uppercase">
@@ -114,7 +114,9 @@ export function ActiveSessionView() {
             )}
           </div>
         </div>
+      </main>
 
+      <div className="fixed bottom-0 left-0 right-0 px-8 pb-8 pt-4 bg-background z-40">
         <SessionActionButtons
           sessionStatus={sessionStatus}
           speedMultiplier={speedMultiplier}
@@ -122,7 +124,7 @@ export function ActiveSessionView() {
           onCompleteSession={handleCompleteSession}
           onAbortSession={handleAbortSession}
         />
-      </main>
+      </div>
     </div>
   )
 }

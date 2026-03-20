@@ -4,11 +4,12 @@ import { useRouter } from 'next/navigation'
 import { DEFAULT_PLAN_NAME } from '../../constants/app'
 import { TopAppBar } from '../layout/TopAppBar'
 import { BottomNavBar } from '../layout/BottomNavBar'
+import { DevModeSection } from './DevModeSection'
 import { PlanSelectorSection } from './PlanSelectorSection'
 import { ResetProgressSection } from './ResetProgressSection'
 import { ConfirmResetModal } from './ConfirmResetModal'
 import { UserProfileCard } from './UserProfileCard'
-import { useTraining } from '../../contexts/TrainingContext'
+import { useTraining } from '../../hooks/useTraining'
 import { DEFAULT_USERNAME } from '../../constants/app'
 
 type ConfirmType = 'reset' | 'planChange' | null
@@ -82,6 +83,8 @@ export function SettingsView() {
           />
 
           <ResetProgressSection onRequestReset={handleRequestReset} />
+
+          <DevModeSection />
 
           <UserProfileCard username={username} />
 

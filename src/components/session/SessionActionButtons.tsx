@@ -16,7 +16,7 @@ export function SessionActionButtons({
   onAbortSession,
 }: SessionActionButtonsProps) {
   return (
-    <div className="w-full flex flex-col gap-6 mb-12">
+    <div className="w-full flex flex-col gap-6">
       {sessionStatus === 'awaitingCompletionConfirm' ? (
         <button
           data-testid="complete-session-button"

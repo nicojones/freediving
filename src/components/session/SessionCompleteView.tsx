@@ -3,7 +3,7 @@ import { DEFAULT_PLAN_NAME } from '../../constants/app'
 import { PrimaryButton } from '../ui/PrimaryButton'
 import { TopAppBar } from '../layout/TopAppBar'
 import { BottomNavBar } from '../layout/BottomNavBar'
-import { useTraining } from '../../contexts/TrainingContext'
+import { useTraining } from '../../hooks/useTraining'
 
 export function SessionCompleteView() {
   const { planWithMeta, handleBackToTraining, handleSettingsClick } = useTraining()

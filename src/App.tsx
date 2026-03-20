@@ -10,7 +10,8 @@ import { TopAppBar } from './components/layout/TopAppBar'
 import { ActiveSessionView } from './components/session/ActiveSessionView'
 import { SessionCompleteView } from './components/session/SessionCompleteView'
 import { SettingsView } from './components/settings/SettingsView'
-import { TrainingProvider, useTraining } from './contexts/TrainingContext'
+import { TrainingProvider } from './contexts/TrainingContext'
+import { useTraining } from './hooks/useTraining'
 import { isNil } from './utils/lang'
 
 function SessionRouteGuard({ children }: { children: React.ReactNode }) {

@@ -1,13 +1,5 @@
 'use client'
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  type ReactNode,
-} from 'react'
+import { useEffect, useState, useRef, useCallback, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { DEFAULT_PLAN_ID } from '../constants/app'
 import {
@@ -29,66 +21,14 @@ import {
 } from '../services/progressService'
 import { hasCompletedToday } from '../utils/completions'
 import { useSessionEngine } from '../hooks/useSessionEngine'
+import { useDevMode } from '../hooks/useDevMode'
 import type { Plan, PlanWithMeta } from '../types/plan'
 import { isEmpty, isNil } from '../utils/lang'
-
-export type TimerState = {
-  phase: string
-  intervalIndex: number
-  remainingMs: number
-  elapsedMs: number
-}
-
-export type ViewMode = 'dashboard' | 'session-preview' | 'settings'
-
-export type SessionStatus = 'idle' | 'running' | 'awaitingCompletionConfirm' | 'complete'
-
-interface TrainingContextValue {
-  // Auth
-  user: { id: number; username: string } | null | undefined
-  refreshUser: () => Promise<void>
-
-  // Plan & progress
-  plan: Plan | null
-  planWithMeta: PlanWithMeta | null
-  activePlanId: string | null
-  availablePlans: PlanWithMeta[]
-  activePlanLoading: boolean
-  error: string | null
-  completions: Completion[]
-  progressError: string | null
-  resetProgress: () => Promise<void>
-  setActivePlan: (planId: string) => Promise<void>
-
-  // UI
-  selectedDayIndex: number | null
-  viewMode: ViewMode
-  savedMessage: boolean
-
-  // Session
-  sessionStatus: SessionStatus
-  sessionDayIndex: number | null
-  timerState: TimerState | null
-  audioLoading: boolean
-  speedMultiplier: number
-  testMode: boolean
-  hasCompletedToday: boolean
-
-  // Actions
-  setSelectedDayIndex: (index: number | null) => void
-  setViewMode: (mode: ViewMode) => void
-  setSpeedMultiplier: (speed: number) => void
-  setTestMode: (v: boolean) => void
-  handleStartSession: () => Promise<void>
-  handleAbortSession: () => void
-  handleCompleteSession: () => Promise<void>
-  handleBackFromComplete: () => void
-  handleBackToTraining: () => void
-  handleSettingsClick: () => void
-  handleLogout: () => Promise<void>
-}
-
-const TrainingContext = createContext<TrainingContextValue | null>(null)
+import {
+  TrainingContext,
+  type TrainingContextValue,
+  type ViewMode,
+} from './trainingContextState'
 
 export function TrainingProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
@@ -106,6 +46,8 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   const [savedMessage, setSavedMessage] = useState(false)
   const [sessionDayIndex, setSessionDayIndex] = useState<number | null>(null)
   const [testMode, setTestMode] = useState(false)
+  const [devModeEnabled] = useDevMode()
+  const showTestControls = devModeEnabled
   const sessionDayIndexRef = useRef<number | null>(null)
 
   const {
@@ -204,9 +146,9 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     setSessionDayIndex(selectedDayIndex)
 
     await engineStartSession(phases, {
-      relaxationSecondsOverride: testMode ? 3 : undefined,
+      relaxationSecondsOverride: showTestControls && testMode ? 3 : undefined,
     })
-  }, [plan, selectedDayIndex, testMode, completions, engineStartSession])
+  }, [plan, selectedDayIndex, showTestControls, testMode, completions, engineStartSession])
 
   const handleAbortSession = useCallback(() => {
     engineAbortSession()
@@ -325,6 +267,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     audioLoading,
     speedMultiplier,
     testMode,
+    showTestControls,
     hasCompletedToday: hasCompletedToday(completions),
     setSelectedDayIndex,
     setViewMode,
@@ -344,12 +287,4 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       {children}
     </TrainingContext.Provider>
   )
-}
-
-export function useTraining(): TrainingContextValue {
-  const ctx = useContext(TrainingContext)
-  if (!ctx) {
-    throw new Error('useTraining must be used within a TrainingProvider')
-  }
-  return ctx
 }

@@ -6,7 +6,8 @@ import { FishIcon } from '@/src/components/ui/FishIcon'
 import { Loader } from '@/src/components/ui/Loader'
 import { LoginPage } from '@/src/views/LoginPage'
 import { TopAppBar } from '@/src/components/layout/TopAppBar'
-import { TrainingProvider, useTraining } from '@/src/contexts/TrainingContext'
+import { TrainingProvider } from '@/src/contexts/TrainingContext'
+import { useTraining } from '@/src/hooks/useTraining'
 import { isNil } from '@/src/utils/lang'
 
 function SessionRouteGuard({ children }: ChildrenNode) {

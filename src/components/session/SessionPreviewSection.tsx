@@ -11,6 +11,7 @@ interface SessionPreviewSectionProps {
   currentDayIndex: number | null
   speedMultiplier: number
   testMode: boolean
+  showTestControls: boolean
   audioLoading: boolean
   hasCompletedToday: boolean
   onBack: () => void
@@ -25,6 +26,7 @@ export function SessionPreviewSection({
   currentDayIndex,
   speedMultiplier,
   testMode,
+  showTestControls,
   audioLoading,
   hasCompletedToday,
   onBack,
@@ -53,22 +55,26 @@ export function SessionPreviewSection({
 
       <SessionPreviewStats phases={selectedPhases} />
 
-      <SpeedMultiplierSelector
-        value={speedMultiplier}
-        onChange={onSpeedMultiplierChange}
-      />
-
-      <label data-testid="test-mode-toggle" className="flex items-center gap-3 cursor-pointer mb-4">
-        <input
-          type="checkbox"
-          checked={testMode}
-          onChange={(e) => onTestModeChange(e.target.checked)}
-          className="rounded border-outline-variant bg-surface-container-low"
+      {showTestControls && (
+        <SpeedMultiplierSelector
+          value={speedMultiplier}
+          onChange={onSpeedMultiplierChange}
         />
-        <span className="text-on-surface-variant font-body text-sm">
-          Test mode — shorten relaxation to 3s for faster testing
-        </span>
-      </label>
+      )}
+
+      {showTestControls && (
+        <label data-testid="test-mode-toggle" className="flex items-center gap-3 cursor-pointer mb-4">
+          <input
+            type="checkbox"
+            checked={testMode}
+            onChange={(e) => onTestModeChange(e.target.checked)}
+            className="rounded border-outline-variant bg-surface-container-low"
+          />
+          <span className="text-on-surface-variant font-body text-sm">
+            Test mode — shorten relaxation to 3s for faster testing
+          </span>
+        </label>
+      )}
 
       <SessionBreakdown phases={selectedPhases} />
 

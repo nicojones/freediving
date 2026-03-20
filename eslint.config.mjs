@@ -38,7 +38,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-hooks/set-state-in-effect': 'off',
       'react-refresh/only-export-components': [
-        'warn',
+        'error',
         { allowConstantExport: true },
       ],
       curly: ['error', 'all'],
@@ -49,6 +49,12 @@ export default tseslint.config(
           varsIgnorePattern: '^_',
         },
       ],
+    },
+  },
+  {
+    files: ['app/layout.tsx', 'app/icon.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   }
 )

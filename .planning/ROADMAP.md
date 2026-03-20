@@ -24,6 +24,7 @@
 - [x] **Phase 14: Next.js Migration** - Migrate all the code (express + react) to Next.js
 - [ ] **Phase 15: Refactor Code (Cleanup)** - Remove all unused variables, functions, imports; no dead code
 - [ ] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
+- [ ] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
 
 ---
 
@@ -319,6 +320,24 @@
 
 ---
 
+### Phase 17: Test Controls
+
+**Goal:** Add Settings toggle (dev mode) to show/hide test controls. All users can toggle; default OFF. When unchecked, test controls are invisible on all pages.
+
+**Depends on:** Phase 16 (Alias Imports, Component Folders & Extended Tests)
+
+**Requirements:** (Enhancement — developer experience)
+
+**Success Criteria** (what must be TRUE):
+1. Settings page has a toggle to show/hide test controls (dev mode)
+2. All users can see and toggle dev mode; default is OFF
+3. When dev mode is unchecked, test controls are invisible on all pages (session preview, etc.)
+4. When dev mode is checked, test controls appear as before
+
+**Plans:** `.planning/17-PLAN.md` (4 tasks: dev mode preference → Settings toggle → gate test controls → tests)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -339,6 +358,7 @@
 | 14. Next.js Migration | 9/9 | Complete | 14-PLAN.md |
 | 15. Refactor Code (Cleanup) | 0/5 | Pending | 15-PLAN.md |
 | 16. Alias Imports, Component Folders & Extended Tests | 0/6 | Pending | 16-PLAN.md |
+| 17. Test Controls | 0/4 | Pending | 17-PLAN.md |
 
 ---
 
