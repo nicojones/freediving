@@ -87,7 +87,6 @@ jobs:
 
             systemctl restart freediving.service
 
-            # Verify service is running (helps diagnose 502)
             sleep 2
             systemctl status freediving.service --no-pager || true
             if ! systemctl is-active --quiet freediving.service; then
