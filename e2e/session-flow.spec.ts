@@ -17,7 +17,7 @@ test('user can complete a session with test mode', async ({ page }) => {
   await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
 
   // 2. Pick a day and open session preview
-  const firstDayCard = page.locator('[data-testi/d^="day-card-"]').first()
+  const firstDayCard = page.locator('[data-testid^="day-card-"]').first()
   await firstDayCard.click()
 
   // 3. Enable test mode (skips real timers) and set 10x speed
