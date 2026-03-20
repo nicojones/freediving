@@ -1,18 +1,7 @@
 import type { NextConfig } from 'next'
-import withSerwistInit from '@serwist/next'
-
-const withSerwist = withSerwistInit({
-  // Avoid dev rebuild loop: Serwist writes `public/sw.js` each compile; Next watches `public/` and retriggers.
-  disable: process.env.NODE_ENV !== 'production',
-  swSrc: 'app/sw.ts',
-  swDest: 'public/sw.js',
-  additionalPrecacheEntries: [
-    { url: '/audio/hold.m4a', revision: null },
-    { url: '/audio/prepare.m4a', revision: null },
-    { url: '/audio/30s.m4a', revision: null },
-    { url: '/audio/breathe.m4a', revision: null },
-  ],
-})
+// Serwist disabled: causes "a[d] is not a function" / "originalFactory is undefined" during prerender.
+// Re-enable when @serwist/next fixes server bundle injection of client-only sw-entry.
+// import withSerwistInit from '@serwist/next'
 
 const nextConfig: NextConfig = {
   output: 'standalone',
@@ -22,4 +11,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withSerwist(nextConfig)
+export default nextConfig

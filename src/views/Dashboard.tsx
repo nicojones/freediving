@@ -1,6 +1,6 @@
 'use client'
 import clsx from 'clsx'
-import isNil from 'lodash/isNil'
+import { isNil } from '../utils/lang'
 import { useCallback, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { BottomNavBar } from '../components/layout/BottomNavBar'

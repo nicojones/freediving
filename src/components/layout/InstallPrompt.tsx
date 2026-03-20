@@ -59,12 +59,17 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
   if (!showPrompt || dismissed || !hasEngaged) {return null}
 
   return (
-    <div className="mb-6 bg-surface-container-low rounded-2xl p-4 flex items-center justify-between gap-4">
+    <div className="mb-6 bg-surface-container-low rounded-3xl p-5 border border-outline-variant/30 overflow-hidden flex items-center gap-4">
+      <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+        <span className="material-symbols-outlined text-primary text-2xl">
+          {deferredPrompt ? 'download_2' : 'add_to_home_screen'}
+        </span>
+      </div>
       <div className="flex-1 min-w-0">
-        <p className="text-on-surface font-label font-semibold text-sm uppercase tracking-wider">
+        <h3 className="font-headline font-bold text-on-surface text-base">
           Install Fishly
-        </p>
-        <p className="text-on-surface-variant text-sm mt-1">
+        </h3>
+        <p className="text-on-surface-variant text-sm mt-0.5 leading-relaxed">
           {deferredPrompt
             ? 'Add to your home screen for the best experience.'
             : 'Tap Share → Add to Home Screen to install.'}
@@ -75,22 +80,22 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
           <button
             type="button"
             onClick={handleInstall}
-            className="primary-pulse-gradient px-4 py-2 rounded-xl font-headline font-bold text-on-primary text-sm"
+            className="primary-pulse-gradient px-5 py-2.5 rounded-xl font-headline font-bold text-on-primary text-sm shadow-[0_4px_12px_rgba(82,218,211,0.2)] hover:shadow-[0_4px_16px_rgba(82,218,211,0.3)] active:scale-[0.98] transition-all duration-300"
           >
             Install
           </button>
         ) : isIOS ? (
-          <span className="text-primary font-label text-xs uppercase tracking-wider">
+          <span className="text-primary font-label text-xs font-medium tracking-wide">
             Share → Add to Home Screen
           </span>
         ) : null}
         <button
           type="button"
           onClick={handleDismiss}
-          className="text-on-surface-variant hover:text-on-surface p-2 rounded-lg transition-colors"
+          className="text-on-surface-variant/70 hover:text-on-surface hover:bg-surface-container-high/50 p-2 rounded-xl transition-colors duration-300"
           aria-label="Dismiss"
         >
-          <span className="material-symbols-outlined text-xl">close</span>
+          <span className="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
     </div>

@@ -11,7 +11,7 @@ import { ActiveSessionView } from './components/session/ActiveSessionView'
 import { SessionCompleteView } from './components/session/SessionCompleteView'
 import { SettingsView } from './components/settings/SettingsView'
 import { TrainingProvider, useTraining } from './contexts/TrainingContext'
-import isNil from 'lodash/isNil'
+import { isNil } from './utils/lang'
 
 function SessionRouteGuard({ children }: { children: React.ReactNode }) {
   const { sessionStatus } = useTraining()

@@ -7,7 +7,7 @@ import { Loader } from '@/src/components/ui/Loader'
 import { LoginPage } from '@/src/views/LoginPage'
 import { TopAppBar } from '@/src/components/layout/TopAppBar'
 import { TrainingProvider, useTraining } from '@/src/contexts/TrainingContext'
-import isNil from 'lodash/isNil'
+import { isNil } from '@/src/utils/lang'
 
 function SessionRouteGuard({ children }: ChildrenNode) {
   const { sessionStatus } = useTraining()

@@ -30,8 +30,7 @@ import {
 import { hasCompletedToday } from '../utils/completions'
 import { useSessionEngine } from '../hooks/useSessionEngine'
 import type { Plan, PlanWithMeta } from '../types/plan'
-import isEmpty from 'lodash/isEmpty'
-import isNil from 'lodash/isNil'
+import { isEmpty, isNil } from '../utils/lang'
 
 export type TimerState = {
   phase: string

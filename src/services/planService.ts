@@ -1,5 +1,4 @@
-import isEmpty from 'lodash/isEmpty'
-import isNil from 'lodash/isNil'
+import { isEmpty, isNil } from '../utils/lang'
 import type { Plan, PlanWithMeta, Phase } from '../types/plan'
 import defaultPlanData from '../data/default-plan.json'
 import minimalPlanData from '../data/minimal-plan.json'
