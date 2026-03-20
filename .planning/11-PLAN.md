@@ -168,7 +168,7 @@ npm run build
 **Files:** Components and services with null/undefined/empty checks (Dashboard, TrainingContext, planService, timerEngine, ActiveSessionView, App, etc.)
 
 **Action:**
-1. Add lodash individual imports where helpful: `import isNil from 'lodash/isNil'`, `import isNull from 'lodash/isNull'`, `import isEmpty from 'lodash/isEmpty'`.
+1. Add lodash individual imports where helpful: `import {isNil} from 'lodash'`...
 2. Replace patterns:
    - `!plan` / `plan == null` (when checking null or undefined) → `isNil(plan)`
    - `x === null` (strict null only) → `isNull(x)`

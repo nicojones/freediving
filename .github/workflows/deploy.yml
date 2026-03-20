@@ -1,0 +1,91 @@
+name: Deploy Fishly
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Check for dependency changes
+        id: changed-deps
+        uses: tj-actions/changed-files@v42
+        with:
+          files: |
+            package.json
+            package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run unit tests
+        run: npm run test:run
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Build Vite
+        run: npm run build
+
+      - name: Prepare Deployment Packages
+        run: |
+          zip -r build.zip dist server package.json package-lock.json start_freediving.sh
+          if [ "${{ steps.changed-deps.outputs.any_changed }}" == "true" ]; then
+            zip -ry modules.zip node_modules
+          fi
+
+      - name: Upload build to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "build.zip"
+          target: "/var/www/freediving"
+
+      - name: Upload node_modules to Server
+        if: steps.changed-deps.outputs.any_changed == 'true'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "modules.zip"
+          target: "/var/www/freediving"
+
+      - name: Post-deployment on VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/freediving
+
+            if [ -f "modules.zip" ]; then
+              rm -rf node_modules
+              unzip -q modules.zip
+              rm modules.zip
+            fi
+
+            if [ -f "build.zip" ]; then
+              unzip -o -q build.zip
+              rm build.zip
+            fi
+
+            systemctl restart freediving.service

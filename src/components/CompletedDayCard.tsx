@@ -3,6 +3,7 @@ import { pluralizeHolds } from '../utils/phaseLabels'
 
 interface CompletedDayCardProps {
   dayIndex: number
+  dayId: string
   duration: number
   holdCount: number
   isRestDay: boolean
@@ -11,6 +12,7 @@ interface CompletedDayCardProps {
 
 export const CompletedDayCard = memo(function CompletedDayCard({
   dayIndex,
+  dayId,
   duration,
   holdCount,
   isRestDay,
@@ -22,6 +24,7 @@ export const CompletedDayCard = memo(function CompletedDayCard({
 
   return (
     <button
+      data-testid={`day-card-${dayId}`}
       type="button"
       onClick={onSelect}
       className="bg-surface-container-low rounded-3xl p-6 flex items-center justify-between transition-colors duration-400 text-left w-full cursor-pointer"

@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-19 — Phase 10 executed
+**Last updated:** 2025-03-20 — Phase 12 & 13 executed
 
 ---
 
@@ -8,7 +8,7 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 10 — Reset + Plan Change (complete)
+**Current focus:** Phase 13 — Deployment (complete)
 
 ---
 
@@ -16,13 +16,13 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 10. Reset + Plan Change |
-| Plan | 10-PLAN.md |
+| Phase | 13. Deployment |
+| Plan | 13-PLAN.md |
 | Status | Executed |
-| Progress | 10/10 phases |
+| Progress | 13/13 phases |
 
 ```
-[██████████] 100%
+[████████████] 100%
 ```
 
 ---
@@ -31,10 +31,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases complete | 10 |
-| Phases total | 10 |
+| Phases complete | 13 |
+| Phases total | 13 |
 | Requirements mapped | 17/17 |
-| Plans executed | 10 |
+| Plans executed | 13 |
 
 ---
 
@@ -61,6 +61,9 @@
 - [x] Phase 8: Session UX Enhancements (context in 8-CONTEXT.md)
 - [x] Phase 9: Refactor Code
 - [x] Phase 10: Reset + Plan Change (context in 10-CONTEXT.md)
+- [x] Phase 11: Refactor Code (Quality Pass) (context in 11-CONTEXT.md)
+- [x] Phase 12: Tests (12-PLAN.md)
+- [x] Phase 13: Deployment (13-PLAN.md)
 
 ### Blockers
 
@@ -70,4 +73,4 @@ None.
 
 ## Session Continuity
 
-Phase 10 (Reset + Plan Change) executed. Reset progress, plan selector, and plan-change warning implemented.
+Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template.

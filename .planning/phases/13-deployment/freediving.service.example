@@ -1,0 +1,15 @@
+[Unit]
+Description=Fishly — Freediving Breathhold Trainer
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/freediving
+EnvironmentFile=/var/www/freediving/.env.production
+ExecStart=/var/www/freediving/start_freediving.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

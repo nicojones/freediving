@@ -17,9 +17,10 @@
 - [x] **Phase 7: Day IDs + Routing** - Stable day IDs, day/group in plan, URL-based day view, completions by day_id
 - [x] **Phase 8: Session UX Enhancements** - One session per day, visible completion flow, test toggle, recovery ring animation
 - [x] **Phase 9: Refactor Code** - Code quality improvements and refactoring
-- [ ] **Phase 10: Reset + Plan Change** - Reset progress from settings; multiple plans; active plan in DB; plan-change warning
-- [ ] **Phase 11: Refactor Code (Quality Pass)** - clsx correctness; small components; extract sub-components for clarity and testability
-- [ ] **Phase 12: Tests** - Unit tests across the app; simple E2E tests with isolated test DB
+- [x] **Phase 10: Reset + Plan Change** - Reset progress from settings; multiple plans; active plan in DB; plan-change warning
+- [x] **Phase 11: Refactor Code (Quality Pass)** - clsx correctness; small components; extract sub-components for clarity and testability
+- [x] **Phase 12: Tests** - Unit tests across the app; simple E2E tests with isolated test DB
+- [x] **Phase 13: Deployment** - GitHub Actions deploy to DigitalOcean on push to main
 
 ---
 
@@ -242,6 +243,24 @@
 
 ---
 
+### Phase 13: Deployment
+
+**Goal:** Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build, zip, SCP to server, and systemctl restart.
+
+**Depends on:** Phase 12 (Tests)
+
+**Requirements:** (Enhancement — production deployment)
+
+**Success Criteria** (what must be TRUE):
+1. Server serves Vite dist/ and API in production; CORS configurable via CORS_ORIGIN
+2. GitHub Actions deploys on push to main (zip build, conditional node_modules)
+3. Post-deploy: unzip, systemctl restart freediving.service
+4. Production start script and systemd service template provided
+
+**Plans:** `.planning/13-PLAN.md` (6 tasks: server prod mode → start script → env example → GitHub workflow → systemd template → Vite base)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -255,9 +274,10 @@
 | 7. Day IDs + Routing | 5/5 | Complete | 7-PLAN.md |
 | 8. Session UX Enhancements | 5/5 | Complete | 8-PLAN.md |
 | 9. Refactor Code | 4/4 | Complete | 9-PLAN.md |
-| 10. Reset + Plan Change | 0/6 | Pending | 10-PLAN.md |
-| 11. Refactor Code (Quality Pass) | 0/6 | Pending | 11-PLAN.md |
-| 12. Tests | 0/TBD | Pending | 12-PLAN.md |
+| 10. Reset + Plan Change | 6/6 | Complete | 10-PLAN.md |
+| 11. Refactor Code (Quality Pass) | 6/6 | Complete | 11-PLAN.md |
+| 12. Tests | 8/8 | Complete | 12-PLAN.md |
+| 13. Deployment | 6/6 | Complete | 13-PLAN.md |
 
 ---
 

@@ -28,12 +28,13 @@ export function DayListSection({
         </p>
       </section>
 
-      <div className="flex flex-col gap-6">
+      <div data-testid="dashboard-day-list" className="flex flex-col gap-6">
         {plan.map((_, i) => (
           <TrainingDayCard
             key={i}
             plan={plan}
             dayIndex={i}
+            dayId={getDayId(plan, i) ?? `day-${i}`}
             isCurrent={currentDayIndex === i}
             isCompleted={isDayCompleted(completions, getDayId(plan, i) ?? undefined)}
             onSelect={() => onSelectDay(i)}

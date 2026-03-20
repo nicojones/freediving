@@ -10,6 +10,7 @@ import { LockedDayCard } from './LockedDayCard'
 interface TrainingDayCardProps {
   plan: Plan
   dayIndex: number
+  dayId: string
   isCurrent: boolean
   isCompleted: boolean
   onSelect: () => void
@@ -18,6 +19,7 @@ interface TrainingDayCardProps {
 export const TrainingDayCard = memo(function TrainingDayCard({
   plan,
   dayIndex,
+  dayId,
   isCurrent,
   isCompleted,
   onSelect,
@@ -32,6 +34,7 @@ export const TrainingDayCard = memo(function TrainingDayCard({
     return (
       <CurrentDayTrainingCard
         dayIndex={dayIndex}
+        dayId={dayId}
         summary={summary}
         duration={duration}
         holdCount={holdCount}
@@ -41,13 +44,14 @@ export const TrainingDayCard = memo(function TrainingDayCard({
   }
 
   if (isCurrent && !phases) {
-    return <CurrentDayRestCard dayIndex={dayIndex} />
+    return <CurrentDayRestCard dayIndex={dayIndex} dayId={dayId} />
   }
 
   if (isCompleted) {
     return (
       <CompletedDayCard
         dayIndex={dayIndex}
+        dayId={dayId}
         duration={duration}
         holdCount={holdCount}
         isRestDay={phases === null}
@@ -57,6 +61,6 @@ export const TrainingDayCard = memo(function TrainingDayCard({
   }
 
   return (
-    <LockedDayCard dayIndex={dayIndex} summary={summary} />
+    <LockedDayCard dayIndex={dayIndex} dayId={dayId} summary={summary} />
   )
 })

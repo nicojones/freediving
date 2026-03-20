@@ -58,7 +58,7 @@ export function SessionPreviewSection({
         onChange={onSpeedMultiplierChange}
       />
 
-      <label className="flex items-center gap-3 cursor-pointer mb-4">
+      <label data-testid="test-mode-toggle" className="flex items-center gap-3 cursor-pointer mb-4">
         <input
           type="checkbox"
           checked={testMode}

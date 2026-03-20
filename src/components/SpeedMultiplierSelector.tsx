@@ -14,7 +14,7 @@ export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
   label = 'Speed (test)',
 }: SpeedMultiplierSelectorProps) {
   return (
-    <section className="mb-8">
+    <section data-testid="speed-selector" className="mb-8">
       <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em] block mb-3">
         {label}
       </span>
@@ -22,6 +22,8 @@ export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
         {SPEEDS.map((speed) => (
           <button
             key={speed}
+            data-testid="speed-option"
+            data-testid-value={String(speed)}
             type="button"
             onClick={() => onChange(speed)}
             className={clsx(

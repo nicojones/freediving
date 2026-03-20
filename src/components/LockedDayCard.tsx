@@ -2,15 +2,17 @@ import { memo } from 'react'
 
 interface LockedDayCardProps {
   dayIndex: number
+  dayId: string
   summary: string
 }
 
 export const LockedDayCard = memo(function LockedDayCard({
   dayIndex,
+  dayId,
   summary,
 }: LockedDayCardProps) {
   return (
-    <div className="bg-surface-container-low/50 rounded-3xl p-6 flex items-center justify-between opacity-50">
+    <div data-testid={`day-card-${dayId}`} className="bg-surface-container-low/50 rounded-3xl p-6 flex items-center justify-between opacity-50">
       <div className="flex items-center gap-5">
         <div className="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center">
           <span className="material-symbols-outlined text-outline-variant">

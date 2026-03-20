@@ -8,8 +8,6 @@ import {
   type ReactNode,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import isEmpty from 'lodash/isEmpty'
-import isNil from 'lodash/isNil'
 import { DEFAULT_PLAN_ID } from '../constants/app'
 import {
   loadPlanById,
@@ -31,6 +29,8 @@ import {
 import { hasCompletedToday } from '../utils/completions'
 import { useSessionEngine } from '../hooks/useSessionEngine'
 import type { Plan, PlanWithMeta } from '../types/plan'
+import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
 
 export type TimerState = {
   phase: string

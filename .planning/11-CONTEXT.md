@@ -68,7 +68,7 @@
   - `x == null` / `x === null` / `!x` (when checking null/undefined) → `isNil(x)` or `isNull(x)` as appropriate
   - `Array.isArray(x) && x.length === 0` / `Object.keys(obj).length === 0` → `isEmpty(x)`
   - `x == null` (null or undefined) → `isNil(x)`
-- **Import:** Use `import isNil from 'lodash/isNil'` (and similarly for isNull, isEmpty) to avoid bundling full lodash. Or add `lodash-es` for tree-shakeable imports if preferred.
+- **Import:** Use `import {isNil} from 'lodash'` (and similarly for isNull, isEmpty) to allow for treeshake (preferred)
 - **type-fest:** Use when type utilities help (e.g. `Optional` for optional props, `ReadonlyDeep`, etc.). Add only when it improves type safety or clarity.
 
 ### 7. Naming and Placement

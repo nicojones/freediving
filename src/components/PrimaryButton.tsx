@@ -10,6 +10,7 @@ interface PrimaryButtonProps {
   size?: 'login' | 'session'
   icon?: string
   className?: string
+  'data-testid'?: string
 }
 
 export const PrimaryButton = memo(function PrimaryButton({
@@ -21,10 +22,12 @@ export const PrimaryButton = memo(function PrimaryButton({
   size = 'session',
   icon,
   className,
+  'data-testid': dataTestId = 'primary-button',
 }: PrimaryButtonProps) {
   const isDisabled = disabled || loading
   return (
     <button
+      data-testid={dataTestId}
       type={type}
       onClick={onClick}
       disabled={isDisabled}
