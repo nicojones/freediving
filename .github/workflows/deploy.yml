@@ -60,7 +60,6 @@ jobs:
           cp start_freediving.sh .next/standalone/
           mkdir -p .next/standalone/src .next/standalone/scripts
           cp -r src/data .next/standalone/src/
-          cp scripts/diagnose-502.sh .next/standalone/scripts/
           cd .next/standalone && zip -r ../../build.zip . && cd ../..
 
       - name: Upload build to Server
