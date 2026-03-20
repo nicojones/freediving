@@ -18,6 +18,7 @@ export const BottomNavBar = memo(function BottomNavBar({
     <nav className="fixed bottom-0 w-full z-50 pb-safe bg-background/60 backdrop-blur-xl shadow-[0_-20px_40px_rgba(0,0,0,0.4)] flex justify-around items-center h-24 px-6">
       <button
         type="button"
+        data-testid="nav-training"
         onClick={onTrainingClick}
         className={clsx(
           'flex flex-col items-center justify-center rounded-2xl px-4 py-2 min-h-[44px] min-w-[44px] transition-all duration-400',

@@ -8,6 +8,7 @@ import { ResetProgressSection } from './ResetProgressSection';
 import { ConfirmResetModal } from './ConfirmResetModal';
 import { UserProfileCard } from './UserProfileCard';
 import { InstallPrompt } from '../layout/InstallPrompt';
+import { VersionFooter } from '../shared/VersionFooter';
 import { useTraining } from '../../hooks/useTraining';
 import { DEFAULT_USERNAME } from '../../constants/app';
 
@@ -34,7 +35,7 @@ export function SettingsView() {
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
       <TopAppBar variant="dashboard" weekLabel="Settings" />
       <main
-        className="px-6 pt-8 max-w-2xl mx-auto"
+        className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300"
         style={{
           background:
             'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
@@ -66,6 +67,10 @@ export function SettingsView() {
             </span>
             Sign out
           </button>
+
+          <div className="pt-12 pb-8 text-center">
+            <VersionFooter />
+          </div>
         </section>
       </main>
       <BottomNavBar
