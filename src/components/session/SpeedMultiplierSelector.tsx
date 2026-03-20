@@ -1,11 +1,11 @@
-import { memo } from 'react'
-import clsx from 'clsx'
-import { SPEEDS } from '../../constants/test'
+import { memo } from 'react';
+import clsx from 'clsx';
+import { SPEEDS } from '../../constants/test';
 
 interface SpeedMultiplierSelectorProps {
-  value: number
-  onChange: (speed: number) => void
-  label?: string
+  value: number;
+  onChange: (speed: number) => void;
+  label?: string;
 }
 
 export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
@@ -40,5 +40,5 @@ export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
         ))}
       </div>
     </section>
-  )
-})
+  );
+});

@@ -1,15 +1,15 @@
-import type { Plan } from '../../types/plan'
-import { getDayId } from '../../services/planService'
-import { isDayCompleted } from '../../utils/completions'
-import { TrainingDayCard } from './TrainingDayCard'
+import type { Plan } from '../../types/plan';
+import { getDayId } from '../../services/planService';
+import { isDayCompleted } from '../../utils/completions';
+import { TrainingDayCard } from './TrainingDayCard';
 
 interface DayListSectionProps {
-  plan: Plan
-  completions: { day_id: string }[]
-  currentDayIndex: number | null
-  onSelectDay: (index: number) => void
-  planName: string
-  planDescription?: string
+  plan: Plan;
+  completions: { day_id: string }[];
+  currentDayIndex: number | null;
+  onSelectDay: (index: number) => void;
+  planName: string;
+  planDescription?: string;
 }
 
 export function DayListSection({
@@ -23,11 +23,15 @@ export function DayListSection({
   return (
     <>
       <section className="mb-12">
-        <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2" data-testid="plan-name">
+        <h1
+          className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2"
+          data-testid="plan-name"
+        >
           {planName}
         </h1>
         <p className="text-on-surface-variant font-body text-sm max-w-[80%]">
-          {planDescription ?? 'Focus on rhythmic breathing and peripheral relaxation during the peak CO2 phases.'}
+          {planDescription ??
+            'Focus on rhythmic breathing and peripheral relaxation during the peak CO2 phases.'}
         </p>
       </section>
 
@@ -45,5 +49,5 @@ export function DayListSection({
         ))}
       </div>
     </>
-  )
+  );
 }

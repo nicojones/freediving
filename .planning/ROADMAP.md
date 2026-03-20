@@ -23,13 +23,15 @@
 - [x] **Phase 13: Deployment** - GitHub Actions deploy to DigitalOcean on push to main
 - [x] **Phase 14: Next.js Migration** - Migrate all the code (express + react) to Next.js
 - [x] **Phase 15: Refactor Code (Cleanup)** - Remove all unused variables, functions, imports; no dead code
-- [x] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
+- [x] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/\*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
 - [x] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
 - [x] **Phase 18: Dynamic Version Display & Semantic Release** - Version from package.json on login; fix→patch, feat→minor, chore→no bump on push to main; major manual
 - [x] **Phase 19: Create Plan in Settings** - JSON upload with schema validation; optional AI voice mode (dictate → Gemini → PlanWithMeta JSON)
 - [x] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
 - [x] **Phase 21: UI** - Remove hardcoded text; unify plan name/description in DayListSection; move app name to constants
 - [x] **Phase 22: Plans Tab + Settings Cleanup** - Add Plans tab; move plan-related UI from Settings; created_by + delete non-active plans; leave room for explore-without-switching
+- [ ] **Phase 23: Prettier + Lefthook + CI** - Basic formatter (Prettier); format + lint via lefthook.yml; GitHub workflow aborts if format/lint would change files
+- [ ] **Phase 24: AI Plan Input Enhancements** - Dynamic prompt from plan types; text/description-to-plan via LLM; optional dedicated plan creation screen
 
 ---
 
@@ -44,6 +46,7 @@
 **Requirements:** PLAN-01, ADMN-01
 
 **Success Criteria** (what must be TRUE):
+
 1. App loads training plans from JSON files (monthly plans, day sequences)
 2. Parsed plans expose hold/breathe intervals per day
 3. Admin can add or modify plans by updating JSON (no in-app editor)
@@ -61,6 +64,7 @@
 **Requirements:** PROF-01, PROF-02, SESS-07
 
 **Success Criteria** (what must be TRUE):
+
 1. User can log in with username/password (pre-defined users, no registration)
 2. Backend persists progress in SQLite; PWA fetches/stores via API
 3. App records session completion per user per day
@@ -79,6 +83,7 @@
 **Requirements:** SESS-06
 
 **Success Criteria** (what must be TRUE):
+
 1. Timer uses Date-based elapsed time (not setInterval) for cue accuracy
 2. Engine emits events: phase_start, prepare_hold, countdown_30, hold_end, session_complete
 3. No events or cues fire during the breathhold itself
@@ -98,6 +103,7 @@
 **Requirements:** SESS-01, SESS-02, SESS-03, SESS-04, SESS-05
 
 **Success Criteria** (what must be TRUE):
+
 1. User hears "Hold" at hold start
 2. User hears "Prepare for hold" 10 seconds before each hold
 3. User hears "30 seconds" when recovery ≥31s, at 30s remaining
@@ -117,6 +123,7 @@
 **Requirements:** PLAN-02, PLAN-03, PLAN-04
 
 **Success Criteria** (what must be TRUE):
+
 1. User can view session structure (hold/breathe intervals) before starting
 2. User can select any day in the current plan
 3. App defaults to "current" day: first non-completed day, or today's scheduled day if all previous are done
@@ -136,6 +143,7 @@
 **Requirements:** PWA-01, PWA-02, PWA-03, PWA-04
 
 **Success Criteria** (what must be TRUE):
+
 1. User can install the app as a PWA (Add to Home Screen)
 2. App loads and functions when offline
 3. Audio cue files play when offline (precached)
@@ -154,6 +162,7 @@
 **Requirements:** (Enhancement — no new v1 requirement)
 
 **Success Criteria** (what must be TRUE):
+
 1. Every day in the plan has `id` (8 hex), `day` (ordinal), and optional `group`
 2. Example groups in default-plan: warm-up, deep pool, endurance
 3. Completions use `day_id` instead of `day_index` (backend + frontend)
@@ -173,6 +182,7 @@
 **Requirements:** (Enhancement — no new v1 requirement)
 
 **Success Criteria** (what must be TRUE):
+
 1. User cannot start a new session if they already completed one today
 2. After last step, user sees green glowing ring + "Complete session" button (no auto-leave)
 3. Test toggle allows overriding step 1 (relaxation) for faster testing
@@ -191,6 +201,7 @@
 **Requirements:** (Enhancement — no new v1 requirement)
 
 **Success Criteria** (what must be TRUE):
+
 1. Refactoring scope and targets defined in plan
 2. Code structure improved without changing user-facing behavior
 
@@ -207,6 +218,7 @@
 **Requirements:** (Enhancement — no new v1 requirement)
 
 **Success Criteria** (what must be TRUE):
+
 1. User can reset progress from the settings page
 2. Multiple plans exist in `src/data`; plan structure is `{id, name, description, days: [...]}` (not array)
 3. Active training plan is stored per user in the DB
@@ -225,6 +237,7 @@
 **Requirements:** (Enhancement — no new v1 requirement)
 
 **Success Criteria** (what must be TRUE):
+
 1. clsx used correctly for all conditional class names (no string concatenation or inline ternaries where clsx fits)
 2. Components stay logically small; no component exceeds ~150 lines
 3. Small UI blocks (e.g. status banners, inline messages) extracted to named sub-components for clarity and testability
@@ -242,6 +255,7 @@
 **Requirements:** (Enhancement — quality assurance)
 
 **Success Criteria** (what must be TRUE):
+
 1. Unit test framework installed and configured (e.g. Vitest)
 2. Pure logic (timer engine, plan service, utils) covered by unit tests
 3. Critical services and components have unit tests
@@ -261,6 +275,7 @@
 **Requirements:** (Enhancement — production deployment)
 
 **Success Criteria** (what must be TRUE):
+
 1. Server serves Vite dist/ and API in production; CORS configurable via CORS_ORIGIN
 2. GitHub Actions deploys on push to main (zip build, conditional node_modules)
 3. Post-deploy: unzip, systemctl restart freediving.service
@@ -279,6 +294,7 @@
 **Requirements:** (Enhancement — framework migration)
 
 **Success Criteria** (what must be TRUE):
+
 1. Express API routes migrated to Next.js API routes or Route Handlers
 2. React pages/components migrated to Next.js App Router or Pages Router
 3. PWA, offline support, and audio precache preserved
@@ -298,6 +314,7 @@
 **Requirements:** (Enhancement — code quality)
 
 **Success Criteria** (what must be TRUE):
+
 1. ESLint configured (flat config) and passing
 2. All `if` statements use curly braces
 3. No unused variables, functions, imports, or exports in codebase
@@ -316,6 +333,7 @@
 **Requirements:** (Enhancement — code structure and test coverage)
 
 **Success Criteria** (what must be TRUE):
+
 1. `~` alias maps to `src/`; imports like `import X from '~/components/...'` work
 2. `src/components` organized into subfolders (e.g. ui, session, day, layout, settings)
 3. Component unit tests added for components that lacked them
@@ -334,6 +352,7 @@
 **Requirements:** (Enhancement — developer experience)
 
 **Success Criteria** (what must be TRUE):
+
 1. Settings page has a toggle to show/hide test controls (dev mode)
 2. All users can see and toggle dev mode; default is OFF
 3. When dev mode is unchecked, test controls are invisible on all pages (session preview, etc.)
@@ -352,6 +371,7 @@
 **Requirements:** (Enhancement — release automation)
 
 **Success Criteria** (what must be TRUE):
+
 1. Login page shows version from package.json
 2. Push to main with fix: bumps patch version
 3. Push to main with feat: bumps minor version
@@ -371,6 +391,7 @@
 **Requirements:** (Enhancement — plan creation)
 
 **Success Criteria** (what must be TRUE):
+
 1. User can upload a JSON file in Settings; file is validated against PlanWithMeta schema
 2. Valid plans are stored (DB preferred; public/static considered — pros/cons documented)
 3. Invalid JSON shows clear validation errors
@@ -389,6 +410,7 @@
 **Requirements:** (Enhancement — plan exploration)
 
 **Success Criteria** (what must be TRUE):
+
 1. User can view session structure (hold/breathe intervals) for future days in the plan
 2. User cannot start or execute a session for a future day
 3. Future days are clearly differentiated from current/available days (e.g. read-only preview, no start button)
@@ -406,6 +428,7 @@
 **Requirements:** (Enhancement — UI consistency)
 
 **Success Criteria** (what must be TRUE):
+
 1. DayListSection displays plan name and description from plan metadata (not hardcoded "Training" / "Focus on rhythmic breathing...")
 2. TopAppBar does not show plan name (redundant with DayListSection)
 3. App name "Fishly" lives in `src/constants/app.ts`
@@ -423,6 +446,7 @@
 **Requirements:** (Enhancement — settings cleanup)
 
 **Success Criteria** (what must be TRUE):
+
 1. Bottom nav has three tabs: Training, Plans, Settings
 2. Plan selector and create-plan live in Plans tab; Settings no longer shows them
 3. plans table has created_by; new user-created plans record creator
@@ -433,32 +457,71 @@
 
 ---
 
+### Phase 23: Prettier + Lefthook + CI
+
+**Goal:** Add basic formatter (Prettier). Code must be formatted and linted with lefthook.yml; GitHub workflow aborts if format/lint would change any files in the pipeline.
+
+**Depends on:** Phase 22 (Plans Tab + Settings Cleanup)
+
+**Requirements:** (Enhancement — code quality tooling)
+
+**Success Criteria** (what must be TRUE):
+
+1. Prettier installed and configured; codebase formatted consistently
+2. lefthook.yml runs format + lint on pre-commit; blocks commit if checks fail
+3. GitHub workflow runs format:check + lint; job aborts if any files would be changed (unformatted or lint-fixable)
+
+**Plans:** `.planning/23-PLAN.md` (5 tasks: Prettier → lefthook → GitHub workflow → document → verify)
+
+---
+
+### Phase 24: AI Plan Input Enhancements
+
+**Goal:** (1) Build the transcribe/plan prompt dynamically from `src/types/plan.ts` so schema changes propagate automatically; (2) allow users to paste or type free-form text — if parseable as JSON, validate as now; otherwise send text to LLM with a text-specific prompt; (3) optionally move plan creation to its own screen if UX warrants it.
+
+**Depends on:** Phase 23 (Prettier + Lefthook + CI)
+
+**Requirements:** (Enhancement — plan creation UX)
+
+**Success Criteria** (what must be TRUE):
+
+1. Transcribe API prompt is derived from plan types (or a shared schema doc); format changes in `plan.ts` do not require manual prompt updates
+2. Create-plan box accepts: JSON (paste/upload/type) — validated as now; or free-form text — sent to LLM, returns PlanWithMeta JSON
+3. Text path uses a prompt variant: "Given the text..." instead of "Convert this audio..."
+4. (Optional) Plan creation has its own screen if it improves UX
+
+**Plans:** `.planning/24-PLAN.md` (TBD — research and task breakdown)
+
+---
+
 ## Progress
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Plan Service | 5/5 | Complete | 1-PLAN.md |
-| 2. Progress + Profile Services | 2/2 | Complete | 2-PLAN.md |
-| 3. Timer Engine | 3/3 | Complete | 3-PLAN.md |
-| 4. Audio Service | 2/2 | Complete | 4-PLAN.md |
-| 5. Session Runner + Plan/Day Selector | 4/4 | Complete | 5-PLAN.md |
-| 6. PWA + Offline | 4/4 | Complete | 6-PLAN.md |
-| 7. Day IDs + Routing | 5/5 | Complete | 7-PLAN.md |
-| 8. Session UX Enhancements | 5/5 | Complete | 8-PLAN.md |
-| 9. Refactor Code | 4/4 | Complete | 9-PLAN.md |
-| 10. Reset + Plan Change | 6/6 | Complete | 10-PLAN.md |
-| 11. Refactor Code (Quality Pass) | 6/6 | Complete | 11-PLAN.md |
-| 12. Tests | 8/8 | Complete | 12-PLAN.md |
-| 13. Deployment | 6/6 | Complete | 13-PLAN.md |
-| 14. Next.js Migration | 9/9 | Complete | 14-PLAN.md |
-| 15. Refactor Code (Cleanup) | 0/5 | Pending | 15-PLAN.md |
-| 16. Alias Imports, Component Folders & Extended Tests | 0/6 | Pending | 16-PLAN.md |
-| 17. Test Controls | 0/4 | Pending | 17-PLAN.md |
-| 18. Dynamic Version Display & Semantic Release | 4/4 | Complete | 18-PLAN.md |
-| 19. Create Plan in Settings | 0/9 | Pending | 19-PLAN.md |
-| 20. Preview Future Days | 0/TBD | Pending | 20-PLAN.md |
-| 21. UI | 0/3 | Pending | 21-PLAN.md |
-| 22. Plans Tab + Settings Cleanup | 5/5 | Complete | 22-PLAN.md |
+| Phase                                                 | Plans Complete | Status   | Completed  |
+| ----------------------------------------------------- | -------------- | -------- | ---------- |
+| 1. Plan Service                                       | 5/5            | Complete | 1-PLAN.md  |
+| 2. Progress + Profile Services                        | 2/2            | Complete | 2-PLAN.md  |
+| 3. Timer Engine                                       | 3/3            | Complete | 3-PLAN.md  |
+| 4. Audio Service                                      | 2/2            | Complete | 4-PLAN.md  |
+| 5. Session Runner + Plan/Day Selector                 | 4/4            | Complete | 5-PLAN.md  |
+| 6. PWA + Offline                                      | 4/4            | Complete | 6-PLAN.md  |
+| 7. Day IDs + Routing                                  | 5/5            | Complete | 7-PLAN.md  |
+| 8. Session UX Enhancements                            | 5/5            | Complete | 8-PLAN.md  |
+| 9. Refactor Code                                      | 4/4            | Complete | 9-PLAN.md  |
+| 10. Reset + Plan Change                               | 6/6            | Complete | 10-PLAN.md |
+| 11. Refactor Code (Quality Pass)                      | 6/6            | Complete | 11-PLAN.md |
+| 12. Tests                                             | 8/8            | Complete | 12-PLAN.md |
+| 13. Deployment                                        | 6/6            | Complete | 13-PLAN.md |
+| 14. Next.js Migration                                 | 9/9            | Complete | 14-PLAN.md |
+| 15. Refactor Code (Cleanup)                           | 0/5            | Pending  | 15-PLAN.md |
+| 16. Alias Imports, Component Folders & Extended Tests | 0/6            | Pending  | 16-PLAN.md |
+| 17. Test Controls                                     | 0/4            | Pending  | 17-PLAN.md |
+| 18. Dynamic Version Display & Semantic Release        | 4/4            | Complete | 18-PLAN.md |
+| 19. Create Plan in Settings                           | 0/9            | Pending  | 19-PLAN.md |
+| 20. Preview Future Days                               | 0/TBD          | Pending  | 20-PLAN.md |
+| 21. UI                                                | 0/3            | Pending  | 21-PLAN.md |
+| 22. Plans Tab + Settings Cleanup                      | 5/5            | Complete | 22-PLAN.md |
+| 23. Prettier + Lefthook + CI                          | 0/5            | Pending  | 23-PLAN.md |
+| 24. AI Plan Input Enhancements                        | 0/7            | Pending  | 24-PLAN.md |
 
 ---
 

@@ -5,13 +5,16 @@
   "type": "module",
   "scripts": {
     "postinstall": "rm -rf node_modules/@tybys node_modules/@napi-rs/wasm-runtime node_modules/@emnapi 2>/dev/null || true",
+    "prepare": "lefthook install",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "eslint .",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "node scripts/check-e2e-port.mjs && playwright test",
     "semantic-release": "semantic-release"
   },
   "dependencies": {
@@ -54,7 +57,9 @@
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.4.0",
     "jsdom": "^29.0.1",
+    "lefthook": "^2.1.4",
     "postcss": "^8.5.8",
+    "prettier": "^3.8.1",
     "semantic-release": "^24.2.0",
     "serwist": "^9.5.7",
     "tailwindcss": "^4.2.2",

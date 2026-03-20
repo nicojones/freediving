@@ -1,4 +1,4 @@
-const DEFAULT_CIRCUMFERENCE = 2 * Math.PI * 160
+const DEFAULT_CIRCUMFERENCE = 2 * Math.PI * 160;
 
 /**
  * Computes SVG strokeDasharray for circular hold progress.
@@ -11,8 +11,10 @@ export function getHoldProgressDashArray(
   totalDurationSeconds: number,
   circumference = DEFAULT_CIRCUMFERENCE
 ): string {
-  if (totalDurationSeconds <= 0) {return `0 ${circumference}`}
-  const progressRatio = remainingMs / 1000 / totalDurationSeconds
-  const filled = progressRatio * circumference
-  return `${filled} ${circumference}`
+  if (totalDurationSeconds <= 0) {
+    return `0 ${circumference}`;
+  }
+  const progressRatio = remainingMs / 1000 / totalDurationSeconds;
+  const filled = progressRatio * circumference;
+  return `${filled} ${circumference}`;
 }

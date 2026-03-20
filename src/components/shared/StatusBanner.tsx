@@ -1,6 +1,6 @@
 interface StatusBannerProps {
-  progressError?: string | null
-  savedMessage?: boolean
+  progressError?: string | null;
+  savedMessage?: boolean;
 }
 
 export function StatusBanner({ progressError, savedMessage }: StatusBannerProps) {
@@ -13,7 +13,7 @@ export function StatusBanner({ progressError, savedMessage }: StatusBannerProps)
       >
         {progressError}
       </p>
-    )
+    );
   }
   if (savedMessage) {
     return (
@@ -23,7 +23,7 @@ export function StatusBanner({ progressError, savedMessage }: StatusBannerProps)
       >
         Saved
       </p>
-    )
+    );
   }
-  return null
+  return null;
 }

@@ -1,102 +1,111 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'install-prompt-dismissed'
+const STORAGE_KEY = 'install-prompt-dismissed';
 
 interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-type Variant = 'banner' | 'compact'
+type Variant = 'banner' | 'compact';
 
 export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null)
-  const [showPrompt, setShowPrompt] = useState(false)
-  const [dismissed, setDismissed] = useState(false)
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      setShowPrompt(false)
-      return
+      setShowPrompt(false);
+      return;
     }
 
     if (variant === 'banner') {
-      const dismissedStorage = localStorage.getItem(STORAGE_KEY)
+      const dismissedStorage = localStorage.getItem(STORAGE_KEY);
       if (dismissedStorage) {
-        setDismissed(true)
+        setDismissed(true);
       }
     }
 
     const handler = (e: Event) => {
-      e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
-      setShowPrompt(true)
-    }
-    window.addEventListener('beforeinstallprompt', handler)
-    return () => window.removeEventListener('beforeinstallprompt', handler)
-  }, [variant])
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      setShowPrompt(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, [variant]);
 
   useEffect(() => {
-    const isIOS =
-      navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')
+    const isIOS = navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad');
     if (isIOS && !window.matchMedia('(display-mode: standalone)').matches) {
-      setShowPrompt(true)
+      setShowPrompt(true);
     }
-  }, [])
+  }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) {return}
-    await deferredPrompt.prompt()
-    await deferredPrompt.userChoice
-    setDeferredPrompt(null)
-    setDismissed(true)
-    if (variant === 'banner') {
-      localStorage.setItem(STORAGE_KEY, '1')
+    if (!deferredPrompt) {
+      return;
     }
-  }
+    await deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+    setDismissed(true);
+    if (variant === 'banner') {
+      localStorage.setItem(STORAGE_KEY, '1');
+    }
+  };
 
   const handleDismiss = () => {
-    setDismissed(true)
-    localStorage.setItem(STORAGE_KEY, '1')
-  }
+    setDismissed(true);
+    localStorage.setItem(STORAGE_KEY, '1');
+  };
 
   const handleShare = async () => {
-    if (!navigator.share) {return}
+    if (!navigator.share) {
+      return;
+    }
     try {
       await navigator.share({
         title: 'Fishly',
         text: 'Add to home screen for the best experience.',
         url: typeof window !== 'undefined' ? window.location.origin : '',
-      })
+      });
     } catch {
       // User cancelled or share failed
     }
-  }
+  };
 
-  const canShare = true;// typeof navigator !== 'undefined' && 'share' in navigator
+  const canShare = true; // typeof navigator !== 'undefined' && 'share' in navigator
 
   const isIOS =
     typeof navigator !== 'undefined' &&
-    (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad'))
+    (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad'));
 
-  const isInstalled = typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches
-  if (isInstalled) {return null}
+  const isInstalled =
+    typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches;
+  if (isInstalled) {
+    return null;
+  }
 
-  if (variant === 'banner' && (!showPrompt || dismissed)) {return null}
+  if (variant === 'banner' && (!showPrompt || dismissed)) {
+    return null;
+  }
 
   if (variant === 'compact') {
     return (
       <div className="mb-6 flex items-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-low/50 px-4 py-3">
-        <span className="material-symbols-outlined text-primary text-xl shrink-0">
-          {deferredPrompt ? 'download_2' : 'add_to_home_screen'}
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-on-surface-variant text-sm">
-            {deferredPrompt
-              ? 'Add to home screen for the best experience.'
-              : 'Tap Share → Add to Home Screen to install.'}
-          </p>
+        <div className="flex gap-3">
+          <span className="material-symbols-outlined text-primary text-xl shrink-0">
+            {deferredPrompt ? 'download_2' : 'add_to_home_screen'}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-on-surface-variant text-sm">
+              {deferredPrompt
+                ? 'Add to home screen for the best experience.'
+                : 'Tap Share → Add to Home Screen to install.'}
+            </p>
+          </div>
         </div>
         {deferredPrompt ? (
           <button
@@ -117,7 +126,7 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
           </button>
         ) : null}
       </div>
-    )
+    );
   }
 
   return (
@@ -128,9 +137,7 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
         </span>
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-headline font-bold text-on-surface text-base">
-          Install Fishly
-        </h3>
+        <h3 className="font-headline font-bold text-on-surface text-base">Install Fishly</h3>
         <p className="text-on-surface-variant text-sm mt-0.5 leading-relaxed">
           {deferredPrompt
             ? 'Add to your home screen for the best experience.'
@@ -170,5 +177,5 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
         </button>
       </div>
     </div>
-  )
+  );
 }

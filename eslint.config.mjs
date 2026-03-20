@@ -1,7 +1,7 @@
-import js from '@eslint/js'
-import tseslint from 'typescript-eslint'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default tseslint.config(
   {
@@ -14,7 +14,8 @@ export default tseslint.config(
       '**/public/sw.js',
       '**/next-env.d.ts',
       '**/server/**',
-      '**/vitest.config.ts',
+      '**/*.mjs',
+      'vite*',
     ],
   },
   js.configs.recommended,
@@ -37,10 +38,7 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-hooks/set-state-in-effect': 'off',
-      'react-refresh/only-export-components': [
-        'error',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['error', { allowConstantExport: true }],
       curly: ['error', 'all'],
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -57,4 +55,4 @@ export default tseslint.config(
       'react-refresh/only-export-components': 'off',
     },
   }
-)
+);

@@ -1,9 +1,9 @@
-import type { PlanWithMeta } from '../../types/plan'
+import type { PlanWithMeta } from '../../types/plan';
 
 interface PlanSelectorSectionProps {
-  availablePlans: PlanWithMeta[]
-  activePlanId: string | null
-  onPlanChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  availablePlans: PlanWithMeta[];
+  activePlanId: string | null;
+  onPlanChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export function PlanSelectorSection({
@@ -30,5 +30,5 @@ export function PlanSelectorSection({
         ))}
       </select>
     </div>
-  )
+  );
 }

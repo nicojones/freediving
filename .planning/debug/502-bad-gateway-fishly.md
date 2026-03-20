@@ -1,6 +1,6 @@
 ---
 status: investigating
-trigger: "Investigate issue: 502-bad-gateway-fishly"
+trigger: 'Investigate issue: 502-bad-gateway-fishly'
 created: 2025-03-20T00:00:00.000Z
 updated: 2025-03-20T00:00:00.000Z
 ---

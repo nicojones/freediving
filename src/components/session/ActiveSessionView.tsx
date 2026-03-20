@@ -1,13 +1,13 @@
-'use client'
-import clsx from 'clsx'
-import { useSessionProgress } from '../../utils/sessionProgress'
-import { formatDuration } from '../../utils/formatDuration'
-import { formatMmSs } from '../../utils/formatMmSs'
-import { formatPhaseDisplayName, formatPhaseShortLabel } from '../../utils/phaseLabels'
-import { useTraining } from '../../hooks/useTraining'
-import { TopAppBar } from '../layout/TopAppBar'
-import { HoldProgressRing } from './HoldProgressRing'
-import { SessionActionButtons } from './SessionActionButtons'
+'use client';
+import clsx from 'clsx';
+import { useSessionProgress } from '../../utils/sessionProgress';
+import { formatDuration } from '../../utils/formatDuration';
+import { formatMmSs } from '../../utils/formatMmSs';
+import { formatPhaseDisplayName, formatPhaseShortLabel } from '../../utils/phaseLabels';
+import { useTraining } from '../../hooks/useTraining';
+import { TopAppBar } from '../layout/TopAppBar';
+import { HoldProgressRing } from './HoldProgressRing';
+import { SessionActionButtons } from './SessionActionButtons';
 
 export function ActiveSessionView() {
   const {
@@ -20,18 +20,17 @@ export function ActiveSessionView() {
     showTestControls,
     handleAbortSession,
     handleCompleteSession,
-  } = useTraining()
+  } = useTraining();
 
-  const {
-    phases,
-    totalRounds,
-    currentRound,
-    progressPercent,
-    nextItem,
-  } = useSessionProgress(plan, sessionDayIndex, timerState)
+  const { phases, totalRounds, currentRound, progressPercent, nextItem } = useSessionProgress(
+    plan,
+    sessionDayIndex,
+    timerState
+  );
 
-  if (!plan || sessionDayIndex === null) {return null}
-
+  if (!plan || sessionDayIndex === null) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background font-body selection:bg-primary/30 flex flex-col">
@@ -50,11 +49,7 @@ export function ActiveSessionView() {
             <div
               className="h-full bg-primary/40 rounded-full transition-all duration-400"
               style={{
-                width: `${
-                  sessionStatus === 'awaitingCompletionConfirm'
-                    ? 100
-                    : progressPercent
-                }%`,
+                width: `${sessionStatus === 'awaitingCompletionConfirm' ? 100 : progressPercent}%`,
               }}
             />
           </div>
@@ -64,19 +59,30 @@ export function ActiveSessionView() {
           <div
             className={clsx(
               'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(320px,75vw)] max-w-[320px] aspect-square rounded-full flex items-center justify-center transition-all duration-400',
-              { 'border-transparent completion-glow': sessionStatus === 'awaitingCompletionConfirm' },
-              { 'border-transparent focus-glow': sessionStatus !== 'awaitingCompletionConfirm' && timerState?.phase === 'hold' },
-              { 'border-transparent recovery-breathe': sessionStatus !== 'awaitingCompletionConfirm' && timerState?.phase === 'recovery' },
-              { 'border-surface-container-high': sessionStatus !== 'awaitingCompletionConfirm' && timerState?.phase !== 'hold' && timerState?.phase !== 'recovery' }
+              {
+                'border-transparent completion-glow': sessionStatus === 'awaitingCompletionConfirm',
+              },
+              {
+                'border-transparent focus-glow':
+                  sessionStatus !== 'awaitingCompletionConfirm' && timerState?.phase === 'hold',
+              },
+              {
+                'border-transparent recovery-breathe':
+                  sessionStatus !== 'awaitingCompletionConfirm' && timerState?.phase === 'recovery',
+              },
+              {
+                'border-surface-container-high':
+                  sessionStatus !== 'awaitingCompletionConfirm' &&
+                  timerState?.phase !== 'hold' &&
+                  timerState?.phase !== 'recovery',
+              }
             )}
           >
             {timerState?.phase === 'hold' && phases && (
               <HoldProgressRing
                 remainingMs={timerState.remainingMs}
                 holdDurationSeconds={
-                  phases.filter((p) => p.type === 'hold')[
-                    timerState.intervalIndex
-                  ]?.duration ?? 60
+                  phases.filter((p) => p.type === 'hold')[timerState.intervalIndex]?.duration ?? 60
                 }
                 isActive
               />
@@ -106,8 +112,7 @@ export function ActiveSessionView() {
                       next_plan
                     </span>
                     <span className="text-on-surface-variant font-label text-sm tracking-wide">
-                      Next: {formatDuration(nextItem.seconds)}{' '}
-                      {formatPhaseShortLabel(nextItem)}
+                      Next: {formatDuration(nextItem.seconds)} {formatPhaseShortLabel(nextItem)}
                     </span>
                   </div>
                 )}
@@ -128,5 +133,5 @@ export function ActiveSessionView() {
         />
       </div>
     </div>
-  )
+  );
 }

@@ -39,16 +39,16 @@
 
 ### Component Boundaries
 
-| Component | Responsibility | Communicates With |
-|-----------|----------------|-------------------|
-| **Profile Service** | Exposes pre-defined profiles; selected profile drives all storage keys | Progress Service (per-user completion) |
-| **Plan Service** | Loads JSON plans, parses session structure (hold/breathe intervals), resolves "current day" | Progress Service (completion state), JSON static assets |
-| **Timer Engine** | State machine for session phases; emits events at phase transitions and countdown milestones | Audio Service (cue triggers), Progress Service (completion) |
-| **Audio Service** | Preloads cue files, plays cues on demand; uses HTML5 Audio in main thread | Timer Engine (subscribes to events), Service Worker (cache) |
-| **Progress Service** | Persists session completion per user per day; exposes "first non-completed day" | Plan Service, Profile Service, SQLite/IndexedDB |
-| **Session Runner (UI)** | Orchestrates start/stop; wires Timer Engine → Audio; minimal visual feedback | Timer Engine, Audio Service, Progress Service |
-| **Plan/Day Selector (UI)** | Profile pick, plan day selection, session preview | Profile Service, Plan Service |
-| **Service Worker** | Precaches app shell, JSON plans, audio files; serves offline | Audio Service (via fetch), Plan Service (via fetch) |
+| Component                  | Responsibility                                                                               | Communicates With                                           |
+| -------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Profile Service**        | Exposes pre-defined profiles; selected profile drives all storage keys                       | Progress Service (per-user completion)                      |
+| **Plan Service**           | Loads JSON plans, parses session structure (hold/breathe intervals), resolves "current day"  | Progress Service (completion state), JSON static assets     |
+| **Timer Engine**           | State machine for session phases; emits events at phase transitions and countdown milestones | Audio Service (cue triggers), Progress Service (completion) |
+| **Audio Service**          | Preloads cue files, plays cues on demand; uses HTML5 Audio in main thread                    | Timer Engine (subscribes to events), Service Worker (cache) |
+| **Progress Service**       | Persists session completion per user per day; exposes "first non-completed day"              | Plan Service, Profile Service, SQLite/IndexedDB             |
+| **Session Runner (UI)**    | Orchestrates start/stop; wires Timer Engine → Audio; minimal visual feedback                 | Timer Engine, Audio Service, Progress Service               |
+| **Plan/Day Selector (UI)** | Profile pick, plan day selection, session preview                                            | Profile Service, Plan Service                               |
+| **Service Worker**         | Precaches app shell, JSON plans, audio files; serves offline                                 | Audio Service (via fetch), Plan Service (via fetch)         |
 
 ### Data Flow
 
@@ -103,7 +103,7 @@ Install / first visit
 // States: IDLE | RECOVERY | HOLD | COMPLETE
 // Events: phase_start | prepare_hold | countdown_30 | hold_end | session_complete
 
-type TimerEvent = 
+type TimerEvent =
   | { type: 'phase_start'; phase: 'recovery' | 'hold'; index: number }
   | { type: 'prepare_hold' }
   | { type: 'countdown_30' }
@@ -127,7 +127,7 @@ type TimerEvent =
 ```typescript
 // Main thread: preload and play
 const audio = new Audio('/audio/breathe.mp3');
-audio.crossOrigin = 'anonymous';  // Required for SW cache
+audio.crossOrigin = 'anonymous'; // Required for SW cache
 await audio.play();
 
 // Service Worker: CacheFirst + RangeRequestsPlugin for media
@@ -214,12 +214,12 @@ timerEngine.on('countdown_30', () => audioService.play('thirty_seconds'));
 
 ## Scalability Considerations
 
-| Concern | At 10 users | At 100 users | At 1000+ users |
-|---------|-------------|--------------|----------------|
-| **SQLite size** | &lt; 1 MB | &lt; 10 MB | Consider periodic pruning of old completion records |
-| **Audio cache** | Fixed (user-provided files) | Same | Same; precache set is bounded |
-| **JSON plans** | Small (KB) | Same | Same; admin-managed |
-| **IndexedDB quota** | Plenty | Plenty | Check `navigator.storage.estimate()` if storing large blobs |
+| Concern             | At 10 users                 | At 100 users | At 1000+ users                                              |
+| ------------------- | --------------------------- | ------------ | ----------------------------------------------------------- |
+| **SQLite size**     | &lt; 1 MB                   | &lt; 10 MB   | Consider periodic pruning of old completion records         |
+| **Audio cache**     | Fixed (user-provided files) | Same         | Same; precache set is bounded                               |
+| **JSON plans**      | Small (KB)                  | Same         | Same; admin-managed                                         |
+| **IndexedDB quota** | Plenty                      | Plenty       | Check `navigator.storage.estimate()` if storing large blobs |
 
 For this project (few pre-defined users, local-only storage), scale is not a primary concern. The architecture is suitable for the stated scope.
 

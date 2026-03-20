@@ -1,30 +1,28 @@
-import { isEmpty, isNil } from '../utils/lang'
-import type { Plan, PlanWithMeta, Phase } from '../types/plan'
-import defaultPlanData from '../data/default-plan.json'
-import minimalPlanData from '../data/minimal-plan.json'
+import { isEmpty, isNil } from '../utils/lang';
+import type { Plan, PlanWithMeta, Phase } from '../types/plan';
+import defaultPlanData from '../data/default-plan.json';
+import minimalPlanData from '../data/minimal-plan.json';
 
 const planModules: PlanWithMeta[] = [
   defaultPlanData as PlanWithMeta,
   minimalPlanData as PlanWithMeta,
-]
+];
 
-const RELAXATION_SECONDS = 60
+const RELAXATION_SECONDS = 60;
 
 /** Minimal completion shape for getCurrentDay; avoids coupling to progressService */
-export type CompletionForPlan = { day_id: string; completed_at: number }
+export type CompletionForPlan = { day_id: string; completed_at: number };
 
 /** Returns plan days from Plan or PlanWithMeta for backward compatibility */
 export function getPlanDays(plan: Plan | PlanWithMeta): Plan {
-  return (Array.isArray(plan) ? plan : plan.days) as Plan
+  return (Array.isArray(plan) ? plan : plan.days) as Plan;
 }
 
 /**
  * Returns bundled plans only (from src/data).
  */
 export function getBundledPlans(): PlanWithMeta[] {
-  return planModules.filter(
-    (p): p is PlanWithMeta => Boolean(p && 'id' in p && 'days' in p)
-  )
+  return planModules.filter((p): p is PlanWithMeta => Boolean(p && 'id' in p && 'days' in p));
 }
 
 /**
@@ -32,12 +30,14 @@ export function getBundledPlans(): PlanWithMeta[] {
  */
 export async function fetchPlansFromApi(): Promise<PlanWithMeta[]> {
   try {
-    const res = await fetch('/api/plans', { credentials: 'include' })
-    if (!res.ok) {return []}
-    const data = (await res.json()) as { plans?: PlanWithMeta[] }
-    return (data.plans ?? []) as PlanWithMeta[]
+    const res = await fetch('/api/plans', { credentials: 'include' });
+    if (!res.ok) {
+      return [];
+    }
+    const data = (await res.json()) as { plans?: PlanWithMeta[] };
+    return (data.plans ?? []) as PlanWithMeta[];
   } catch {
-    return []
+    return [];
   }
 }
 
@@ -45,8 +45,10 @@ export async function fetchPlansFromApi(): Promise<PlanWithMeta[]> {
  * Returns all available plans (bundled + DB). Use plans param when available from context.
  */
 export function getAvailablePlans(plans?: PlanWithMeta[]): PlanWithMeta[] {
-  if (plans) {return plans}
-  return getBundledPlans()
+  if (plans) {
+    return plans;
+  }
+  return getBundledPlans();
 }
 
 /**
@@ -57,12 +59,12 @@ export function loadPlanById(
   planId: string,
   plans?: PlanWithMeta[]
 ): PlanWithMeta | { error: string } {
-  const list = getAvailablePlans(plans)
-  const plan = list.find((p) => p.id === planId)
+  const list = getAvailablePlans(plans);
+  const plan = list.find((p) => p.id === planId);
   if (isNil(plan)) {
-    return { error: `Plan not found: ${planId}` }
+    return { error: `Plan not found: ${planId}` };
   }
-  return plan as PlanWithMeta
+  return plan as PlanWithMeta;
 }
 
 /**
@@ -75,17 +77,17 @@ export async function loadPlan(
 ): Promise<PlanWithMeta | { error: string }> {
   try {
     if (planId) {
-      return loadPlanById(planId, plans)
+      return loadPlanById(planId, plans);
     }
-    const list = getAvailablePlans(plans)
+    const list = getAvailablePlans(plans);
     if (isEmpty(list)) {
-      return { error: 'No plans available' }
+      return { error: 'No plans available' };
     }
-    return list[0]
+    return list[0];
   } catch (e) {
     return {
       error: `Failed to load plan: ${e instanceof Error ? e.message : 'Unknown error'}`,
-    }
+    };
   }
 }
 
@@ -95,61 +97,73 @@ export async function loadPlan(
  */
 export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
   if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {
-    return null
+    return null;
   }
-  const day = plan[dayIndex]
+  const day = plan[dayIndex];
   if (day == null || (typeof day === 'object' && 'rest' in day && day.rest)) {
-    return null
+    return null;
   }
-  if (
-    typeof day === 'object' &&
-    'phases' in day &&
-    Array.isArray(day.phases)
-  ) {
-    return day.phases
+  if (typeof day === 'object' && 'phases' in day && Array.isArray(day.phases)) {
+    return day.phases;
   }
-  return null
+  return null;
 }
 
 /**
  * Returns the day group at the given index (e.g. "warm-up", "deep pool"), or undefined.
  */
 export function getDayGroup(plan: Plan, dayIndex: number): string | undefined {
-  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {return undefined}
-  const day = plan[dayIndex]
-  if (day == null || typeof day !== 'object' || !('group' in day)) {return undefined}
-  const g = (day as { group?: string }).group
-  return typeof g === 'string' ? g : undefined
+  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {
+    return undefined;
+  }
+  const day = plan[dayIndex];
+  if (day == null || typeof day !== 'object' || !('group' in day)) {
+    return undefined;
+  }
+  const g = (day as { group?: string }).group;
+  return typeof g === 'string' ? g : undefined;
 }
 
 /**
  * Returns the day id at the given index, or null if missing/invalid.
  */
 export function getDayId(plan: Plan, dayIndex: number): string | null {
-  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {return null}
-  const day = plan[dayIndex]
-  if (day == null || typeof day !== 'object' || !('id' in day)) {return null}
-  return (day as { id: string }).id
+  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {
+    return null;
+  }
+  const day = plan[dayIndex];
+  if (day == null || typeof day !== 'object' || !('id' in day)) {
+    return null;
+  }
+  return (day as { id: string }).id;
 }
 
 /**
  * Returns the day object for a given id, or null. Case-insensitive for URLs.
  */
 export function getDayById(plan: Plan, dayId: string): (typeof plan)[number] | null {
-  if (!Array.isArray(plan) || !dayId) {return null}
-  const lower = dayId.toLowerCase()
-  const day = plan.find((d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower)
-  return day ?? null
+  if (!Array.isArray(plan) || !dayId) {
+    return null;
+  }
+  const lower = dayId.toLowerCase();
+  const day = plan.find(
+    (d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower
+  );
+  return day ?? null;
 }
 
 /**
  * Returns the index of the day with the given id, or null.
  */
 export function getDayIndexById(plan: Plan, dayId: string): number | null {
-  if (!Array.isArray(plan) || !dayId) {return null}
-  const lower = dayId.toLowerCase()
-  const idx = plan.findIndex((d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower)
-  return idx >= 0 ? idx : null
+  if (!Array.isArray(plan) || !dayId) {
+    return null;
+  }
+  const lower = dayId.toLowerCase();
+  const idx = plan.findIndex(
+    (d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower
+  );
+  return idx >= 0 ? idx : null;
 }
 
 /**
@@ -157,83 +171,87 @@ export function getDayIndexById(plan: Plan, dayId: string): number | null {
  * On track (trained yesterday or today): next day in sequence, including rest.
  * Behind (last completion 2+ days ago): skip rest days, return first training day.
  */
-export function getCurrentDay(
-  plan: Plan,
-  completions: CompletionForPlan[]
-): number | null {
-  if (!Array.isArray(plan) || isEmpty(plan)) {return null}
-
-  let lastCompletedDayIndex = -1
-  if (completions.length > 0) {
-    const sorted = [...completions].sort((a, b) => b.completed_at - a.completed_at)
-    const lastId = sorted[0].day_id
-    const idx = getDayIndexById(plan, lastId)
-    lastCompletedDayIndex = idx ?? -1
+export function getCurrentDay(plan: Plan, completions: CompletionForPlan[]): number | null {
+  if (!Array.isArray(plan) || isEmpty(plan)) {
+    return null;
   }
 
-  const nextDayIndex = lastCompletedDayIndex + 1
-  if (nextDayIndex >= plan.length) {return null}
+  let lastCompletedDayIndex = -1;
+  if (completions.length > 0) {
+    const sorted = [...completions].sort((a, b) => b.completed_at - a.completed_at);
+    const lastId = sorted[0].day_id;
+    const idx = getDayIndexById(plan, lastId);
+    lastCompletedDayIndex = idx ?? -1;
+  }
+
+  const nextDayIndex = lastCompletedDayIndex + 1;
+  if (nextDayIndex >= plan.length) {
+    return null;
+  }
 
   const lastDate =
     completions.length > 0
-      ? new Date(
-          [...completions].sort((a, b) => b.completed_at - a.completed_at)[0]
-            .completed_at
-        )
-      : null
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
+      ? new Date([...completions].sort((a, b) => b.completed_at - a.completed_at)[0].completed_at)
+      : null;
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
 
   const isOnTrack =
     !lastDate ||
     lastDate.toDateString() === today.toDateString() ||
-    lastDate.toDateString() === yesterday.toDateString()
+    lastDate.toDateString() === yesterday.toDateString();
 
   if (isOnTrack) {
     // If next day is a rest day and we're past that day (viewing app after the rest day),
     // assume user took the rest and advance to the next day
-    let idx = nextDayIndex
+    let idx = nextDayIndex;
     while (idx < plan.length && getPhasesForDay(plan, idx) === null) {
-      const restDayDate = lastDate ? new Date(lastDate) : null
-      if (restDayDate) {restDayDate.setDate(restDayDate.getDate() + 1)}
-      const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+      const restDayDate = lastDate ? new Date(lastDate) : null;
+      if (restDayDate) {
+        restDayDate.setDate(restDayDate.getDate() + 1);
+      }
+      const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const restNorm = restDayDate
         ? new Date(restDayDate.getFullYear(), restDayDate.getMonth(), restDayDate.getDate())
-        : null
+        : null;
       if (restNorm && todayNorm.getTime() > restNorm.getTime()) {
-        idx++
+        idx++;
       } else {
-        break
+        break;
       }
     }
-    return idx < plan.length ? idx : null
+    return idx < plan.length ? idx : null;
   }
 
   // Behind: skip rest days, return first training day
   for (let i = nextDayIndex; i < plan.length; i++) {
-    if (getPhasesForDay(plan, i) !== null) {return i}
+    if (getPhasesForDay(plan, i) !== null) {
+      return i;
+    }
   }
-  return null
+  return null;
 }
 
 /**
  * Computes total session duration in seconds (relaxation + all phases).
  */
 export function computeSessionDurationSeconds(phases: Phase[]): number {
-  let total = RELAXATION_SECONDS
+  let total = RELAXATION_SECONDS;
   for (const p of phases) {
-    total += p.duration
+    total += p.duration;
   }
-  return total
+  return total;
 }
 
 /**
  * Returns a short summary for a day: "Rest" or "X cycle(s)".
  */
 export function getDaySummary(plan: Plan, dayIndex: number): string {
-  const phases = getPhasesForDay(plan, dayIndex)
-  if (phases === null) {return 'Rest'}
-  const holdCount = phases.filter((p) => p.type === 'hold').length
-  return holdCount === 1 ? '1 cycle' : `${holdCount} cycles`
+  const phases = getPhasesForDay(plan, dayIndex);
+  if (phases === null) {
+    return 'Rest';
+  }
+  const holdCount = phases.filter((p) => p.type === 'hold').length;
+  return holdCount === 1 ? '1 cycle' : `${holdCount} cycles`;
 }

@@ -57,12 +57,12 @@
 
 ## Traceability
 
-| Decision | Outcome |
-|----------|---------|
-| One session per day | Block start if any completion today; show message |
-| Completion flow | Green ring + "Complete session" button; no auto-leave |
-| Test toggle | Override relaxation (step 1) for testing |
-| Recovery ring | Faint blue base + breathing animation |
+| Decision            | Outcome                                               |
+| ------------------- | ----------------------------------------------------- |
+| One session per day | Block start if any completion today; show message     |
+| Completion flow     | Green ring + "Complete session" button; no auto-leave |
+| Test toggle         | Override relaxation (step 1) for testing              |
+| Recovery ring       | Faint blue base + breathing animation                 |
 
 ---
 
@@ -79,4 +79,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 8*
+_Context captured from /gsd-discuss-phase 8_

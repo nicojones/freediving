@@ -1,7 +1,7 @@
 interface FishIconProps {
-  className?: string
-  size?: number
-  'aria-hidden'?: boolean
+  className?: string;
+  size?: number;
+  'aria-hidden'?: boolean;
 }
 
 export function FishIcon({ className = '', size = 24, 'aria-hidden': ariaHidden }: FishIconProps) {
@@ -20,5 +20,5 @@ export function FishIcon({ className = '', size = 24, 'aria-hidden': ariaHidden 
       <ellipse cx="16" cy="18" rx="7" ry="9" fill="currentColor" />
       <circle cx="17.6" cy="22.4" r="2" fill="var(--color-background)" />
     </svg>
-  )
+  );
 }

@@ -1,68 +1,62 @@
 # Phase 12: Tests — Executable Plan
 
 ---
+
 phase: 12-tests
 plans:
-  - id: "01"
-    tasks: 8
-    files: 25
-    depends_on: [11-refactor-quality]
-type: execute
-wave: 1
-files_modified:
-  - vite.config.ts
-  - package.json
-  - src/test/setup.ts
-  - playwright.config.ts
-  - src/pages/LoginPage.tsx
-  - src/pages/Dashboard.tsx
-  - src/components/SessionPreviewSection.tsx
-  - src/components/ActiveSessionView.tsx
-  - src/components/StatusBanner.tsx
-  - src/components/PrimaryButton.tsx
-  - src/components/SpeedMultiplierSelector.tsx
-  - src/components/HoldProgressRing.tsx
-  - src/services/timerEngine.test.ts
-  - src/services/planService.test.ts
-  - src/utils/completions.test.ts
-  - src/utils/holdProgress.test.ts
-  - src/utils/sessionStats.test.ts
-  - src/utils/buildSessionTimeline.test.ts
-  - src/utils/formatMmSs.test.ts
-  - src/utils/formatDuration.test.ts
-  - src/utils/phaseLabels.test.ts
-  - src/services/progressService.test.ts
-  - src/services/authService.test.ts
-  - src/services/offlineQueue.test.ts
-  - src/components/StatusBanner.test.tsx
-  - src/components/PrimaryButton.test.tsx
-  - src/components/SpeedMultiplierSelector.test.tsx
-  - src/components/HoldProgressRing.test.tsx
-  - e2e/login.spec.ts
-  - e2e/session-flow.spec.ts
-autonomous: false
-requirements: []
-user_setup: []
-must_haves:
-  truths:
-    - "Vitest + @testing-library/react installed and configured"
-    - "Pure logic (timerEngine, planService, utils) covered by unit tests"
-    - "Services (progressService, authService, offlineQueue) have unit tests with mocked fetch/IndexedDB"
-    - "Key components (StatusBanner, PrimaryButton, SpeedMultiplierSelector, HoldProgressRing) have unit tests"
-    - "E2E tests run against FREEDIVING_DB_PATH=:memory: (never touch user data)"
-    - "E2E flows: login, select day, session (test mode), complete"
-  artifacts:
-    - path: src/test/setup.ts
-      provides: "fake-indexeddb for offlineQueue tests"
-      contains: "globalThis.indexedDB"
-    - path: playwright.config.ts
-      provides: "dual webServer with FREEDIVING_DB_PATH=:memory:"
-      contains: "FREEDIVING_DB_PATH"
-  key_links:
-    - from: vite.config.ts
-      to: src/test/setup.ts
-      via: "test.setupFiles"
-      pattern: "setupFiles"
+
+- id: "01"
+  tasks: 8
+  files: 25
+  depends_on: [11-refactor-quality]
+  type: execute
+  wave: 1
+  files_modified:
+- vite.config.ts
+- package.json
+- src/test/setup.ts
+- playwright.config.ts
+- src/pages/LoginPage.tsx
+- src/pages/Dashboard.tsx
+- src/components/SessionPreviewSection.tsx
+- src/components/ActiveSessionView.tsx
+- src/components/StatusBanner.tsx
+- src/components/PrimaryButton.tsx
+- src/components/SpeedMultiplierSelector.tsx
+- src/components/HoldProgressRing.tsx
+- src/services/timerEngine.test.ts
+- src/services/planService.test.ts
+- src/utils/completions.test.ts
+- src/utils/holdProgress.test.ts
+- src/utils/sessionStats.test.ts
+- src/utils/buildSessionTimeline.test.ts
+- src/utils/formatMmSs.test.ts
+- src/utils/formatDuration.test.ts
+- src/utils/phaseLabels.test.ts
+- src/services/progressService.test.ts
+- src/services/authService.test.ts
+- src/services/offlineQueue.test.ts
+- src/components/StatusBanner.test.tsx
+- src/components/PrimaryButton.test.tsx
+- src/components/SpeedMultiplierSelector.test.tsx
+- src/components/HoldProgressRing.test.tsx
+- e2e/login.spec.ts
+- e2e/session-flow.spec.ts
+  autonomous: false
+  requirements: []
+  user_setup: []
+  must_haves:
+  truths: - "Vitest + @testing-library/react installed and configured" - "Pure logic (timerEngine, planService, utils) covered by unit tests" - "Services (progressService, authService, offlineQueue) have unit tests with mocked fetch/IndexedDB" - "Key components (StatusBanner, PrimaryButton, SpeedMultiplierSelector, HoldProgressRing) have unit tests" - "E2E tests run against FREEDIVING_DB_PATH=:memory: (never touch user data)" - "E2E flows: login, select day, session (test mode), complete"
+  artifacts: - path: src/test/setup.ts
+  provides: "fake-indexeddb for offlineQueue tests"
+  contains: "globalThis.indexedDB" - path: playwright.config.ts
+  provides: "dual webServer with FREEDIVING_DB_PATH=:memory:"
+  contains: "FREEDIVING_DB_PATH"
+  key_links: - from: vite.config.ts
+  to: src/test/setup.ts
+  via: "test.setupFiles"
+  pattern: "setupFiles"
+
 ---
 
 ## Objective
@@ -72,6 +66,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Purpose:** Quality assurance, regression prevention, confidence for refactoring.
 
 **Principles:**
+
 - Unit tests for pure logic first (timer, plan, utils)
 - Services tested with mocked fetch / fake-indexeddb
 - E2E uses FREEDIVING_DB_PATH=:memory: — never touch user data
@@ -92,11 +87,12 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Existing:** Phases 1–11 complete. No test framework installed. Server uses FREEDIVING_DB_PATH; Vite proxies /api to backend.
 
 **Decisions (from 12-CONTEXT):**
+
 - Vitest + @testing-library/react for units
 - Playwright for E2E
 - E2E DB: FREEDIVING_DB_PATH=:memory:
 - Co-located unit tests; e2e/ for E2E
-- Test selectors: data-testid, data-testid-value, data-testid-* — never class names
+- Test selectors: data-testid, data-testid-value, data-testid-\* — never class names
 
 ---
 
@@ -107,6 +103,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `package.json`, `vite.config.ts`, `src/test/setup.ts`, `playwright.config.ts`
 
 **Action:**
+
 1. Install dev dependencies:
    ```bash
    npm install -D vitest @testing-library/react jsdom @playwright/test fake-indexeddb
@@ -130,12 +127,13 @@ Add unit tests across the application; add simple E2E tests that use an isolated
      ```
 4. Create `src/test/setup.ts`:
    ```ts
-   import indexeddb from 'fake-indexeddb'
-   globalThis.indexedDB = indexeddb
+   import indexeddb from 'fake-indexeddb';
+   globalThis.indexedDB = indexeddb;
    ```
 5. Create `playwright.config.ts` at project root:
+
    ```ts
-   import { defineConfig } from '@playwright/test'
+   import { defineConfig } from '@playwright/test';
 
    export default defineConfig({
      webServer: [
@@ -154,7 +152,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
        },
      ],
      use: { baseURL: 'http://localhost:5173' },
-   })
+   });
    ```
 
 **Verification:** `npm run test:run` runs (no tests yet); `npx playwright test` starts servers and exits (no tests yet).
@@ -166,6 +164,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `src/services/timerEngine.test.ts`
 
 **Action:**
+
 1. Create `src/services/timerEngine.test.ts`.
 2. Use `vi.useFakeTimers()` in beforeEach, `vi.useRealTimers()` in afterEach.
 3. Test `createTimerEngine()`:
@@ -188,8 +187,9 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `src/services/planService.test.ts`
 
 **Action:**
+
 1. Create `src/services/planService.test.ts`.
-2. Test `getAvailablePlans()` — returns array (relies on src/data/*-plan.json; if empty, skip or mock).
+2. Test `getAvailablePlans()` — returns array (relies on src/data/\*-plan.json; if empty, skip or mock).
 3. Test `loadPlanById('default')` — returns plan or error.
 4. Test `getPhasesForDay(plan, dayIndex)` — returns phases for training day, null for rest/out-of-range.
 5. Test `getDayId(plan, dayIndex)` — returns id or null.
@@ -210,6 +210,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `src/utils/completions.test.ts`, `holdProgress.test.ts`, `sessionStats.test.ts`, `buildSessionTimeline.test.ts`, `formatMmSs.test.ts`, `formatDuration.test.ts`, `phaseLabels.test.ts`
 
 **Action:**
+
 1. **completions.test.ts:** Test `hasCompletedToday(completions)` — true when any completion is today (use date-fns isSameDay). Test `isDayCompleted(completions, dayId)` — case-insensitive.
 2. **holdProgress.test.ts:** Test progress calculation for hold phase (elapsed, total, percentage).
 3. **sessionStats.test.ts:** Test stats derivation from phases (hold count, total duration, etc.).
@@ -227,6 +228,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `src/services/progressService.test.ts`, `authService.test.ts`, `offlineQueue.test.ts`
 
 **Action:**
+
 1. **progressService.test.ts:**
    - Mock fetch with `vi.stubGlobal('fetch', vi.fn())` in beforeEach; `vi.unstubAllGlobals()` in afterEach.
    - Test `recordCompletion` — success (ok: true), network error, 401 (session expired).
@@ -248,6 +250,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `src/components/StatusBanner.test.tsx`, `PrimaryButton.test.tsx`, `SpeedMultiplierSelector.test.tsx`, `HoldProgressRing.test.tsx`
 
 **Action:**
+
 1. **StatusBanner.test.tsx:** Renders error when progressError; renders "Saved" when savedMessage; renders null when neither. Use `getByTestId` — components must have `data-testid` (e.g. `status-banner`, `status-banner-error`, `status-banner-saved`).
 2. **PrimaryButton.test.tsx:** Renders label; onClick fires; disabled when disabled prop. Use `getByTestId("primary-button")` or similar.
 3. **SpeedMultiplierSelector.test.tsx:** Renders speed options; onChange fires on selection. Use `data-testid="speed-selector"`, `data-testid-value` for selected speed if needed.
@@ -264,6 +267,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `e2e/login.spec.ts`
 
 **Action:**
+
 1. Add `data-testid` to LoginPage: `login-username`, `login-password`, `login-submit`, `login-error` (if present).
 2. Add `data-testid` to Dashboard/day list as needed: e.g. `dashboard-day-list`, `day-card-{dayId}`.
 3. Create `e2e/login.spec.ts`.
@@ -284,6 +288,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 **Files:** `e2e/session-flow.spec.ts`
 
 **Action:**
+
 1. Add `data-testid` to SessionPreviewSection / ActiveSessionView: `test-mode-toggle`, `speed-selector`, `start-session-button`, `complete-session-button`, etc.
 2. Create `e2e/session-flow.spec.ts`.
 3. Test: User can complete a session (with test mode).
@@ -317,15 +322,15 @@ Task 1 (scaffold) ──┬──> Task 2 (timerEngine)
 
 ## Success Criteria Checklist
 
-| Criterion | Task | Verification |
-|-----------|------|---------------|
-| Vitest + RTL installed | 1 | npm run test:run |
-| Pure logic unit tests | 2, 3, 4 | vitest run src/services/timerEngine.test.ts, planService.test.ts, src/utils/*.test.ts |
-| Services unit tests (mocked) | 5 | vitest run src/services/progressService.test.ts, authService.test.ts, offlineQueue.test.ts |
-| Component unit tests | 6 | vitest run src/components/*.test.tsx |
-| E2E DB isolation | 1 (playwright config) | FREEDIVING_DB_PATH=:memory: in webServer env |
-| E2E login flow | 7 | npx playwright test e2e/login.spec.ts |
-| E2E session flow | 8 | npx playwright test e2e/session-flow.spec.ts |
+| Criterion                    | Task                  | Verification                                                                               |
+| ---------------------------- | --------------------- | ------------------------------------------------------------------------------------------ |
+| Vitest + RTL installed       | 1                     | npm run test:run                                                                           |
+| Pure logic unit tests        | 2, 3, 4               | vitest run src/services/timerEngine.test.ts, planService.test.ts, src/utils/\*.test.ts     |
+| Services unit tests (mocked) | 5                     | vitest run src/services/progressService.test.ts, authService.test.ts, offlineQueue.test.ts |
+| Component unit tests         | 6                     | vitest run src/components/\*.test.tsx                                                      |
+| E2E DB isolation             | 1 (playwright config) | FREEDIVING_DB_PATH=:memory: in webServer env                                               |
+| E2E login flow               | 7                     | npx playwright test e2e/login.spec.ts                                                      |
+| E2E session flow             | 8                     | npx playwright test e2e/session-flow.spec.ts                                               |
 
 ---
 
@@ -343,9 +348,9 @@ Task 1 (scaffold) ──┬──> Task 2 (timerEngine)
 
 ## Files Summary
 
-| Category | Files |
-|----------|-------|
-| Config | vite.config.ts, package.json, playwright.config.ts, src/test/setup.ts |
-| Unit | timerEngine.test.ts, planService.test.ts, utils/*.test.ts, progressService.test.ts, authService.test.ts, offlineQueue.test.ts |
-| Components | StatusBanner.test.tsx, PrimaryButton.test.tsx, SpeedMultiplierSelector.test.tsx, HoldProgressRing.test.tsx |
-| E2E | e2e/login.spec.ts, e2e/session-flow.spec.ts |
+| Category   | Files                                                                                                                          |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Config     | vite.config.ts, package.json, playwright.config.ts, src/test/setup.ts                                                          |
+| Unit       | timerEngine.test.ts, planService.test.ts, utils/\*.test.ts, progressService.test.ts, authService.test.ts, offlineQueue.test.ts |
+| Components | StatusBanner.test.tsx, PrimaryButton.test.tsx, SpeedMultiplierSelector.test.tsx, HoldProgressRing.test.tsx                     |
+| E2E        | e2e/login.spec.ts, e2e/session-flow.spec.ts                                                                                    |

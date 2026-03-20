@@ -1,43 +1,37 @@
 # Phase 5: Session Runner + Plan/Day Selector — Executable Plan
 
 ---
+
 phase: 05-session-runner
 plans:
-  - id: "01"
-    tasks: 4
-    files: 4
-    depends_on: [01-plan-service, 02-progress-profile, 03-timer-engine, 04-audio]
-type: execute
-wave: 1
-files_modified:
-  - src/services/planService.ts
-  - src/App.tsx
-autonomous: true
-requirements: [PLAN-02, PLAN-03, PLAN-04, SESS-07]
-user_setup: []
-must_haves:
-  truths:
-    - "User can view session structure (hold/breathe intervals) before starting"
-    - "User can select any day in the current plan"
-    - "App defaults to current day (on-track: next day incl. rest; behind: skip rest)"
-    - "User can start a session and complete it with all audio cues"
-    - "Session completion is recorded for the selected profile and day"
-  artifacts:
-    - path: src/services/planService.ts
-      provides: "getCurrentDay, computeSessionDurationSeconds, getDaySummary"
-      contains: "getCurrentDay|computeSessionDurationSeconds|getDaySummary"
-    - path: src/App.tsx
-      provides: "Day selector, session preview, session flow with completion recording"
-      contains: "selectedDayIndex|getCurrentDay|recordCompletion|session_complete"
-  key_links:
-    - from: src/App.tsx
-      to: src/services/planService.ts
-      via: "Day selection, current day, preview"
-      pattern: "getCurrentDay|getDaySummary|computeSessionDurationSeconds"
-    - from: src/App.tsx
-      to: src/services/progressService.ts
-      via: "recordCompletion on session_complete"
-      pattern: "recordCompletion|session_complete"
+
+- id: "01"
+  tasks: 4
+  files: 4
+  depends_on: [01-plan-service, 02-progress-profile, 03-timer-engine, 04-audio]
+  type: execute
+  wave: 1
+  files_modified:
+- src/services/planService.ts
+- src/App.tsx
+  autonomous: true
+  requirements: [PLAN-02, PLAN-03, PLAN-04, SESS-07]
+  user_setup: []
+  must_haves:
+  truths: - "User can view session structure (hold/breathe intervals) before starting" - "User can select any day in the current plan" - "App defaults to current day (on-track: next day incl. rest; behind: skip rest)" - "User can start a session and complete it with all audio cues" - "Session completion is recorded for the selected profile and day"
+  artifacts: - path: src/services/planService.ts
+  provides: "getCurrentDay, computeSessionDurationSeconds, getDaySummary"
+  contains: "getCurrentDay|computeSessionDurationSeconds|getDaySummary" - path: src/App.tsx
+  provides: "Day selector, session preview, session flow with completion recording"
+  contains: "selectedDayIndex|getCurrentDay|recordCompletion|session_complete"
+  key_links: - from: src/App.tsx
+  to: src/services/planService.ts
+  via: "Day selection, current day, preview"
+  pattern: "getCurrentDay|getDaySummary|computeSessionDurationSeconds" - from: src/App.tsx
+  to: src/services/progressService.ts
+  via: "recordCompletion on session_complete"
+  pattern: "recordCompletion|session_complete"
+
 ---
 
 ## Objective
@@ -60,6 +54,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 **Existing:** Phases 1–4 complete. Plan Service, Progress Service, Timer Engine, Audio Service exist. App currently hardcodes day 0; session_complete does not call recordCompletion.
 
 **Design decisions (from 5-CONTEXT):**
+
 - Preview: summary + detail; rest = "Rest day — No intervals today"; hold/recovery, duration, type
 - Day selector: scrollable list; current pre-selected + badge; rest selectable (Start disabled); completed = checkmark + dimmed
 - Current day: on-track = next day (incl. rest); behind = skip rest; all done = null
@@ -75,6 +70,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 **Files:** `src/services/planService.ts`
 
 **Action:**
+
 1. Add `getCurrentDay(plan: Plan, completions: Completion[]): number | null`:
    - Import `Completion` from progressService (or define minimal type: `{ day_index: number; completed_at: number }`).
    - If no completions: return 0 (first day).
@@ -92,6 +88,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
    - Else: `phases = getPhasesForDay(...)`; return `"${holdCount} cycle(s)"` (or "1 cycle" if 1 hold).
 
 **Verify:**
+
 ```typescript
 // getCurrentDay: no completions → 0; all done → null; on-track includes rest; behind skips rest
 // computeSessionDurationSeconds: day 0 default-plan → 60 + sum of all phase durations (hold, rec, hold, rec, hold…)
@@ -107,6 +104,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 **Files:** `src/App.tsx`
 
 **Action:**
+
 1. Update `fetchCompletions` usage: ensure completions include `completed_at` (progressService already returns it). Type completions as `Completion[]`.
 2. Add state: `selectedDayIndex: number | null`; initialize from `getCurrentDay(plan, completions)` when plan and completions load. Use `null` when all done.
 3. Add state: `showReadyConfirm: boolean` (for "Ready to start?" step).
@@ -121,6 +119,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 6. Remove old "Day 1 intervals", "Completions", "Mark day 0 complete" demo UI. Replace with day selector.
 
 **Verify:**
+
 - Day list renders; clicking selects day; current day has badge; completed days dimmed + checkmark.
 - All done: "Plan complete", no day selected.
 
@@ -133,6 +132,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 **Files:** `src/App.tsx`
 
 **Action:**
+
 1. Add session preview section below day list. Updates when `selectedDayIndex` changes.
 2. If `selectedDayIndex === null`: show "Plan complete — no session to run."
 3. If rest day (`getPhasesForDay(plan, selectedDayIndex) === null`): show "Rest day — No phases today." Disable Start. Show "Mark rest day complete" button; on click call `handleMarkDayComplete(selectedDayIndex)`.
@@ -143,6 +143,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 5. Pass `planId = 'default'` through; use `selectedDayIndex` in all session logic.
 
 **Verify:**
+
 - Rest day: "Rest day — No intervals today", Start disabled, "Mark rest day complete" works.
 - Training day: summary + detail; Start enabled.
 
@@ -155,6 +156,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 **Files:** `src/App.tsx`
 
 **Action:**
+
 1. **Start flow:** When user clicks Start (training day selected):
    - Option A: Show "Ready to start?" button/modal; on confirm → proceed.
    - Option B: Go straight to preload + start.
@@ -167,6 +169,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 7. **Speed control:** Keep for dev/testing; can stay in session view.
 
 **Verify:**
+
 ```bash
 npm run dev
 # Login, select day 0 (training), click "Ready to start?" → Start
@@ -182,14 +185,14 @@ npm run dev
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| PLAN-02: View session structure before starting | Session preview shows hold/recovery, duration, type for selected day |
-| PLAN-03: Select any day | Day list; click to select; all days selectable |
-| PLAN-04: Default to current day | On load, current day (on-track or behind) pre-selected with badge |
-| SESS-07: Session completion recorded | Complete session → "Saved"; completions refetched; day shows complete |
-| Rest day handling | Rest selectable; "Mark rest day complete"; Start disabled |
-| All done | "Plan complete"; no day selected; Start disabled |
+| Success Criterion                               | How to Verify                                                         |
+| ----------------------------------------------- | --------------------------------------------------------------------- |
+| PLAN-02: View session structure before starting | Session preview shows hold/recovery, duration, type for selected day  |
+| PLAN-03: Select any day                         | Day list; click to select; all days selectable                        |
+| PLAN-04: Default to current day                 | On load, current day (on-track or behind) pre-selected with badge     |
+| SESS-07: Session completion recorded            | Complete session → "Saved"; completions refetched; day shows complete |
+| Rest day handling                               | Rest selectable; "Mark rest day complete"; Start disabled             |
+| All done                                        | "Plan complete"; no day selected; Start disabled                      |
 
 ---
 
@@ -206,6 +209,7 @@ npm run dev
 ## Output
 
 After completion:
+
 - `src/services/planService.ts` — getCurrentDay, computeSessionDurationSeconds, getDaySummary
 - `src/App.tsx` — Day selector, session preview, session flow, session_complete → recordCompletion
 

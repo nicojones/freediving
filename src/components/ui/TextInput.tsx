@@ -1,13 +1,13 @@
 interface TextInputProps {
-  id: string
-  label: string
-  type?: 'text' | 'password'
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  autoComplete?: string
-  icon?: string
-  'data-testid'?: string
+  id: string;
+  label: string;
+  type?: 'text' | 'password';
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  autoComplete?: string;
+  icon?: string;
+  'data-testid'?: string;
 }
 
 export function TextInput({
@@ -45,5 +45,5 @@ export function TextInput({
         />
       </div>
     </div>
-  )
+  );
 }

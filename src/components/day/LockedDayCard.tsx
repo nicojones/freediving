@@ -1,10 +1,10 @@
-import { memo } from 'react'
+import { memo } from 'react';
 
 interface LockedDayCardProps {
-  dayIndex: number
-  dayId: string
-  summary: string
-  onSelect?: () => void
+  dayIndex: number;
+  dayId: string;
+  summary: string;
+  onSelect?: () => void;
 }
 
 export const LockedDayCard = memo(function LockedDayCard({
@@ -17,14 +17,10 @@ export const LockedDayCard = memo(function LockedDayCard({
     <>
       <div className="flex items-center gap-5">
         <div className="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center">
-          <span className="material-symbols-outlined text-outline-variant">
-            lock
-          </span>
+          <span className="material-symbols-outlined text-outline-variant">lock</span>
         </div>
         <div>
-          <h3 className="font-headline font-bold text-on-surface-variant">
-            Day {dayIndex + 1}
-          </h3>
+          <h3 className="font-headline font-bold text-on-surface-variant">Day {dayIndex + 1}</h3>
           <p className="font-body text-xs text-outline-variant">{summary}</p>
         </div>
       </div>
@@ -35,7 +31,7 @@ export const LockedDayCard = memo(function LockedDayCard({
         </span>
       )}
     </>
-  )
+  );
 
   if (onSelect) {
     return (
@@ -47,12 +43,15 @@ export const LockedDayCard = memo(function LockedDayCard({
       >
         {content}
       </button>
-    )
+    );
   }
 
   return (
-    <div data-testid={`day-card-${dayId}`} className="bg-surface-container-low/50 rounded-3xl p-6 flex items-center justify-between opacity-50">
+    <div
+      data-testid={`day-card-${dayId}`}
+      className="bg-surface-container-low/50 rounded-3xl p-6 flex items-center justify-between opacity-50"
+    >
       {content}
     </div>
-  )
-})
+  );
+});

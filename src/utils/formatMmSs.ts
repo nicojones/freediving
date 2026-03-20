@@ -1,6 +1,6 @@
 export const formatMmSs = (ms: number): string => {
-  const totalSeconds = Math.ceil(ms / 1000)
-  const m = Math.floor(totalSeconds / 60)
-  const s = totalSeconds % 60
-  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-}
+  const totalSeconds = Math.ceil(ms / 1000);
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+};

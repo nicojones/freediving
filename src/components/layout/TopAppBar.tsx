@@ -1,13 +1,13 @@
-import { APP_NAME } from '../../constants/app'
-import { FishIcon } from '../ui/FishIcon'
+import { APP_NAME } from '../../constants/app';
+import { FishIcon } from '../ui/FishIcon';
 
-type TopAppBarVariant = 'dashboard' | 'session-preview' | 'active-session'
+type TopAppBarVariant = 'dashboard' | 'session-preview' | 'active-session';
 
 interface TopAppBarProps {
-  variant: TopAppBarVariant
-  weekLabel?: string
-  onBack?: () => void
-  onShare?: () => void
+  variant: TopAppBarVariant;
+  weekLabel?: string;
+  onBack?: () => void;
+  onShare?: () => void;
 }
 
 export function TopAppBar({
@@ -59,5 +59,5 @@ export function TopAppBar({
         )}
       </div>
     </header>
-  )
+  );
 }

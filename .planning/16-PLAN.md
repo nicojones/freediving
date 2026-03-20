@@ -1,21 +1,20 @@
 # Phase 16: Alias Imports, Component Folders & Extended Tests — Executable Plan
 
 ---
+
 phase: 16-alias-imports-component-folders-tests
 plans:
-  - id: "01"
-    tasks: 6
-    depends_on: [15-refactor-cleanup]
-type: execute
-wave: 1
-autonomous: false
-requirements: []
-must_haves:
-  truths:
-    - "~ alias maps to src/ for imports"
-    - "src/components organized into subfolders"
-    - "Component tests added for components in subfolders"
-    - "E2E tests cover non-happy path, reset progress, plan change, abort session"
+
+- id: "01"
+  tasks: 6
+  depends_on: [15-refactor-cleanup]
+  type: execute
+  wave: 1
+  autonomous: false
+  requirements: []
+  must_haves:
+  truths: - "~ alias maps to src/ for imports" - "src/components organized into subfolders" - "Component tests added for components in subfolders" - "E2E tests cover non-happy path, reset progress, plan change, abort session"
+
 ---
 
 ## Objective
@@ -25,6 +24,7 @@ Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add
 **Purpose:** Cleaner imports, better component organization, stronger test coverage.
 
 **Principles:**
+
 - Use `~` (tilde) as alias for `src/` — e.g. `import X from '~/components/...'`
 - Group components by domain (ui, session, day, layout, settings, etc.)
 - Add unit tests for components that lack them
@@ -48,6 +48,7 @@ Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add
 **Files:** `tsconfig.json`, `next.config.ts` (or equivalent)
 
 **Action:**
+
 1. Add `"~/*": ["./src/*"]` to `tsconfig.json` `compilerOptions.paths`
 2. Ensure Next.js resolves `~` — may need `next.config` `experimental.turbo.resolveAlias` or standard path resolution
 3. Update one or two imports as proof-of-concept (e.g. in `app/` or a component)
@@ -62,6 +63,7 @@ Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add
 **Files:** `src/components/**`, all files that import from components
 
 **Action:**
+
 1. Define subfolder structure (suggested: `ui/`, `session/`, `day/`, `layout/`, `settings/`, or similar)
 2. Move components into appropriate subfolders (e.g. `PrimaryButton.tsx` → `ui/PrimaryButton.tsx`)
 3. Add `index.ts` per subfolder to re-export (optional, for cleaner imports)
@@ -77,6 +79,7 @@ Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add
 **Files:** `src/components/**/*.test.tsx`
 
 **Action:**
+
 1. Identify components without tests (e.g. AppShell, DayListSection, SessionPreviewSection, LockedDayCard, etc.)
 2. Add unit tests for at least 3–5 key components using Vitest + @testing-library/react
 3. Use `data-testid` for element targeting (per Phase 12)
@@ -91,6 +94,7 @@ Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add
 **Files:** `e2e/reset-progress.spec.ts` (or extend existing)
 
 **Action:**
+
 1. Create E2E test: login → go to settings → reset progress → confirm → verify progress cleared (e.g. day list shows no completions)
 2. Use `data-testid` selectors
 3. Run `npm run test:e2e` — passes
@@ -104,6 +108,7 @@ Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add
 **Files:** `e2e/plan-change.spec.ts`, `e2e/abort-session.spec.ts` (or combined)
 
 **Action:**
+
 1. **Plan change:** Login → settings → change plan (dropdown) → accept warning → verify new plan shown
 2. **Abort session:** Login → start session (test mode) → abort/back before completion → verify user returns to day view without completion
 3. Use `data-testid` selectors
@@ -118,6 +123,7 @@ Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add
 **Files:** `e2e/error-paths.spec.ts` (or similar)
 
 **Action:**
+
 1. Add tests for: invalid login, invalid day ID redirect, session already completed (blocked), etc.
 2. Use `data-testid` selectors
 3. Run `npm run test:e2e` — passes

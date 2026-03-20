@@ -1,6 +1,6 @@
 ---
 status: awaiting_human_verify
-trigger: "plan_id and day_index required error when completing session"
+trigger: 'plan_id and day_index required error when completing session'
 created: 2025-03-19
 updated: 2025-03-19
 ---

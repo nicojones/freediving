@@ -1,1 +1,1 @@
-export { AIVoicePlanInput } from './AIVoicePlanInput'
+export { AIVoicePlanInput } from './AIVoicePlanInput';

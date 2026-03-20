@@ -52,13 +52,13 @@
 
 ## Traceability
 
-| Decision | Outcome |
-|----------|---------|
-| Reset progress | Button in Settings; confirmation; clears active plan's completions |
-| Plan structure | `{ id, name, description, days }`; migrate JSON files |
-| Multiple plans | Several JSON files in src/data; active plan in DB per user |
-| Plan selector | Dropdown in Settings; lists plan names |
-| Plan-change warning | Confirmation modal before switching; reset on confirm |
+| Decision            | Outcome                                                            |
+| ------------------- | ------------------------------------------------------------------ |
+| Reset progress      | Button in Settings; confirmation; clears active plan's completions |
+| Plan structure      | `{ id, name, description, days }`; migrate JSON files              |
+| Multiple plans      | Several JSON files in src/data; active plan in DB per user         |
+| Plan selector       | Dropdown in Settings; lists plan names                             |
+| Plan-change warning | Confirmation modal before switching; reset on confirm              |
 
 ---
 
@@ -75,4 +75,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 10*
+_Context captured from /gsd-discuss-phase 10_

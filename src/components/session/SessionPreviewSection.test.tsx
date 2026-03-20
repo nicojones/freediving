@@ -1,11 +1,11 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import { SessionPreviewSection } from './SessionPreviewSection'
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { SessionPreviewSection } from './SessionPreviewSection';
 
 const mockPhases = [
   { type: 'prepare', duration: 60 },
   { type: 'hold', duration: 30 },
-]
+];
 
 describe('SessionPreviewSection', () => {
   it('renders day heading', () => {
@@ -26,9 +26,9 @@ describe('SessionPreviewSection', () => {
         onTestModeChange={() => {}}
         onStartSession={() => {}}
       />
-    )
-    expect(screen.getByRole('heading', { name: /day 1/i })).toBeInTheDocument()
-  })
+    );
+    expect(screen.getByRole('heading', { name: /day 1/i })).toBeInTheDocument();
+  });
 
   it('renders start session button when current day', () => {
     render(
@@ -48,12 +48,12 @@ describe('SessionPreviewSection', () => {
         onTestModeChange={() => {}}
         onStartSession={() => {}}
       />
-    )
-    expect(screen.getByTestId('start-session-button')).toBeInTheDocument()
-  })
+    );
+    expect(screen.getByTestId('start-session-button')).toBeInTheDocument();
+  });
 
   it('calls onBack when back button is clicked', async () => {
-    const onBack = vi.fn()
+    const onBack = vi.fn();
     render(
       <SessionPreviewSection
         selectedDayIndex={0}
@@ -71,10 +71,10 @@ describe('SessionPreviewSection', () => {
         onTestModeChange={() => {}}
         onStartSession={() => {}}
       />
-    )
-    await screen.getByRole('button', { name: /back/i }).click()
-    expect(onBack).toHaveBeenCalledTimes(1)
-  })
+    );
+    await screen.getByRole('button', { name: /back/i }).click();
+    expect(onBack).toHaveBeenCalledTimes(1);
+  });
 
   it('hides test controls (toggle and speed selector) when showTestControls is false', () => {
     render(
@@ -94,10 +94,10 @@ describe('SessionPreviewSection', () => {
         onTestModeChange={() => {}}
         onStartSession={() => {}}
       />
-    )
-    expect(screen.queryByTestId('test-mode-toggle')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('speed-selector')).not.toBeInTheDocument()
-  })
+    );
+    expect(screen.queryByTestId('test-mode-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('speed-selector')).not.toBeInTheDocument();
+  });
 
   it('shows Preview label and hides Start button when viewing future day', () => {
     render(
@@ -117,10 +117,10 @@ describe('SessionPreviewSection', () => {
         onTestModeChange={() => {}}
         onStartSession={() => {}}
       />
-    )
-    expect(screen.getByText('Preview')).toBeInTheDocument()
-    expect(screen.queryByTestId('start-session-button')).not.toBeInTheDocument()
-  })
+    );
+    expect(screen.getByText('Preview')).toBeInTheDocument();
+    expect(screen.queryByTestId('start-session-button')).not.toBeInTheDocument();
+  });
 
   it('shows test controls (toggle and speed selector) when showTestControls is true', () => {
     render(
@@ -140,8 +140,8 @@ describe('SessionPreviewSection', () => {
         onTestModeChange={() => {}}
         onStartSession={() => {}}
       />
-    )
-    expect(screen.getByTestId('test-mode-toggle')).toBeInTheDocument()
-    expect(screen.getByTestId('speed-selector')).toBeInTheDocument()
-  })
-})
+    );
+    expect(screen.getByTestId('test-mode-toggle')).toBeInTheDocument();
+    expect(screen.getByTestId('speed-selector')).toBeInTheDocument();
+  });
+});

@@ -46,12 +46,12 @@ Phase 8 adds four UX enhancements to the Freediving Breathhold Trainer: (1) one 
 
 ## Phase Requirements
 
-| ID | Description | Research Support |
-|----|-------------|------------------|
-| SESS-08-1 | One session per day: block start if completed today | `hasCompletedToday` + date-fns `isSameDay`; guard in `handleStartSession` |
+| ID        | Description                                                    | Research Support                                                                             |
+| --------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| SESS-08-1 | One session per day: block start if completed today            | `hasCompletedToday` + date-fns `isSameDay`; guard in `handleStartSession`                    |
 | SESS-08-2 | Visible completion flow: green ring + button, no auto-navigate | `awaitingCompletionConfirm` state; SessionRouteGuard update; ActiveSessionView completion UI |
-| SESS-08-3 | Test toggle: 3s relaxation when on | `relaxationSecondsOverride` in TimerStartOptions; buildTimeline override |
-| SESS-08-4 | Recovery ring: faint blue + breathing animation | `.recovery-breathe` CSS; opacity keyframes; prefers-reduced-motion |
+| SESS-08-3 | Test toggle: 3s relaxation when on                             | `relaxationSecondsOverride` in TimerStartOptions; buildTimeline override                     |
+| SESS-08-4 | Recovery ring: faint blue + breathing animation                | `.recovery-breathe` CSS; opacity keyframes; prefers-reduced-motion                           |
 
 </phase_requirements>
 
@@ -61,19 +61,20 @@ Phase 8 adds four UX enhancements to the Freediving Breathhold Trainer: (1) one 
 
 ### Core
 
-| Library | Version | Purpose | Why Standard |
-|---------|---------|---------|--------------|
-| date-fns | ^4.1 | Timezone-aware "today" check | STACK.md recommends; lightweight; `isSameDay` uses local time by default for Date objects |
-| React | 19.x | UI | Existing |
-| Tailwind CSS | 4.x | Styling | Existing |
+| Library      | Version | Purpose                      | Why Standard                                                                              |
+| ------------ | ------- | ---------------------------- | ----------------------------------------------------------------------------------------- |
+| date-fns     | ^4.1    | Timezone-aware "today" check | STACK.md recommends; lightweight; `isSameDay` uses local time by default for Date objects |
+| React        | 19.x    | UI                           | Existing                                                                                  |
+| Tailwind CSS | 4.x     | Styling                      | Existing                                                                                  |
 
 ### Supporting
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| @date-fns/tz | ^1.4 | Explicit timezone | Only if comparing in non-local timezone; NOT needed for "user's local today" |
+| Library      | Version | Purpose           | When to Use                                                                  |
+| ------------ | ------- | ----------------- | ---------------------------------------------------------------------------- |
+| @date-fns/tz | ^1.4    | Explicit timezone | Only if comparing in non-local timezone; NOT needed for "user's local today" |
 
 **Installation:**
+
 ```bash
 npm install date-fns
 ```
@@ -86,14 +87,14 @@ npm install date-fns
 
 ### Recommended Changes
 
-| Area | Change |
-|------|--------|
-| `src/utils/completions.ts` | Add `hasCompletedToday(completions: Completion[]): boolean` |
-| `TrainingContext` | Add `SessionStatus: 'awaitingCompletionConfirm'`; guard `handleStartSession` with `hasCompletedToday` |
-| `SessionRouteGuard` | Allow `sessionStatus === 'awaitingCompletionConfirm'` on `/session` |
-| `ActiveSessionView` | Branch on `sessionStatus === 'awaitingCompletionConfirm'` → green ring + "Complete session" button |
-| `timerEngine` | Add `relaxationSecondsOverride?: number` to `TimerStartOptions` |
-| `index.css` | Add `.recovery-breathe`, `.completion-glow` |
+| Area                       | Change                                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `src/utils/completions.ts` | Add `hasCompletedToday(completions: Completion[]): boolean`                                           |
+| `TrainingContext`          | Add `SessionStatus: 'awaitingCompletionConfirm'`; guard `handleStartSession` with `hasCompletedToday` |
+| `SessionRouteGuard`        | Allow `sessionStatus === 'awaitingCompletionConfirm'` on `/session`                                   |
+| `ActiveSessionView`        | Branch on `sessionStatus === 'awaitingCompletionConfirm'` → green ring + "Complete session" button    |
+| `timerEngine`              | Add `relaxationSecondsOverride?: number` to `TimerStartOptions`                                       |
+| `index.css`                | Add `.recovery-breathe`, `.completion-glow`                                                           |
 
 ### Pattern 1: Timezone-Aware "Today" Check
 
@@ -103,11 +104,11 @@ npm install date-fns
 
 ```typescript
 // Source: date-fns docs, STACK.md
-import { isSameDay } from 'date-fns'
+import { isSameDay } from 'date-fns';
 
 export function hasCompletedToday(completions: { completed_at: number }[]): boolean {
-  const now = new Date()
-  return completions.some((c) => isSameDay(new Date(c.completed_at * 1000), now))
+  const now = new Date();
+  return completions.some((c) => isSameDay(new Date(c.completed_at * 1000), now));
 }
 ```
 
@@ -130,12 +131,12 @@ awaitingCompletionConfirm → user clicks "Complete session" → recordCompletio
 ```typescript
 // timerEngine.ts
 interface TimerStartOptions {
-  speedMultiplier?: number
-  relaxationSecondsOverride?: number
+  speedMultiplier?: number;
+  relaxationSecondsOverride?: number;
 }
 
 function buildTimeline(phases: Phase[], relaxationSeconds?: number) {
-  const relaxationMs = (relaxationSeconds ?? RELAXATION_SECONDS) * 1000
+  const relaxationMs = (relaxationSeconds ?? RELAXATION_SECONDS) * 1000;
   // ...
 }
 ```
@@ -150,11 +151,11 @@ function buildTimeline(phases: Phase[], relaxationSeconds?: number) {
 
 ## Don't Hand-Roll
 
-| Problem | Don't Build | Use Instead | Why |
-|---------|-------------|-------------|-----|
-| "Same calendar day" check | Manual date math | date-fns `isSameDay` | DST, leap years, edge cases |
+| Problem                              | Don't Build                | Use Instead                | Why                                      |
+| ------------------------------------ | -------------------------- | -------------------------- | ---------------------------------------- |
+| "Same calendar day" check            | Manual date math           | date-fns `isSameDay`       | DST, leap years, edge cases              |
 | Timezone handling for "user's local" | Server TZ or manual offset | `new Date()` + `isSameDay` | Browser provides local TZ; no extra deps |
-| Breathing animation | JS requestAnimationFrame | CSS `@keyframes` + opacity | GPU-friendly, no JS overhead |
+| Breathing animation                  | JS requestAnimationFrame   | CSS `@keyframes` + opacity | GPU-friendly, no JS overhead             |
 
 ---
 
@@ -195,11 +196,11 @@ function buildTimeline(phases: Phase[], relaxationSeconds?: number) {
 ### hasCompletedToday (completions.ts)
 
 ```typescript
-import { isSameDay } from 'date-fns'
+import { isSameDay } from 'date-fns';
 
 export function hasCompletedToday(completions: { completed_at: number }[]): boolean {
-  const now = new Date()
-  return completions.some((c) => isSameDay(new Date(c.completed_at * 1000), now))
+  const now = new Date();
+  return completions.some((c) => isSameDay(new Date(c.completed_at * 1000), now));
 }
 ```
 
@@ -207,33 +208,33 @@ export function hasCompletedToday(completions: { completed_at: number }[]): bool
 
 ```typescript
 engine.on('session_complete', () => {
-  engine.stop()
-  engineRef.current = null
-  setSessionStatus('awaitingCompletionConfirm')  // Do NOT navigate yet
-  setTimerState(null)
+  engine.stop();
+  engineRef.current = null;
+  setSessionStatus('awaitingCompletionConfirm'); // Do NOT navigate yet
+  setTimerState(null);
   // recordCompletion happens on button click
-})
+});
 ```
 
 ### Handle Complete Session (user clicks button)
 
 ```typescript
 const handleCompleteSession = useCallback(async () => {
-  const dayToRecord = sessionDayIndexRef.current
+  const dayToRecord = sessionDayIndexRef.current;
   if (dayToRecord !== null && plan) {
-    const day = plan[dayToRecord]
-    const dayId = day?.id
+    const day = plan[dayToRecord];
+    const dayId = day?.id;
     if (dayId) {
-      const result = await recordCompletion('default', dayId, dayToRecord)
+      const result = await recordCompletion('default', dayId, dayToRecord);
       if ('ok' in result) {
-        setSessionStatus('complete')
-        setSessionDayIndex(null)
-        navigate('/session/complete')
+        setSessionStatus('complete');
+        setSessionDayIndex(null);
+        navigate('/session/complete');
         // ... update completions, savedMessage, etc.
       }
     }
   }
-}, [plan, navigate])
+}, [plan, navigate]);
 ```
 
 ### Timer Engine Override
@@ -241,7 +242,7 @@ const handleCompleteSession = useCallback(async () => {
 ```typescript
 // timerEngine.ts - buildTimeline
 function buildTimeline(phases: Phase[], options?: { relaxationSeconds?: number }) {
-  const relaxationMs = (options?.relaxationSeconds ?? RELAXATION_SECONDS) * 1000
+  const relaxationMs = (options?.relaxationSeconds ?? RELAXATION_SECONDS) * 1000;
   // ...
 }
 
@@ -249,7 +250,7 @@ function buildTimeline(phases: Phase[], options?: { relaxationSeconds?: number }
 function start(phasesInput: Phase[], options?: TimerStartOptions) {
   timeline = buildTimeline(phasesInput, {
     relaxationSeconds: options?.relaxationSecondsOverride,
-  })
+  });
   // ...
 }
 ```
@@ -263,8 +264,13 @@ function start(phasesInput: Phase[], options?: TimerStartOptions) {
 }
 
 @keyframes recovery-pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -287,24 +293,24 @@ function start(phasesInput: Phase[], options?: TimerStartOptions) {
 
 ## State of the Art
 
-| Old Approach | Current Approach | When Changed | Impact |
-|--------------|------------------|--------------|--------|
-| Immediate navigate on session_complete | Explicit confirm + save + navigate | Phase 8 | User sees completion, no invisible "Saved" |
-| Solid border for recovery | Faint blue + breathing animation | Phase 8 | Calmer recovery UX |
-| Fixed RELAXATION_SECONDS | Override via TimerStartOptions | Phase 8 | Test mode without code changes |
+| Old Approach                           | Current Approach                   | When Changed | Impact                                     |
+| -------------------------------------- | ---------------------------------- | ------------ | ------------------------------------------ |
+| Immediate navigate on session_complete | Explicit confirm + save + navigate | Phase 8      | User sees completion, no invisible "Saved" |
+| Solid border for recovery              | Faint blue + breathing animation   | Phase 8      | Calmer recovery UX                         |
+| Fixed RELAXATION_SECONDS               | Override via TimerStartOptions     | Phase 8      | Test mode without code changes             |
 
 ---
 
 ## Open Questions
 
-1. **Test toggle placement**  
-   - What we know: CONTEXT says "settings or session preview", clearly labeled "Test mode".  
-   - What's unclear: Which is better for discoverability vs. accidental activation.  
+1. **Test toggle placement**
+   - What we know: CONTEXT says "settings or session preview", clearly labeled "Test mode".
+   - What's unclear: Which is better for discoverability vs. accidental activation.
    - Recommendation: Session preview (near Start Session) — testers are there; settings users may forget to turn off.
 
-2. **Green glow intensity**  
-   - What we know: CONTEXT suggests `rgba(82, 218, 211, …)` (primary teal), celebratory.  
-   - What's unclear: Exact opacity for "glowing" vs. "subtle".  
+2. **Green glow intensity**
+   - What we know: CONTEXT suggests `rgba(82, 218, 211, …)` (primary teal), celebratory.
+   - What's unclear: Exact opacity for "glowing" vs. "subtle".
    - Recommendation: Start with `0.35` (stronger than hold's `0.15`); adjust in implementation.
 
 ---
@@ -313,22 +319,22 @@ function start(phasesInput: Phase[], options?: TimerStartOptions) {
 
 ### Test Framework
 
-| Property | Value |
-|----------|-------|
-| Framework | None detected |
-| Config file | — |
-| Quick run command | — |
-| Full suite command | — |
+| Property           | Value         |
+| ------------------ | ------------- |
+| Framework          | None detected |
+| Config file        | —             |
+| Quick run command  | —             |
+| Full suite command | —             |
 
 ### Phase Requirements → Test Map
 
-| Req | Behavior | Test Type | Automated Command | File Exists? |
-|-----|----------|-----------|-------------------|--------------|
-| One session/day | Block start when completed today | unit | — | ❌ Wave 0 |
-| hasCompletedToday | Correct for local midnight edge cases | unit | — | ❌ Wave 0 |
-| Completion flow | No auto-navigate; button triggers save | manual | — | — |
-| Test toggle | Relaxation 3s when on | manual | — | — |
-| Recovery animation | Faint blue + pulse | manual | — | — |
+| Req                | Behavior                               | Test Type | Automated Command | File Exists? |
+| ------------------ | -------------------------------------- | --------- | ----------------- | ------------ |
+| One session/day    | Block start when completed today       | unit      | —                 | ❌ Wave 0    |
+| hasCompletedToday  | Correct for local midnight edge cases  | unit      | —                 | ❌ Wave 0    |
+| Completion flow    | No auto-navigate; button triggers save | manual    | —                 | —            |
+| Test toggle        | Relaxation 3s when on                  | manual    | —                 | —            |
+| Recovery animation | Faint blue + pulse                     | manual    | —                 | —            |
 
 ### Sampling Rate
 
@@ -367,6 +373,7 @@ function start(phasesInput: Phase[], options?: TimerStartOptions) {
 ## Metadata
 
 **Confidence breakdown:**
+
 - Standard stack: HIGH — date-fns is STACK recommendation; timer/context patterns match existing codebase
 - Architecture: HIGH — flow derived from CONTEXT and TrainingContext/ActiveSessionView structure
 - Pitfalls: HIGH — Unix ms vs s, box-shadow performance, route guard behavior are well-documented

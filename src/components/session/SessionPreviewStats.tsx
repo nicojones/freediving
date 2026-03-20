@@ -1,22 +1,22 @@
-import { memo } from 'react'
-import { formatDuration } from '../../utils/formatDuration'
+import { memo } from 'react';
+import { formatDuration } from '../../utils/formatDuration';
 import {
   getSessionDurationMinutes,
   getLongestHoldSeconds,
   getRecoveryDurationSeconds,
-} from '../../utils/sessionStats'
-import type { Phase } from '../../types/plan'
+} from '../../utils/sessionStats';
+import type { Phase } from '../../types/plan';
 
 interface SessionPreviewStatsProps {
-  phases: Phase[]
+  phases: Phase[];
 }
 
 export const SessionPreviewStats = memo(function SessionPreviewStats({
   phases,
 }: SessionPreviewStatsProps) {
-  const totalMinutes = getSessionDurationMinutes(phases)
-  const longestHold = getLongestHoldSeconds(phases)
-  const recoveryDuration = getRecoveryDurationSeconds(phases)
+  const totalMinutes = getSessionDurationMinutes(phases);
+  const longestHold = getLongestHoldSeconds(phases);
+  const recoveryDuration = getRecoveryDurationSeconds(phases);
 
   return (
     <section className="grid grid-cols-2 gap-4 mb-12">
@@ -50,5 +50,5 @@ export const SessionPreviewStats = memo(function SessionPreviewStats({
         </div>
       </div>
     </section>
-  )
-})
+  );
+});

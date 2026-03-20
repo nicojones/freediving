@@ -16,6 +16,7 @@
 **Consequences:** Session becomes unusable on iOS. User gets no "Breathe!" cue, no "Prepare for hold," no "30 seconds"—they are left guessing or must keep the screen on (defeating the eyes-closed workflow).
 
 **Prevention:**
+
 - Document iOS limitation clearly in onboarding: "Keep screen on or use Android for best experience."
 - Test `display: "minimal-ui"` and `display_override`—if Safari opens with address bar, background audio may work in some iOS versions.
 - Consider NoSleep.js or similar to prevent display sleep (limited iOS support).
@@ -36,6 +37,7 @@
 **Consequences:** "Breathe!" plays 2 minutes late. "Prepare for hold" never fires. User holds too long or breathes too early. Session state is corrupted.
 
 **Prevention:**
+
 - Use **local notifications** for critical cues: schedule "Breathe!" and "Prepare for hold" at absolute times before starting the session, so the OS fires them even when the app is suspended.
 - Keep a single source of truth: session start time + planned cue times. On resume, recalculate elapsed time from `Date.now()` vs start time, not from accumulated ticks.
 - Avoid relying on `setInterval` for session progression—use `Date`/`performance.now()` for elapsed time.
@@ -55,6 +57,7 @@
 **Consequences:** User loses trust in cues. "30 seconds" is a critical safety/psychology marker; inaccuracy undermines the session.
 
 **Prevention:**
+
 - Use **Web Audio API** for cue scheduling. `AudioContext.currentTime` is a high-precision audio clock; schedule `source.start(audioCtx.currentTime + offset)` for each cue.
 - Pre-schedule all cues at session start using a lookahead scheduler if events depend on user input.
 - Never use `setInterval` for sub-second or multi-minute precision timing.
@@ -74,6 +77,7 @@
 **Consequences:** Session is unusable offline despite "works offline" promise. User in airplane mode or poor signal gets no cues.
 
 **Prevention:**
+
 - **Preload audio at install**: Use Workbox `warmStrategyCache()` or equivalent to cache all cue files when the service worker installs.
 - Use `RangeRequestsPlugin` when serving cached audio so range requests are honored.
 - Validate audio availability before starting a session; show clear error if files are missing.
@@ -94,6 +98,7 @@
 **Consequences:** Medical risk: syncope, pulmonary edema (documented in dry apnea), or—in water—drowning. Even dry static apnea has caused prolonged syncope and pulmonary edema in unsupervised training (PubMed 34157738).
 
 **Prevention:**
+
 - Document safe table construction in admin docs: CO2 holds ≤50% of PB, O2 final holds ≤80%, max 8 cycles per table.
 - Add plan validation: flag holds that exceed configurable thresholds.
 - Include safety disclaimer: "Never train alone in water. Dry training: lie down, have a spotter if possible."
@@ -114,6 +119,7 @@
 **Consequences:** Breaks the core promise: "No audio during the breathhold." User cannot trust the app.
 
 **Prevention:**
+
 - Strict state machine: HOLD → no cues. Only transition to RECOVERY before any recovery-related cue.
 - Unit test edge cases: recovery 30s, 31s, 32s—"30 seconds" must only play when appropriate.
 - Double-check condition: recovery phase `duration >= 31` before scheduling "30 seconds" cue.
@@ -186,16 +192,16 @@
 
 ## Phase-Specific Warnings
 
-| Phase Topic              | Likely Pitfall                          | Mitigation                                                                 |
-|--------------------------|-----------------------------------------|----------------------------------------------------------------------------|
-| PWA Setup                | iOS background audio broken             | Document limitation; test minimal-ui; prioritize Android                  |
-| Offline / Service Worker | Audio 206 responses not cached         | Preload with warmStrategyCache; RangeRequestsPlugin                        |
-| Session / Timer          | Timers stop when suspended              | Local notifications for cues; Date-based elapsed time                       |
-| Session / Timer          | setInterval drift                       | Web Audio API for cue scheduling                                          |
-| Session / Timer          | Cue during hold                         | State machine; strict recovery ≥31s check; edge-case tests                 |
-| Plans / Training         | Unsafe table design                     | Validation rules; admin docs; safety disclaimer                            |
-| Audio / Playback         | Missing or corrupt files                | Validate at load; preload check; clear error messages                      |
-| Audio / Playback         | Other app steals audio                  | User guidance; test with background music                                 |
+| Phase Topic              | Likely Pitfall                 | Mitigation                                                 |
+| ------------------------ | ------------------------------ | ---------------------------------------------------------- |
+| PWA Setup                | iOS background audio broken    | Document limitation; test minimal-ui; prioritize Android   |
+| Offline / Service Worker | Audio 206 responses not cached | Preload with warmStrategyCache; RangeRequestsPlugin        |
+| Session / Timer          | Timers stop when suspended     | Local notifications for cues; Date-based elapsed time      |
+| Session / Timer          | setInterval drift              | Web Audio API for cue scheduling                           |
+| Session / Timer          | Cue during hold                | State machine; strict recovery ≥31s check; edge-case tests |
+| Plans / Training         | Unsafe table design            | Validation rules; admin docs; safety disclaimer            |
+| Audio / Playback         | Missing or corrupt files       | Validate at load; preload check; clear error messages      |
+| Audio / Playback         | Other app steals audio         | User guidance; test with background music                  |
 
 ---
 

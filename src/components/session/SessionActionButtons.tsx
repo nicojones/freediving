@@ -1,12 +1,12 @@
-import { SpeedMultiplierSelector } from './SpeedMultiplierSelector'
+import { SpeedMultiplierSelector } from './SpeedMultiplierSelector';
 
 interface SessionActionButtonsProps {
-  sessionStatus: 'idle' | 'running' | 'awaitingCompletionConfirm' | 'complete'
-  speedMultiplier: number
-  onSpeedMultiplierChange: (speed: number) => void
-  showTestControls?: boolean
-  onCompleteSession: () => void
-  onAbortSession: () => void
+  sessionStatus: 'idle' | 'running' | 'awaitingCompletionConfirm' | 'complete';
+  speedMultiplier: number;
+  onSpeedMultiplierChange: (speed: number) => void;
+  showTestControls?: boolean;
+  onCompleteSession: () => void;
+  onAbortSession: () => void;
 }
 
 export function SessionActionButtons({
@@ -60,5 +60,5 @@ export function SessionActionButtons({
         </>
       )}
     </div>
-  )
+  );
 }

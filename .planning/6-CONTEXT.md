@@ -51,12 +51,12 @@
 
 ## Traceability
 
-| Requirement | Decision |
-|-------------|----------|
-| PWA-01 | Manifest with standalone; install prompt on dashboard after engagement |
-| PWA-02 | App loads offline; completions queued and synced when online |
-| PWA-03 | Audio precached at SW install; RangeRequestsPlugin for m4a |
-| PWA-04 | Validate mobile-first; touch targets, safe-area; no major layout changes |
+| Requirement | Decision                                                                 |
+| ----------- | ------------------------------------------------------------------------ |
+| PWA-01      | Manifest with standalone; install prompt on dashboard after engagement   |
+| PWA-02      | App loads offline; completions queued and synced when online             |
+| PWA-03      | Audio precached at SW install; RangeRequestsPlugin for m4a               |
+| PWA-04      | Validate mobile-first; touch targets, safe-area; no major layout changes |
 
 ---
 
@@ -72,4 +72,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 6*
+_Context captured from /gsd-discuss-phase 6_

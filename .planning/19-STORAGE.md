@@ -10,23 +10,27 @@
 ### 1. Database (SQLite)
 
 **Pros:**
+
 - No deploy needed to add new plans — users create at runtime
 - Per-user plans possible (future: `user_id` column)
 - Centralized storage; works with existing auth
 - Survives app restarts; no static file deployment
 
 **Cons:**
+
 - Requires schema migration for new columns
 - Backups must include DB file
 
 ### 2. Public/Static (JSON in `src/data` or `public/`)
 
 **Pros:**
+
 - Simpler: no backend change for plan creation
 - Bundled plans work offline (PWA)
 - Version-controlled with code
 
 **Cons:**
+
 - Adding a plan requires deploy
 - No per-user isolation
 - Not suitable for user-created content

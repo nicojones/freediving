@@ -1,5 +1,5 @@
-import { Dashboard } from '@/src/views/Dashboard'
+import { Dashboard } from '@/src/views/Dashboard';
 
 export default function Home() {
-  return <Dashboard />
+  return <Dashboard />;
 }

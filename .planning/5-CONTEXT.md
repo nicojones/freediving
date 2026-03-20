@@ -50,12 +50,12 @@
 
 ## Traceability
 
-| Requirement | Decision |
-|-------------|----------|
-| PLAN-02 | Summary + detail preview; rest day note; dedicated section; hold/recovery, duration, type |
-| PLAN-03 | Scrollable list with summary; current pre-selected + badge; rest selectable (Start disabled); completed = checkmark + dimmed |
-| PLAN-04 | On track: next day (incl. rest). Behind: skip rest, first training day. All done: "Plan complete" |
-| SESS-07 | Auto-record on session_complete; brief "Saved" confirmation |
+| Requirement | Decision                                                                                                                     |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| PLAN-02     | Summary + detail preview; rest day note; dedicated section; hold/recovery, duration, type                                    |
+| PLAN-03     | Scrollable list with summary; current pre-selected + badge; rest selectable (Start disabled); completed = checkmark + dimmed |
+| PLAN-04     | On track: next day (incl. rest). Behind: skip rest, first training day. All done: "Plan complete"                            |
+| SESS-07     | Auto-record on session_complete; brief "Saved" confirmation                                                                  |
 
 ---
 
@@ -70,4 +70,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 5*
+_Context captured from /gsd-discuss-phase 5_

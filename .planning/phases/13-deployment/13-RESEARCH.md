@@ -16,12 +16,12 @@
 
 ## Freediving Differences
 
-| Geonaut | Freediving |
-|---------|------------|
-| Next.js | Vite + Express |
-| .next + public | dist/ (Vite) + server/ |
-| Single process | Node server serves API + static |
-| next.config.mjs | vite.config.ts |
+| Geonaut         | Freediving                      |
+| --------------- | ------------------------------- |
+| Next.js         | Vite + Express                  |
+| .next + public  | dist/ (Vite) + server/          |
+| Single process  | Node server serves API + static |
+| next.config.mjs | vite.config.ts                  |
 
 ## Deployment Artifacts
 

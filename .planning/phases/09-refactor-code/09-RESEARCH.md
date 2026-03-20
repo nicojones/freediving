@@ -11,13 +11,13 @@ Phase 9 improves code quality through targeted refactoring. Scope is bounded: no
 
 ### File Size (lines)
 
-| File | Lines | Notes |
-|------|-------|-------|
-| TrainingContext.tsx | 302 | Largest; auth + plan + progress + session |
-| timerEngine.ts | 229 | Pure logic, well-structured |
-| Dashboard.tsx | 222 | Complex conditional rendering |
-| ActiveSessionView.tsx | 159 | Reasonable |
-| planService.ts | 153 | Good separation |
+| File                  | Lines | Notes                                     |
+| --------------------- | ----- | ----------------------------------------- |
+| TrainingContext.tsx   | 302   | Largest; auth + plan + progress + session |
+| timerEngine.ts        | 229   | Pure logic, well-structured               |
+| Dashboard.tsx         | 222   | Complex conditional rendering             |
+| ActiveSessionView.tsx | 159   | Reasonable                                |
+| planService.ts        | 153   | Good separation                           |
 
 ### Identified Refactoring Targets
 

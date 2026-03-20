@@ -1,0 +1,25 @@
+pre-commit:
+  follow: true
+  commands:
+    '✨ format':
+      glob: '*.{js,ts,jsx,tsx,json,css,scss,md,html,yml,yaml,mjs}'
+      run: npx prettier --write {staged_files}
+      stage_fixed: true
+      priority: 1
+    '🔍 lint':
+      glob: '*.{js,ts,jsx,tsx,mjs}'
+      run: npx eslint {staged_files} --fix
+      stage_fixed: true
+      priority: 2
+    '📦 build':
+      glob: '*.{js,ts,jsx,tsx,json,css,mjs}'
+      run: npm run build
+      priority: 3
+    '🧪 unit tests':
+      glob: '*.{js,ts,jsx,tsx,json,mjs}'
+      run: npm run test:run
+      priority: 4
+    '🎭 e2e tests':
+      glob: '*.{js,ts,jsx,tsx,json,mjs}'
+      run: npm run test:e2e
+      priority: 5

@@ -9,11 +9,11 @@
 
 ## Terminology
 
-| Term | Meaning |
-|------|---------|
-| **User** | Person logged in via username/password. Pre-defined, no registration. Owns progress. |
-| **Plan** | Training plan (days, intervals). Admin-added. User selects one and stays on it. |
-| **Profile** | Same as user (PROF-01, PROF-02 use "profile"). |
+| Term        | Meaning                                                                              |
+| ----------- | ------------------------------------------------------------------------------------ |
+| **User**    | Person logged in via username/password. Pre-defined, no registration. Owns progress. |
+| **Plan**    | Training plan (days, intervals). Admin-added. User selects one and stays on it.      |
+| **Profile** | Same as user (PROF-01, PROF-02 use "profile").                                       |
 
 ---
 
@@ -80,11 +80,11 @@
 
 ## Traceability
 
-| Requirement | Decision |
-|-------------|----------|
-| PROF-01 | Pre-defined users; username/password login; no registration |
-| PROF-02 | Progress stored per user in server SQLite; survives restart; cross-device |
-| SESS-07 | Session completion recorded as (user_id, plan_id, day_index, completed_at) |
+| Requirement | Decision                                                                   |
+| ----------- | -------------------------------------------------------------------------- |
+| PROF-01     | Pre-defined users; username/password login; no registration                |
+| PROF-02     | Progress stored per user in server SQLite; survives restart; cross-device  |
+| SESS-07     | Session completion recorded as (user_id, plan_id, day_index, completed_at) |
 
 ---
 
@@ -98,4 +98,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 2, refined 2025-03-19*
+_Context captured from /gsd-discuss-phase 2, refined 2025-03-19_

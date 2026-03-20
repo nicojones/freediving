@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { TopAppBar } from '@/src/components/layout/TopAppBar'
-import { BottomNavBar } from '@/src/components/layout/BottomNavBar'
-import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSection'
-import { CreatePlanSection } from '@/src/components/settings/CreatePlanSection'
-import { PlanDeleteSection } from '@/src/components/settings/PlanDeleteSection'
-import { ConfirmResetModal } from '@/src/components/settings/ConfirmResetModal'
-import { useTraining } from '@/src/hooks/useTraining'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { TopAppBar } from '@/src/components/layout/TopAppBar';
+import { BottomNavBar } from '@/src/components/layout/BottomNavBar';
+import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSection';
+import { CreatePlanSection } from '@/src/components/settings/CreatePlanSection';
+import { PlanDeleteSection } from '@/src/components/settings/PlanDeleteSection';
+import { ConfirmResetModal } from '@/src/components/settings/ConfirmResetModal';
+import { useTraining } from '@/src/hooks/useTraining';
 
 /**
  * Plans tab: change plan, add plan, delete plan (user-created, non-active).
@@ -19,35 +19,32 @@ import { useTraining } from '@/src/hooks/useTraining'
  * their active plan. Do not implement; only ensure no dead ends block this.
  */
 export function PlansView() {
-  const router = useRouter()
-  const {
-    user,
-    availablePlans,
-    activePlanId,
-    setActivePlan,
-    refreshAvailablePlans,
-  } = useTraining()
+  const router = useRouter();
+  const { user, availablePlans, activePlanId, setActivePlan, refreshAvailablePlans } =
+    useTraining();
 
   const [confirmPlanChange, setConfirmPlanChange] = useState<{
-    pendingPlanId: string
-  } | null>(null)
+    pendingPlanId: string;
+  } | null>(null);
 
   const handlePlanChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newPlanId = e.target.value
-    if (newPlanId === activePlanId) {return}
-    setConfirmPlanChange({ pendingPlanId: newPlanId })
-  }
+    const newPlanId = e.target.value;
+    if (newPlanId === activePlanId) {
+      return;
+    }
+    setConfirmPlanChange({ pendingPlanId: newPlanId });
+  };
 
   const handleCloseConfirm = () => {
-    setConfirmPlanChange(null)
-  }
+    setConfirmPlanChange(null);
+  };
 
   const handleConfirmPlanChange = async () => {
     if (confirmPlanChange?.pendingPlanId) {
-      await setActivePlan(confirmPlanChange.pendingPlanId)
+      await setActivePlan(confirmPlanChange.pendingPlanId);
     }
-    handleCloseConfirm()
-  }
+    handleCloseConfirm();
+  };
 
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
@@ -97,10 +94,11 @@ export function PlansView() {
         title="Change training plan"
         message={
           <>
-            Changing plan will reset your progress. Type <strong className="text-on-surface">reset</strong> to confirm.
+            Changing plan will reset your progress. Type{' '}
+            <strong className="text-on-surface">reset</strong> to confirm.
           </>
         }
       />
     </div>
-  )
+  );
 }

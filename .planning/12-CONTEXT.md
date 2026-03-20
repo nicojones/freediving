@@ -78,15 +78,15 @@ The server uses `FREEDIVING_DB_PATH` (default: `server/data.db`). For E2E:
 
 ## Traceability
 
-| Decision | Outcome |
-|----------|---------|
-| Unit framework | Vitest + @testing-library/react |
-| Unit scope | Pure logic, services (mocked), key components |
-| E2E framework | Playwright |
-| E2E DB | FREEDIVING_DB_PATH=:memory:; server started with env |
-| E2E scope | Simple flows: login, day select, session (test mode) |
-| File layout | Co-located unit tests; e2e/ for E2E |
-| Test selectors | data-testid, data-testid-value, data-testid-* — never class names |
+| Decision       | Outcome                                                            |
+| -------------- | ------------------------------------------------------------------ |
+| Unit framework | Vitest + @testing-library/react                                    |
+| Unit scope     | Pure logic, services (mocked), key components                      |
+| E2E framework  | Playwright                                                         |
+| E2E DB         | FREEDIVING_DB_PATH=:memory:; server started with env               |
+| E2E scope      | Simple flows: login, day select, session (test mode)               |
+| File layout    | Co-located unit tests; e2e/ for E2E                                |
+| Test selectors | data-testid, data-testid-value, data-testid-\* — never class names |
 
 ---
 
@@ -94,16 +94,16 @@ The server uses `FREEDIVING_DB_PATH` (default: `server/data.db`). For E2E:
 
 ### Testable Pure Logic
 
-| File | What to Test |
-|------|--------------|
-| `timerEngine.ts` | buildTimeline, computeState, event emission (phase_start, prepare_hold, countdown_30, hold_end, session_complete); recovery ≥31s for countdown_30 |
-| `planService.ts` | getAvailablePlans, loadPlanById, getPhasesForDay, getDayId, getDayById, getCurrentDayIndex (if present) |
-| `utils/completions.ts` | hasCompletedToday, isDayCompleted |
-| `utils/holdProgress.ts` | Progress calculation for hold phase |
-| `utils/sessionStats.ts` | Stats derivation from phases |
-| `utils/buildSessionTimeline.ts` | Timeline building |
-| `utils/formatMmSs.ts`, `formatDuration.ts` | Formatting |
-| `utils/phaseLabels.ts` | Label mapping |
+| File                                       | What to Test                                                                                                                                      |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `timerEngine.ts`                           | buildTimeline, computeState, event emission (phase_start, prepare_hold, countdown_30, hold_end, session_complete); recovery ≥31s for countdown_30 |
+| `planService.ts`                           | getAvailablePlans, loadPlanById, getPhasesForDay, getDayId, getDayById, getCurrentDayIndex (if present)                                           |
+| `utils/completions.ts`                     | hasCompletedToday, isDayCompleted                                                                                                                 |
+| `utils/holdProgress.ts`                    | Progress calculation for hold phase                                                                                                               |
+| `utils/sessionStats.ts`                    | Stats derivation from phases                                                                                                                      |
+| `utils/buildSessionTimeline.ts`            | Timeline building                                                                                                                                 |
+| `utils/formatMmSs.ts`, `formatDuration.ts` | Formatting                                                                                                                                        |
+| `utils/phaseLabels.ts`                     | Label mapping                                                                                                                                     |
 
 ### Services (Mock API)
 
@@ -130,4 +130,4 @@ The server uses `FREEDIVING_DB_PATH` (default: `server/data.db`). For E2E:
 
 ---
 
-*Context captured from /gsd-discuss-phase 12 — user specified: unit test whole app, simple E2E, E2E must use own DB (never touch user data). E2E DB isolation confirmed via FREEDIVING_DB_PATH.*
+_Context captured from /gsd-discuss-phase 12 — user specified: unit test whole app, simple E2E, E2E must use own DB (never touch user data). E2E DB isolation confirmed via FREEDIVING_DB_PATH._

@@ -16,18 +16,19 @@ Phase 6 makes the Freediving Breathhold Trainer installable as a PWA, functional
 
 ### 1. vite-plugin-pwa Setup for Vite 8
 
-| Finding | Source |
-|---------|--------|
-| vite-plugin-pwa v0.21.1+ supports Vite 6 | vite-pwa-org changelog |
-| Vite 8 support tracked in GitHub issue #918 (Mar 2026) | WebSearch |
-| Plugin may work with Vite 8 even if not officially tested | — |
-| Workbox 7.3.0 from v0.21.0 | Changelog |
+| Finding                                                   | Source                 |
+| --------------------------------------------------------- | ---------------------- |
+| vite-plugin-pwa v0.21.1+ supports Vite 6                  | vite-pwa-org changelog |
+| Vite 8 support tracked in GitHub issue #918 (Mar 2026)    | WebSearch              |
+| Plugin may work with Vite 8 even if not officially tested | —                      |
+| Workbox 7.3.0 from v0.21.0                                | Changelog              |
 
 **Implementation:** Install `vite-plugin-pwa` (latest). If Vite 8 causes build errors, options: (a) downgrade to Vite 6/7 temporarily, (b) use PR/branch with Vite 8 fixes, (c) check plugin releases for explicit Vite 8 support. STACK.md recommends ^1.2; npm shows v1.2.0 (Nov 2025). Verify compatibility before Phase 6 start.
 
 **Config skeleton (vite.config.ts):**
+
 ```ts
-import { VitePWA } from 'vite-plugin-pwa'
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
@@ -53,23 +54,24 @@ export default defineConfig({
       },
     }),
   ],
-})
+});
 ```
 
 ---
 
 ### 2. Workbox Precache + RangeRequestsPlugin for m4a Audio
 
-| Finding | Source |
-|---------|--------|
-| Browsers use range requests for media; runtime caching fails | Chrome Workbox docs |
-| Must precache audio explicitly; CacheFirst + RangeRequestsPlugin | Chrome, STACK.md |
-| CacheableResponsePlugin: statuses [200] — cache full responses, not 206 | Chrome docs |
-| crossorigin="anonymous" required on audio elements | ARCHITECTURE Pattern 2 |
+| Finding                                                                 | Source                 |
+| ----------------------------------------------------------------------- | ---------------------- |
+| Browsers use range requests for media; runtime caching fails            | Chrome Workbox docs    |
+| Must precache audio explicitly; CacheFirst + RangeRequestsPlugin        | Chrome, STACK.md       |
+| CacheableResponsePlugin: statuses [200] — cache full responses, not 206 | Chrome docs            |
+| crossorigin="anonymous" required on audio elements                      | ARCHITECTURE Pattern 2 |
 
 **Audio files:** `hold.m4a`, `prepare.m4a`, `30s.m4a`, `breathe.m4a` in `public/audio/`.
 
 **Workbox config:**
+
 ```ts
 workbox: {
   globPatterns: ['**/*.{js,css,html,ico,png,svg,m4a}'],
@@ -100,20 +102,22 @@ workbox: {
 
 ### 3. Offline Completion Queue and Sync-on-Online
 
-| Finding | Source |
-|---------|--------|
-| Store pending completions in IndexedDB; survives refresh | 6-CONTEXT, WebSearch |
-| On `online` event or app load: flush queue to /api/progress | 6-CONTEXT |
-| Single device, last-write-wins; no conflict resolution | 6-CONTEXT |
-| idb or Dexie.js for Promise-based IndexedDB | WebSearch |
+| Finding                                                     | Source               |
+| ----------------------------------------------------------- | -------------------- |
+| Store pending completions in IndexedDB; survives refresh    | 6-CONTEXT, WebSearch |
+| On `online` event or app load: flush queue to /api/progress | 6-CONTEXT            |
+| Single device, last-write-wins; no conflict resolution      | 6-CONTEXT            |
+| idb or Dexie.js for Promise-based IndexedDB                 | WebSearch            |
 
 **Queue schema (minimal):**
+
 ```ts
 // IndexedDB store: pending_completions
 // { plan_id, day_index, completed_at, created_at }
 ```
 
 **Flow:**
+
 1. On `recordCompletion` call: if offline, push to IndexedDB queue; return success locally.
 2. On app load: check `navigator.onLine`; if online, process queue.
 3. On `window.addEventListener('online')`: process queue.
@@ -130,13 +134,13 @@ workbox: {
 
 ### 4. iOS PWA Behavior: minimal-ui vs standalone, Screen Wake Lock, NoSleep.js
 
-| Finding | Source |
-|---------|--------|
-| Audio stops when screen locks in standalone mode | PITFALLS 1, WebSearch |
+| Finding                                                                            | Source                   |
+| ---------------------------------------------------------------------------------- | ------------------------ |
+| Audio stops when screen locks in standalone mode                                   | PITFALLS 1, WebSearch    |
 | minimal-ui opens with address bar; may allow background audio in some iOS versions | PITFALLS, Stack Overflow |
-| minimal-ui support inconsistent; can fall back to browser mode | PITFALLS |
-| Screen Wake Lock API: WebKit bug #254545 fixed in iOS 18.4 | WebSearch |
-| NoSleep.js: wakeLock fails in iOS PWA until 18.4; video fallback works in Safari | GitHub issues |
+| minimal-ui support inconsistent; can fall back to browser mode                     | PITFALLS                 |
+| Screen Wake Lock API: WebKit bug #254545 fixed in iOS 18.4                         | WebSearch                |
+| NoSleep.js: wakeLock fails in iOS PWA until 18.4; video fallback works in Safari   | GitHub issues            |
 
 **Recommendation (6-CONTEXT):** Use `display: "standalone"` as default. Document iOS limitation: "Keep screen on or use Android for best experience." Optional: test `display_override: ["minimal-ui", "standalone"]` — if Safari opens with address bar, background audio may work; document as experimental.
 
@@ -146,15 +150,15 @@ workbox: {
 
 ### 5. Manifest and Installability
 
-| Field | Value |
-|-------|-------|
-| name | Submerged — Breathhold Protocol |
-| short_name | Submerged |
-| theme_color | #52dad3 (primary) |
-| background_color | #0d1416 (background) |
-| display | standalone |
-| start_url | / |
-| icons | 192×192, 512×512 (PNG, maskable optional) |
+| Field            | Value                                     |
+| ---------------- | ----------------------------------------- |
+| name             | Submerged — Breathhold Protocol           |
+| short_name       | Submerged                                 |
+| theme_color      | #52dad3 (primary)                         |
+| background_color | #0d1416 (background)                      |
+| display          | standalone                                |
+| start_url        | /                                         |
+| icons            | 192×192, 512×512 (PNG, maskable optional) |
 
 **Install criteria (Chrome):** HTTPS, manifest, SW, icons, start_url. `beforeinstallprompt` fires when criteria met and app not already installed.
 
@@ -164,27 +168,28 @@ workbox: {
 
 ### 6. beforeinstallprompt and Install Prompt UX
 
-| Finding | Source |
-|---------|--------|
+| Finding                                                             | Source       |
+| ------------------------------------------------------------------- | ------------ |
 | beforeinstallprompt only in Chromium (Chrome, Edge); not Safari/iOS | MDN, web.dev |
-| event.preventDefault() to capture; event.prompt() on user gesture | MDN |
-| prompt() can only be called once per captured event | web.dev |
-| Show after user engagement (e.g. after first session) | 6-CONTEXT |
+| event.preventDefault() to capture; event.prompt() on user gesture   | MDN          |
+| prompt() can only be called once per captured event                 | web.dev      |
+| Show after user engagement (e.g. after first session)               | 6-CONTEXT    |
 
 **Implementation:**
+
 ```ts
-let deferredPrompt: BeforeInstallPromptEvent | null = null
+let deferredPrompt: BeforeInstallPromptEvent | null = null;
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault()
-  deferredPrompt = e
+  e.preventDefault();
+  deferredPrompt = e;
   // Show install banner/button when appropriate
-})
+});
 
 // On user click (e.g. "Install" button):
 if (deferredPrompt) {
-  await deferredPrompt.prompt()
-  const { outcome } = await deferredPrompt.userChoice
-  deferredPrompt = null
+  await deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
 }
 ```
 
@@ -194,13 +199,13 @@ if (deferredPrompt) {
 
 ### 7. Responsive Validation (PWA-04)
 
-| Rule | Current State | Action |
-|------|---------------|--------|
-| viewport meta | `width=device-width, initial-scale=1.0, viewport-fit=cover` | ✓ Present |
-| Touch targets (Stop/Emergency) | UI-SPEC: min `xl` | Validate ActiveSessionView Stop button |
-| Safe-area | BottomNavBar has `pb-safe` | ✓ Present |
-| min-height | `max(884px, 100dvh)` in index.css | ✓ Present |
-| 320px–tablet | max-w-2xl, px-6/8 | Validate at 320px viewport |
+| Rule                           | Current State                                               | Action                                 |
+| ------------------------------ | ----------------------------------------------------------- | -------------------------------------- |
+| viewport meta                  | `width=device-width, initial-scale=1.0, viewport-fit=cover` | ✓ Present                              |
+| Touch targets (Stop/Emergency) | UI-SPEC: min `xl`                                           | Validate ActiveSessionView Stop button |
+| Safe-area                      | BottomNavBar has `pb-safe`                                  | ✓ Present                              |
+| min-height                     | `max(884px, 100dvh)` in index.css                           | ✓ Present                              |
+| 320px–tablet                   | max-w-2xl, px-6/8                                           | Validate at 320px viewport             |
 
 **Tailwind:** `min-w-[2.5rem] min-h-[2.5rem]` or `min-w-10 min-h-10` for 40px touch targets. UI-SPEC says "min xl" — Tailwind `xl` = 36px (2.25rem); 44px is often recommended for touch. Use `min-w-11 min-h-11` (44px) for critical buttons.
 
@@ -212,22 +217,22 @@ if (deferredPrompt) {
 
 ### New / Modified Modules
 
-| Module | Purpose |
-|--------|---------|
-| vite.config.ts | Add VitePWA plugin, manifest, workbox (precache + audio runtimeCache) |
-| public/icons/ | icon-192.png, icon-512.png |
-| offlineQueue.ts (or similar) | IndexedDB queue for completions; sync when online |
-| progressService.ts | Wrap recordCompletion: if offline, queue; if online, POST; on load, flush queue |
-| InstallPrompt component | Listen beforeinstallprompt; show "Install" after engagement |
-| index.html | Link manifest (plugin may inject automatically) |
+| Module                       | Purpose                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| vite.config.ts               | Add VitePWA plugin, manifest, workbox (precache + audio runtimeCache)           |
+| public/icons/                | icon-192.png, icon-512.png                                                      |
+| offlineQueue.ts (or similar) | IndexedDB queue for completions; sync when online                               |
+| progressService.ts           | Wrap recordCompletion: if offline, queue; if online, POST; on load, flush queue |
+| InstallPrompt component      | Listen beforeinstallprompt; show "Install" after engagement                     |
+| index.html                   | Link manifest (plugin may inject automatically)                                 |
 
 ### Offline Queue API (proposed)
 
 ```ts
 // offlineQueue.ts
-export async function queueCompletion(planId: string, dayIndex: number): Promise<void>
-export async function flushQueue(): Promise<{ synced: number; failed: number }>
-export async function getPendingCount(): Promise<number>
+export async function queueCompletion(planId: string, dayIndex: number): Promise<void>;
+export async function flushQueue(): Promise<{ synced: number; failed: number }>;
+export async function getPendingCount(): Promise<number>;
 ```
 
 ### Progress Service Integration
@@ -250,15 +255,15 @@ vite-plugin-pwa with `registerType: 'autoUpdate'` auto-registers. Ensure `workbo
 
 ## Pitfalls to Avoid
 
-| Pitfall | Mitigation |
-|---------|------------|
-| **Pitfall 1: iOS audio stops on lock** | Document limitation; use standalone; prioritize Android testing |
-| **Pitfall 4: Offline audio 206/cache** | Precache audio; RangeRequestsPlugin; validate before session |
-| **Runtime caching of audio** | Precache at SW install; runtimeCache as fallback only |
-| **beforeinstallprompt on iOS** | Not available; provide manual "Add to Home Screen" instructions |
-| **Queue sync without auth** | Backend uses cookie; ensure credentials: 'include' on sync POST |
-| **Fonts offline** | Google Fonts may fail; 6-CONTEXT defers; use system font fallback |
-| **Vite 8 + vite-plugin-pwa** | Verify build; have downgrade path if incompatible |
+| Pitfall                                | Mitigation                                                        |
+| -------------------------------------- | ----------------------------------------------------------------- |
+| **Pitfall 1: iOS audio stops on lock** | Document limitation; use standalone; prioritize Android testing   |
+| **Pitfall 4: Offline audio 206/cache** | Precache audio; RangeRequestsPlugin; validate before session      |
+| **Runtime caching of audio**           | Precache at SW install; runtimeCache as fallback only             |
+| **beforeinstallprompt on iOS**         | Not available; provide manual "Add to Home Screen" instructions   |
+| **Queue sync without auth**            | Backend uses cookie; ensure credentials: 'include' on sync POST   |
+| **Fonts offline**                      | Google Fonts may fail; 6-CONTEXT defers; use system font fallback |
+| **Vite 8 + vite-plugin-pwa**           | Verify build; have downgrade path if incompatible                 |
 
 ---
 

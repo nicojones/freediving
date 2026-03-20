@@ -1,83 +1,72 @@
 # Phase 2: Progress + Profile Services — Executable Plan
 
 ---
+
 phase: 02-progress-profile
 plans:
-  - id: "01"
-    tasks: 3
-    files: 8
-    depends_on: []
-  - id: "02"
-    tasks: 2
-    files: 5
-    depends_on: ["01"]
-type: execute
-wave: 1
-files_modified:
-  - package.json
-  - vite.config.ts
-  - server/index.js
-  - server/db.js
-  - server/schema.sql
-  - server/auth.js
-  - server/routes/auth.js
-  - server/routes/progress.js
-  - src/services/authService.ts
-  - src/services/progressService.ts
-  - src/pages/LoginPage.tsx
-  - src/App.tsx
-  - src/main.tsx
-autonomous: true
-requirements: [PROF-01, PROF-02, SESS-07]
-user_setup:
-  - service: backend
-    why: "Initial user credentials"
-    env_vars:
-      - name: SESSION_SECRET
-        source: "Generate with: openssl rand -hex 32"
-      - name: USER_PASSWORD_NICO
-        source: "Set password for nico (or use default in seed for dev)"
-      - name: USER_PASSWORD_ATHENA
-        source: "Set password for athena (or use default in seed for dev)"
+
+- id: "01"
+  tasks: 3
+  files: 8
+  depends_on: []
+- id: "02"
+  tasks: 2
+  files: 5
+  depends_on: ["01"]
+  type: execute
+  wave: 1
+  files_modified:
+- package.json
+- vite.config.ts
+- server/index.js
+- server/db.js
+- server/schema.sql
+- server/auth.js
+- server/routes/auth.js
+- server/routes/progress.js
+- src/services/authService.ts
+- src/services/progressService.ts
+- src/pages/LoginPage.tsx
+- src/App.tsx
+- src/main.tsx
+  autonomous: true
+  requirements: [PROF-01, PROF-02, SESS-07]
+  user_setup:
+- service: backend
+  why: "Initial user credentials"
+  env_vars:
+  - name: SESSION_SECRET
+    source: "Generate with: openssl rand -hex 32"
+  - name: USER_PASSWORD_NICO
+    source: "Set password for nico (or use default in seed for dev)"
+  - name: USER_PASSWORD_ATHENA
+    source: "Set password for athena (or use default in seed for dev)"
 
 must_haves:
-  truths:
-    - "User can log in with username/password (pre-defined users)"
-    - "Backend persists progress in SQLite; PWA fetches/stores via API"
-    - "App records session completion per user per day"
-    - "Progress survives browser restart and syncs across devices"
-  artifacts:
-    - path: server/db.js
-      provides: "SQLite connection and schema init"
-      contains: "better-sqlite3, CREATE TABLE"
-    - path: server/schema.sql
-      provides: "users and progress_completions schema"
-      contains: "user_id, plan_id, day_index, completed_at"
-    - path: server/routes/auth.js
-      provides: "POST /api/auth/login"
-      exports: ["login"]
-    - path: server/routes/progress.js
-      provides: "POST /api/progress, GET /api/progress"
-      exports: ["recordCompletion", "fetchCompletions"]
-    - path: src/services/authService.ts
-      provides: "Client-side auth (login, logout, getCurrentUser)"
-    - path: src/services/progressService.ts
-      provides: "Client-side progress (recordCompletion, fetchCompletions)"
-    - path: src/pages/LoginPage.tsx
-      provides: "Login form UI"
-  key_links:
-    - from: src/App.tsx
-      to: src/services/authService.ts
-      via: "require login before rendering main app"
-      pattern: "getCurrentUser|login"
-    - from: src/services/progressService.ts
-      to: "/api/progress"
-      via: "fetch"
-      pattern: "fetch.*api/progress"
-    - from: server/routes/progress.js
-      to: "server/db.js"
-      via: "SQLite insert/select"
-      pattern: "progress_completions"
+truths: - "User can log in with username/password (pre-defined users)" - "Backend persists progress in SQLite; PWA fetches/stores via API" - "App records session completion per user per day" - "Progress survives browser restart and syncs across devices"
+artifacts: - path: server/db.js
+provides: "SQLite connection and schema init"
+contains: "better-sqlite3, CREATE TABLE" - path: server/schema.sql
+provides: "users and progress_completions schema"
+contains: "user_id, plan_id, day_index, completed_at" - path: server/routes/auth.js
+provides: "POST /api/auth/login"
+exports: ["login"] - path: server/routes/progress.js
+provides: "POST /api/progress, GET /api/progress"
+exports: ["recordCompletion", "fetchCompletions"] - path: src/services/authService.ts
+provides: "Client-side auth (login, logout, getCurrentUser)" - path: src/services/progressService.ts
+provides: "Client-side progress (recordCompletion, fetchCompletions)" - path: src/pages/LoginPage.tsx
+provides: "Login form UI"
+key_links: - from: src/App.tsx
+to: src/services/authService.ts
+via: "require login before rendering main app"
+pattern: "getCurrentUser|login" - from: src/services/progressService.ts
+to: "/api/progress"
+via: "fetch"
+pattern: "fetch.\*api/progress" - from: server/routes/progress.js
+to: "server/db.js"
+via: "SQLite insert/select"
+pattern: "progress_completions"
+
 ---
 
 ## Objective
@@ -102,19 +91,25 @@ Implement Progress + Profile Services so users can log in, and the app stores/re
 **Interfaces (from Phase 1):**
 
 From `src/types/plan.ts`:
+
 ```typescript
-export type Plan = PlanDay[]
-export type PlanDay = TrainingDay | RestDay | null
-export interface Phase { type: 'hold' | 'recovery'; duration: number }
+export type Plan = PlanDay[];
+export type PlanDay = TrainingDay | RestDay | null;
+export interface Phase {
+  type: 'hold' | 'recovery';
+  duration: number;
+}
 ```
 
 From `src/services/planService.ts`:
+
 ```typescript
-export async function loadPlan(): Promise<Plan | { error: string }>
-export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null
+export async function loadPlan(): Promise<Plan | { error: string }>;
+export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null;
 ```
 
 **Decisions (from 2-CONTEXT):**
+
 - Backend: Node/Express + SQLite (better-sqlite3)
 - Auth: username/password, pre-defined users (nico, athena), no registration
 - Progress schema: `user_id`, `plan_id`, `day_index`, `completed_at`; uniqueness on (user_id, plan_id, day_index)
@@ -130,6 +125,7 @@ export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null
 **Files:** `package.json`, `server/index.js`, `server/db.js`, `server/schema.sql`
 
 **Action:**
+
 1. Add backend dependencies: `express`, `better-sqlite3`, `bcrypt`, `jsonwebtoken`, `cookie-parser`, `cors`. Add `"type": "module"` or use .mjs if needed; ensure server runs as ESM.
 2. Create `server/index.js`: Express app, CORS for `http://localhost:5173` (Vite dev), `cookie-parser`, mount routes at `/api/auth` and `/api/progress`. Listen on `PORT` (default 3001). Add `npm run server` script.
 3. Create `server/db.js`: Initialize better-sqlite3, run schema from `server/schema.sql` on startup. Export `db` and `runSchema()`.
@@ -140,6 +136,7 @@ export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null
 6. Vite proxy: Add `server.proxy: { '/api': 'http://localhost:3001' }` to `vite.config.ts` so frontend fetches `/api/*` hit the backend.
 
 **Verify:**
+
 ```bash
 npm run server
 # Server starts on 3001; no errors
@@ -154,7 +151,8 @@ npm run server
 **Files:** `server/auth.js`, `server/routes/auth.js`
 
 **Action:**
-1. Create `server/auth.js`: 
+
+1. Create `server/auth.js`:
    - `hashPassword(password)`: bcrypt.hash
    - `verifyPassword(password, hash)`: bcrypt.compare
    - `createToken(user)`: sign JWT with `{ userId, username }`, expiry 7 days. Use `process.env.SESSION_SECRET` or fallback for dev.
@@ -167,6 +165,7 @@ npm run server
 3. Mount auth routes in `server/index.js`.
 
 **Verify:**
+
 ```bash
 curl -X POST http://localhost:3001/api/auth/login -H "Content-Type: application/json" -d '{"username":"nico","password":"password"}' -c cookies.txt -v
 # Returns 200 with user; Set-Cookie: token=...
@@ -183,12 +182,14 @@ curl -b cookies.txt http://localhost:3001/api/auth/me
 **Files:** `server/routes/progress.js`
 
 **Action:**
+
 1. Create `server/routes/progress.js`:
    - `POST /api/progress`: body `{ plan_id, day_index }`. Require auth (authMiddleware). Insert or replace `progress_completions` with `user_id=req.user.id`, `plan_id`, `day_index`, `completed_at=Date.now()`. Use `INSERT OR REPLACE` or upsert. Return 201 `{ ok: true }`.
    - `GET /api/progress`: query `?plan_id=default` (optional, default "default"). Require auth. Select rows for `user_id=req.user.id` and given plan_id. Return `{ completions: [{ plan_id, day_index, completed_at }] }`.
 2. Mount progress routes in `server/index.js`.
 
 **Verify:**
+
 ```bash
 # After login (with cookie)
 curl -b cookies.txt -X POST http://localhost:3001/api/progress -H "Content-Type: application/json" -d '{"plan_id":"default","day_index":0}'
@@ -208,6 +209,7 @@ curl -b cookies.txt "http://localhost:3001/api/progress?plan_id=default"
 **Files:** `src/services/authService.ts`, `src/pages/LoginPage.tsx`
 
 **Action:**
+
 1. Create `src/services/authService.ts`:
    - `login(username: string, password: string): Promise<{ user } | { error: string }>`: POST `/api/auth/login`, credentials: 'include'. On 200: return { user }. On 401: return { error: 'Invalid credentials' }.
    - `logout(): Promise<void>`: POST `/api/auth/logout`, credentials: 'include'.
@@ -215,6 +217,7 @@ curl -b cookies.txt "http://localhost:3001/api/progress?plan_id=default"
 2. Create `src/pages/LoginPage.tsx`: Form with username and password inputs, submit button. On submit: call `authService.login(username, password)`. On success: redirect or set state so parent shows app. On error: show error message. Keep it simple (no router required for now — use state/callback).
 
 **Verify:**
+
 ```bash
 npm run dev
 # Visit app; see login form; login with nico/password; should redirect or show main app
@@ -229,6 +232,7 @@ npm run dev
 **Files:** `src/services/progressService.ts`, `src/App.tsx`, `src/main.tsx`
 
 **Action:**
+
 1. Create `src/services/progressService.ts`:
    - `recordCompletion(planId: string, dayIndex: number): Promise<{ ok: boolean } | { error: string }>`: POST `/api/progress` with `{ plan_id: planId, day_index: dayIndex }`, credentials: 'include'. Return result or error.
    - `fetchCompletions(planId?: string): Promise<{ plan_id: string; day_index: number; completed_at: number }[]>`: GET `/api/progress?plan_id=...`, credentials: 'include'. Return completions array or [] on error.
@@ -239,6 +243,7 @@ npm run dev
 3. Ensure `main.tsx` or App fetches `getCurrentUser` before rendering; show loading state briefly if needed.
 
 **Verify:**
+
 ```bash
 npm run dev
 # Visit app; login; see plan; click "Mark day 0 complete"; refresh page; still logged in; completions persist
@@ -251,13 +256,13 @@ npm run dev
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| User can log in with username/password | Login page; nico/password succeeds; invalid fails |
-| Backend persists progress in SQLite | POST /api/progress; restart server; GET completions still returns data |
-| App records session completion per user per day | Click "Mark day X complete"; GET /api/progress shows it |
-| Progress survives browser restart | Close browser; reopen; login; completions still there |
-| Cross-device sync | Login from second browser; same completions |
+| Success Criterion                               | How to Verify                                                          |
+| ----------------------------------------------- | ---------------------------------------------------------------------- |
+| User can log in with username/password          | Login page; nico/password succeeds; invalid fails                      |
+| Backend persists progress in SQLite             | POST /api/progress; restart server; GET completions still returns data |
+| App records session completion per user per day | Click "Mark day X complete"; GET /api/progress shows it                |
+| Progress survives browser restart               | Close browser; reopen; login; completions still there                  |
+| Cross-device sync                               | Login from second browser; same completions                            |
 
 ---
 
@@ -273,6 +278,7 @@ npm run dev
 ## Output
 
 After completion:
+
 - `server/` — Express backend, SQLite, auth + progress routes
 - `src/services/authService.ts` — login, logout, getCurrentUser
 - `src/services/progressService.ts` — recordCompletion, fetchCompletions

@@ -1,8 +1,8 @@
-import { memo } from 'react'
+import { memo } from 'react';
 
 interface CurrentDayRestCardProps {
-  dayIndex: number
-  dayId: string
+  dayIndex: number;
+  dayId: string;
 }
 
 export const CurrentDayRestCard = memo(function CurrentDayRestCard({
@@ -34,9 +34,7 @@ export const CurrentDayRestCard = memo(function CurrentDayRestCard({
             <div className="h-full bg-primary w-0 rounded-full" />
           </div>
           <div className="h-24 w-full rounded-xl bg-secondary/20 border-2 border-secondary/30 flex items-center justify-center gap-3 pointer-events-none">
-            <span className="material-symbols-outlined text-secondary">
-              bed
-            </span>
+            <span className="material-symbols-outlined text-secondary">bed</span>
             <span className="text-secondary font-headline text-xl font-bold">
               Take a rest day today
             </span>
@@ -44,5 +42,5 @@ export const CurrentDayRestCard = memo(function CurrentDayRestCard({
         </div>
       </div>
     </div>
-  )
-})
+  );
+});

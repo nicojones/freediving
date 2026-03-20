@@ -1,5 +1,5 @@
-import { ActiveSessionView } from '@/src/components/session/ActiveSessionView'
+import { ActiveSessionView } from '@/src/components/session/ActiveSessionView';
 
 export default function SessionPage() {
-  return <ActiveSessionView />
+  return <ActiveSessionView />;
 }

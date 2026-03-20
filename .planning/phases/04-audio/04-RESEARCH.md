@@ -16,21 +16,21 @@ Phase 4 needs an Audio Service that subscribes to timer events and plays cue fil
 
 ### 1. HTML5 Audio for Cue Playback
 
-| Finding | Source |
-|---------|--------|
+| Finding                                                         | Source                    |
+| --------------------------------------------------------------- | ------------------------- |
 | `new Audio(url)` or `<audio>` is sufficient for short cue files | STACK.md, ARCHITECTURE.md |
-| No Web Audio API needed for simple playback | STACK.md |
-| Main thread plays; Service Worker only caches (Phase 6) | ARCHITECTURE Pattern 2 |
+| No Web Audio API needed for simple playback                     | STACK.md                  |
+| Main thread plays; Service Worker only caches (Phase 6)         | ARCHITECTURE Pattern 2    |
 
 **Implementation:** Use `new Audio('/audio/hold.m4a')` and call `.play()` on event. Cues are short; no overlap handling needed (4-CONTEXT).
 
 ### 2. M4A Format Support
 
-| Browser | M4A Support |
-|---------|-------------|
-| Safari | Yes (native) |
-| Chrome | Yes |
-| Edge | Yes |
+| Browser | M4A Support                |
+| ------- | -------------------------- |
+| Safari  | Yes (native)               |
+| Chrome  | Yes                        |
+| Edge    | Yes                        |
 | Firefox | Yes (AAC in MP4 container) |
 
 **MIME type:** `audio/mp4` for .m4a files. Vite dev server typically serves correct MIME; verify in production.
@@ -42,11 +42,12 @@ Phase 4 needs an Audio Service that subscribes to timer events and plays cue fil
 Per PITFALLS (Pitfall 9): "Validate audio URLs at plan load. Preload and test-play before session start. Show explicit error: 'Audio file X missing.'"
 
 **Pattern:**
+
 ```typescript
 // Option A: Preload each file, check canplaythrough / error
-const audio = new Audio('/audio/hold.m4a')
-audio.onloadeddata = () => resolve()
-audio.onerror = () => reject(new Error('Audio file hold.m4a failed to load'))
+const audio = new Audio('/audio/hold.m4a');
+audio.onloadeddata = () => resolve();
+audio.onerror = () => reject(new Error('Audio file hold.m4a failed to load'));
 
 // Option B: HEAD request (lighter, but doesn't verify playability)
 // Prefer Option A: ensures file loads and is playable
@@ -58,13 +59,13 @@ audio.onerror = () => reject(new Error('Audio file hold.m4a failed to load'))
 
 From 4-CONTEXT and timerEngine:
 
-| Timer Event | Cue File | When |
-|-------------|----------|------|
-| phase_start (phase: 'hold') | hold.m4a | Hold start |
-| prepare_hold | prepare.m4a | 10s before hold |
-| countdown_30 | 30s.m4a | 30s remaining in recovery (if recovery ≥31s) |
-| hold_end | breathe.m4a | Hold end |
-| session_complete | — | No cue (v2) |
+| Timer Event                 | Cue File    | When                                         |
+| --------------------------- | ----------- | -------------------------------------------- |
+| phase_start (phase: 'hold') | hold.m4a    | Hold start                                   |
+| prepare_hold                | prepare.m4a | 10s before hold                              |
+| countdown_30                | 30s.m4a     | 30s remaining in recovery (if recovery ≥31s) |
+| hold_end                    | breathe.m4a | Hold end                                     |
+| session_complete            | —           | No cue (v2)                                  |
 
 **Integration:** Audio Service subscribes via `engine.on(eventType, callback)`. Each callback calls `playCue(filename)`.
 
@@ -74,12 +75,12 @@ STACK and ARCHITECTURE: Add `crossorigin="anonymous"` to audio for same-origin U
 
 ### 6. Pitfalls to Avoid
 
-| Pitfall | Mitigation |
-|---------|------------|
-| SW playing audio | Main thread only; SW caches in Phase 6 |
-| Runtime caching of audio | Phase 6 precaches; Phase 4 just fetches |
-| Missing/corrupt files | Validate before session; show explicit error |
-| Cue during hold | Timer emits no events during hold; no action needed |
+| Pitfall                  | Mitigation                                          |
+| ------------------------ | --------------------------------------------------- |
+| SW playing audio         | Main thread only; SW caches in Phase 6              |
+| Runtime caching of audio | Phase 6 precaches; Phase 4 just fetches             |
+| Missing/corrupt files    | Validate before session; show explicit error        |
+| Cue during hold          | Timer emits no events during hold; no action needed |
 
 ---
 
@@ -90,10 +91,10 @@ STACK and ARCHITECTURE: Add `crossorigin="anonymous"` to audio for same-origin U
 ```typescript
 // audioService.ts
 export function createAudioService(): {
-  preload(): Promise<void>           // Validate all cues; reject if any fail
-  play(cue: 'hold' | 'prepare' | '30s' | 'breathe'): void
-  wireToTimer(engine: TimerEngineAPI): void  // Subscribe to events
-}
+  preload(): Promise<void>; // Validate all cues; reject if any fail
+  play(cue: 'hold' | 'prepare' | '30s' | 'breathe'): void;
+  wireToTimer(engine: TimerEngineAPI): void; // Subscribe to events
+};
 ```
 
 ### File Paths

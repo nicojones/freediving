@@ -1,15 +1,15 @@
-import type { MouseEvent } from 'react'
-import { memo } from 'react'
-import { PrimaryButton } from '../ui/PrimaryButton'
-import { pluralizeHolds } from '../../utils/phaseLabels'
+import type { MouseEvent } from 'react';
+import { memo } from 'react';
+import { PrimaryButton } from '../ui/PrimaryButton';
+import { pluralizeHolds } from '../../utils/phaseLabels';
 
 interface CurrentDayTrainingCardProps {
-  dayIndex: number
-  dayId: string
-  summary: string
-  duration: number
-  holdCount: number
-  onSelect: () => void
+  dayIndex: number;
+  dayId: string;
+  summary: string;
+  duration: number;
+  holdCount: number;
+  onSelect: () => void;
 }
 
 export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
@@ -28,8 +28,8 @@ export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
       onClick={onSelect}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onSelect()
+          e.preventDefault();
+          onSelect();
         }
       }}
       className="relative group w-full text-left cursor-pointer"
@@ -50,9 +50,7 @@ export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
               </p>
             </div>
             <div className="flex flex-col items-end">
-              <span className="text-secondary font-headline text-2xl font-bold">
-                {duration}:00
-              </span>
+              <span className="text-secondary font-headline text-2xl font-bold">{duration}:00</span>
               <span className="text-on-surface-variant text-[10px] font-label uppercase tracking-widest">
                 Est. Duration
               </span>
@@ -63,8 +61,8 @@ export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
           </div>
           <PrimaryButton
             onClick={(e?: MouseEvent) => {
-              e?.stopPropagation()
-              onSelect()
+              e?.stopPropagation();
+              onSelect();
             }}
             icon="play_arrow"
           >
@@ -73,5 +71,5 @@ export const CurrentDayTrainingCard = memo(function CurrentDayTrainingCard({
         </div>
       </div>
     </div>
-  )
-})
+  );
+});

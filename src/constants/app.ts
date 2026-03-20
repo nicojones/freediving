@@ -1,18 +1,18 @@
 /** Gemini model used for audio transcription */
-export const GEMINI_TRANSCRIPTION_MODEL = 'gemini-3-flash-preview'
+export const GEMINI_TRANSCRIPTION_MODEL = 'gemini-3-flash-preview';
 
 /** App display name */
-export const APP_NAME = 'Fishly'
+export const APP_NAME = 'Fishly';
 
 /** Fallback plan name when plan metadata is missing */
-export const DEFAULT_PLAN_NAME = 'CO2 Tolerance'
+export const DEFAULT_PLAN_NAME = 'CO2 Tolerance';
 /** Fallback plan ID when no active plan stored */
-export const DEFAULT_PLAN_ID = 'default'
+export const DEFAULT_PLAN_ID = 'default';
 
 /** Plan IDs bundled in src/data; not user-deletable, not creatable via API */
-export const BUNDLED_PLAN_IDS: readonly string[] = ['default', 'minimal']
+export const BUNDLED_PLAN_IDS: readonly string[] = ['default', 'minimal'];
 /** Fallback username when user object missing */
-export const DEFAULT_USERNAME = 'Unknown'
+export const DEFAULT_USERNAME = 'Unknown';
 
 /** Default description for rest days */
-export const REST_DAY_DESCRIPTION = 'Recovery and light activity'
+export const REST_DAY_DESCRIPTION = 'Recovery and light activity';

@@ -1,6 +1,6 @@
 ---
 status: awaiting_human_verify
-trigger: "react-router-dom remnants in Next.js — remove and use App Router only"
+trigger: 'react-router-dom remnants in Next.js — remove and use App Router only'
 created: 2025-03-20T00:00:00Z
 updated: 2025-03-20T12:35:00Z
 ---

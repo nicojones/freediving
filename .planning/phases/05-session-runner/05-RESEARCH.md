@@ -17,33 +17,36 @@ Phase 5 orchestrates day selection, session preview, and full session execution 
 ### 1. Current Day Logic (getCurrentDay)
 
 **Requirements (5-CONTEXT):**
+
 - **On track** (trained yesterday or today): Current = next day in sequence, including rest days.
 - **Behind** (last completion 2+ days ago): Skip rest days; current = first non-completed training day.
 - **All done:** No day selected; Start disabled.
 
 **Implementation approach:**
 
-| Step | Logic |
-|------|-------|
-| 1. Last completion | Sort completions by `completed_at` desc; take first. That day index = last completed. |
-| 2. On track? | `completed_at` in ms. Compare to local calendar: `new Date(completed_at).toDateString()` equals today or yesterday (`new Date()` minus 1 day). |
-| 3. Next day | `nextDayIndex = lastCompletedDayIndex + 1` (or 0 if no completions). |
-| 4. If on track | `current = nextDayIndex` (can be rest). |
-| 5. If behind | From `nextDayIndex`, skip rest/null days until first training day. Use `getPhasesForDay(plan, i) !== null` to detect training days. |
-| 6. All done | If `nextDayIndex >= plan.length` or all days completed, return `null` (no current day). |
+| Step               | Logic                                                                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Last completion | Sort completions by `completed_at` desc; take first. That day index = last completed.                                                          |
+| 2. On track?       | `completed_at` in ms. Compare to local calendar: `new Date(completed_at).toDateString()` equals today or yesterday (`new Date()` minus 1 day). |
+| 3. Next day        | `nextDayIndex = lastCompletedDayIndex + 1` (or 0 if no completions).                                                                           |
+| 4. If on track     | `current = nextDayIndex` (can be rest).                                                                                                        |
+| 5. If behind       | From `nextDayIndex`, skip rest/null days until first training day. Use `getPhasesForDay(plan, i) !== null` to detect training days.            |
+| 6. All done        | If `nextDayIndex >= plan.length` or all days completed, return `null` (no current day).                                                        |
 
 **Date comparison (local timezone):**
 
 ```typescript
 function isOnTrack(completions: Completion[]): boolean {
-  if (completions.length === 0) return true
-  const last = [...completions].sort((a, b) => b.completed_at - a.completed_at)[0]
-  const lastDate = new Date(last.completed_at)
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-  return lastDate.toDateString() === today.toDateString() ||
-         lastDate.toDateString() === yesterday.toDateString()
+  if (completions.length === 0) return true;
+  const last = [...completions].sort((a, b) => b.completed_at - a.completed_at)[0];
+  const lastDate = new Date(last.completed_at);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  return (
+    lastDate.toDateString() === today.toDateString() ||
+    lastDate.toDateString() === yesterday.toDateString()
+  );
 }
 ```
 
@@ -56,18 +59,19 @@ function isOnTrack(completions: Completion[]): boolean {
 **Requirement:** Summary shows "~X min total" (5-CONTEXT).
 
 **Formula (from timerEngine):**
+
 - Relaxation: 60s (RELAXATION_SECONDS)
 - Phases: flat sequence (hold, recovery, hold, recovery, hold…; no recovery after last hold)
 - Total seconds = 60 + Σ(phase.duration) for all phases
 
 ```typescript
 function computeSessionDurationSeconds(phases: Phase[]): number {
-  const RELAXATION = 60
-  let total = RELAXATION
+  const RELAXATION = 60;
+  let total = RELAXATION;
   for (const p of phases) {
-    total += p.duration
+    total += p.duration;
   }
-  return total
+  return total;
 }
 ```
 
@@ -80,6 +84,7 @@ function computeSessionDurationSeconds(phases: Phase[]): number {
 **Current state:** App has `handleMarkDayComplete` (manual button). Session `session_complete` handler does NOT call `recordCompletion`.
 
 **Wiring:**
+
 1. In `session_complete` callback: call `recordCompletion(planId, selectedDayIndex)`.
 2. Use `planId = 'default'`; `selectedDayIndex` = day user started session with.
 3. On success: show brief "Saved" (e.g. toast or inline text for 2–3s).
@@ -94,12 +99,14 @@ function computeSessionDurationSeconds(phases: Phase[]): number {
 **5-CONTEXT:** Scrollable list, day number + summary, current pre-selected + badge, rest selectable (Start disabled), completed = checkmark + dimmed.
 
 **React patterns:**
+
 - Controlled selection: `selectedDayIndex` state; `onClick` on day item updates it.
 - Current day badge: compute `currentDay` via `getCurrentDay(plan, completions)`; show "Current" or "Next" on that item.
 - Rest day: `getPhasesForDay(plan, i) === null` → render "Rest" summary; disable Start when selected.
 - Completed: `completions.some(c => c.day_index === i)` → checkmark + dimmed style.
 
 **Summary text per day:**
+
 - Rest: "Day N — Rest"
 - Training: "Day N — X cycles" (hold phase count) or "Day N — 1 cycle"
 - Optional: "dry" / "wet" from `day.type` if present.
@@ -111,6 +118,7 @@ function computeSessionDurationSeconds(phases: Phase[]): number {
 **5-CONTEXT:** Summary + detail; "3 cycles · ~12 min total"; expandable per-cycle; rest = "Rest day — No intervals today"; hold/recovery, duration, type.
 
 **Structure:**
+
 - **Summary line:** `${holdCount} cycle(s) · ~${Math.ceil(durationSec / 60)} min` + type if present (`dry`/`wet`).
 - **Expandable detail:** Numbered list of phases: "1. Hold 60s", "2. Recovery 90s", "3. Hold 60s", etc.
 - **Rest day:** "Rest day — No intervals today."
@@ -138,12 +146,12 @@ function computeSessionDurationSeconds(phases: Phase[]): number {
 
 ## Pitfalls to Avoid
 
-| Pitfall | Mitigation |
-|---------|------------|
-| **Pitfall 8: Decision fatigue** | Default to current day; single tap to start; avoid extra steps |
-| **Pitfall 11: No feedback when complete** | Show "Session complete" + brief "Saved" after recordCompletion |
-| **Timezone edge cases** | Use `toDateString()` for calendar-day comparison; avoid UTC-only logic |
-| **Rest day "current" when behind** | Skip rest days when behind; only select rest when on track |
+| Pitfall                                   | Mitigation                                                             |
+| ----------------------------------------- | ---------------------------------------------------------------------- |
+| **Pitfall 8: Decision fatigue**           | Default to current day; single tap to start; avoid extra steps         |
+| **Pitfall 11: No feedback when complete** | Show "Session complete" + brief "Saved" after recordCompletion         |
+| **Timezone edge cases**                   | Use `toDateString()` for calendar-day comparison; avoid UTC-only logic |
+| **Rest day "current" when behind**        | Skip rest days when behind; only select rest when on track             |
 
 ---
 
@@ -151,12 +159,12 @@ function computeSessionDurationSeconds(phases: Phase[]): number {
 
 ### New / Modified Modules
 
-| Module | Purpose |
-|--------|---------|
-| `getCurrentDay(plan, completions)` | Returns day index or null; uses on-track/behind logic |
-| `computeSessionDurationSeconds(phases)` | Total seconds for preview |
-| `getDaySummary(plan, dayIndex)` | "Rest" or "X cycles" for list item |
-| App.tsx | Day selector, preview, session flow, session_complete → recordCompletion |
+| Module                                  | Purpose                                                                  |
+| --------------------------------------- | ------------------------------------------------------------------------ |
+| `getCurrentDay(plan, completions)`      | Returns day index or null; uses on-track/behind logic                    |
+| `computeSessionDurationSeconds(phases)` | Total seconds for preview                                                |
+| `getDaySummary(plan, dayIndex)`         | "Rest" or "X cycles" for list item                                       |
+| App.tsx                                 | Day selector, preview, session flow, session_complete → recordCompletion |
 
 ### Data Flow
 

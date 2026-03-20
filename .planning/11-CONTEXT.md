@@ -36,12 +36,12 @@
 - **Rule:** Even small inline blocks (e.g. 5–15 lines) should be extracted when they represent a distinct UI concept. Improves clarity and enables unit testing.
 - **Example (from Dashboard.tsx 107–117):** The progress error and saved message blocks:
   ```tsx
-  {progressError && (
-    <p className="px-6 py-3 ...">{progressError}</p>
-  )}
-  {savedMessage && (
-    <p className="px-6 py-3 ...">Saved</p>
-  )}
+  {
+    progressError && <p className="px-6 py-3 ...">{progressError}</p>;
+  }
+  {
+    savedMessage && <p className="px-6 py-3 ...">Saved</p>;
+  }
   ```
   → Extract to `StatusBanner` (or `DashboardStatusBanner`) component with props `{ progressError?: string, savedMessage?: boolean }`. Renders one or the other; returns null if neither.
 - **Other candidates:** Scan Dashboard, SettingsView, ActiveSessionView, SessionCompleteView for similar inline blocks (confirmation dialogs, plan selector section, etc.).
@@ -89,15 +89,15 @@
 
 ## Traceability
 
-| Decision | Outcome |
-|----------|---------|
-| clsx correctness | All conditional classNames use clsx; audit and fix |
-| Component size | Components <150 lines; split when larger |
+| Decision               | Outcome                                                                     |
+| ---------------------- | --------------------------------------------------------------------------- |
+| clsx correctness       | All conditional classNames use clsx; audit and fix                          |
+| Component size         | Components <150 lines; split when larger                                    |
 | Extract sub-components | StatusBanner (progressError/savedMessage); other small blocks as identified |
-| Rules of hooks | No early return before hooks; fix Dashboard and audit others |
-| Constants | Magic words/constants in src/constants/*; audit and extract |
-| lodash + type-fest | Use lodash (isEmpty, isNil, isNull) and type-fest where helpful |
-| Naming | Sub-components in src/components/ with descriptive names |
+| Rules of hooks         | No early return before hooks; fix Dashboard and audit others                |
+| Constants              | Magic words/constants in src/constants/\*; audit and extract                |
+| lodash + type-fest     | Use lodash (isEmpty, isNil, isNull) and type-fest where helpful             |
+| Naming                 | Sub-components in src/components/ with descriptive names                    |
 
 ---
 
@@ -111,4 +111,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 11 — user specified: clsx correctness, small components, extract sub-components (e.g. Dashboard 107–117), no early returns before hooks (e.g. Dashboard 64–66), magic words/constants in src/constants/* (e.g. plan name fallback, SPEEDS), lodash (isEmpty, isNil, isNull) + type-fest*
+_Context captured from /gsd-discuss-phase 11 — user specified: clsx correctness, small components, extract sub-components (e.g. Dashboard 107–117), no early returns before hooks (e.g. Dashboard 64–66), magic words/constants in src/constants/_ (e.g. plan name fallback, SPEEDS), lodash (isEmpty, isNil, isNull) + type-fest\*

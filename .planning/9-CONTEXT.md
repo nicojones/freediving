@@ -57,12 +57,12 @@
 
 ## Traceability
 
-| Decision | Outcome |
-|----------|---------|
-| Plan day ID | getDayId(plan, index) in planService; replace casts |
-| Session engine | useSessionEngine hook; TrainingContext delegates |
-| Dashboard sections | DayListSection, SessionPreviewSection components |
-| Plan name | No change |
+| Decision           | Outcome                                             |
+| ------------------ | --------------------------------------------------- |
+| Plan day ID        | getDayId(plan, index) in planService; replace casts |
+| Session engine     | useSessionEngine hook; TrainingContext delegates    |
+| Dashboard sections | DayListSection, SessionPreviewSection components    |
+| Plan name          | No change                                           |
 
 ---
 

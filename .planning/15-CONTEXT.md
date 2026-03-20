@@ -24,11 +24,11 @@
 
 ## Decisions
 
-| Decision | Outcome |
-|----------|---------|
-| ESLint config | Flat config (`eslint.config.mjs`); migrate from `next lint` to `eslint .` |
-| Curly braces | All `if` use `{ }` — no single-line `if (x) return` |
-| Unused vars/functions | Remove or prefix with `_` if intentionally unused |
-| Unused imports | Remove |
-| Unused exports | Remove or make internal |
-| Dead components | Remove if not referenced |
+| Decision              | Outcome                                                                   |
+| --------------------- | ------------------------------------------------------------------------- |
+| ESLint config         | Flat config (`eslint.config.mjs`); migrate from `next lint` to `eslint .` |
+| Curly braces          | All `if` use `{ }` — no single-line `if (x) return`                       |
+| Unused vars/functions | Remove or prefix with `_` if intentionally unused                         |
+| Unused imports        | Remove                                                                    |
+| Unused exports        | Remove or make internal                                                   |
+| Dead components       | Remove if not referenced                                                  |

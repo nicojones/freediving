@@ -1,14 +1,14 @@
-import { memo } from 'react'
-import { format } from 'date-fns'
-import { PrimaryButton } from '../ui/PrimaryButton'
+import { memo } from 'react';
+import { format } from 'date-fns';
+import { PrimaryButton } from '../ui/PrimaryButton';
 
 interface StartSessionCTAProps {
-  onStart: () => void
-  loading?: boolean
-  disabled?: boolean
-  disabledMessage?: string
+  onStart: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+  disabledMessage?: string;
   /** When set, shows a green disabled "Completed on [date]" button instead */
-  completedAt?: number
+  completedAt?: number;
 }
 
 export const StartSessionCTA = memo(function StartSessionCTA({
@@ -18,11 +18,11 @@ export const StartSessionCTA = memo(function StartSessionCTA({
   disabledMessage = "You've already trained today",
   completedAt,
 }: StartSessionCTAProps) {
-  const isCompleted = completedAt != null
-  const isDisabled = loading || disabled || isCompleted
+  const isCompleted = completedAt != null;
+  const isDisabled = loading || disabled || isCompleted;
 
   if (isCompleted) {
-    const dateStr = format(new Date(completedAt), 'MMM d, yyyy')
+    const dateStr = format(new Date(completedAt), 'MMM d, yyyy');
     return (
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-linear-to-t from-background via-background to-transparent pt-12 pb-8 px-6 pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
@@ -38,7 +38,7 @@ export const StartSessionCTA = memo(function StartSessionCTA({
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -60,5 +60,5 @@ export const StartSessionCTA = memo(function StartSessionCTA({
         </PrimaryButton>
       </div>
     </div>
-  )
-})
+  );
+});

@@ -1,60 +1,52 @@
 # Phase 6: PWA + Offline — Executable Plan
 
 ---
+
 phase: 06-pwa-offline
 plans:
-  - id: "01"
-    tasks: 4
-    files: 10
-    depends_on: [05-session-runner]
-type: execute
-wave: 1
-files_modified:
-  - vite.config.ts
-  - package.json
-  - public/icons/icon-192.png
-  - public/icons/icon-512.png
-  - src/services/offlineQueue.ts
-  - src/services/progressService.ts
-  - src/contexts/TrainingContext.tsx
-  - src/components/InstallPrompt.tsx
-  - src/pages/Dashboard.tsx
-  - index.html
-autonomous: true
-requirements: [PWA-01, PWA-02, PWA-03, PWA-04]
-user_setup: []
-must_haves:
-  truths:
-    - "User can install the app as a PWA (Add to Home Screen)"
-    - "App loads and functions when offline"
-    - "Audio cue files play when offline (precached)"
-    - "Layout is responsive and mobile-first"
-  artifacts:
-    - path: vite.config.ts
-      provides: "VitePWA plugin, manifest, workbox precache + audio"
-      contains: "VitePWA|workbox|manifest"
-    - path: src/services/offlineQueue.ts
-      provides: "IndexedDB queue for completions; sync when online"
-      contains: "queueCompletion|flushQueue|getPendingCount"
-    - path: src/services/progressService.ts
-      provides: "recordCompletion with offline queue fallback"
-      contains: "navigator.onLine|queueCompletion"
-    - path: src/components/InstallPrompt.tsx
-      provides: "Install prompt on Dashboard after engagement"
-      contains: "beforeinstallprompt|Add to Home Screen"
-  key_links:
-    - from: src/contexts/TrainingContext.tsx
-      to: src/services/progressService.ts
-      via: "recordCompletion on session_complete"
-      pattern: "recordCompletion"
-    - from: vite.config.ts
-      to: "Service Worker"
-      via: "VitePWA plugin auto-registers SW"
-      pattern: "VitePWA|registerType"
-    - from: vite.config.ts
-      to: public/audio/*.m4a
-      via: "workbox additionalManifestEntries"
-      pattern: "hold.m4a|prepare.m4a|30s.m4a|breathe.m4a"
+
+- id: "01"
+  tasks: 4
+  files: 10
+  depends_on: [05-session-runner]
+  type: execute
+  wave: 1
+  files_modified:
+- vite.config.ts
+- package.json
+- public/icons/icon-192.png
+- public/icons/icon-512.png
+- src/services/offlineQueue.ts
+- src/services/progressService.ts
+- src/contexts/TrainingContext.tsx
+- src/components/InstallPrompt.tsx
+- src/pages/Dashboard.tsx
+- index.html
+  autonomous: true
+  requirements: [PWA-01, PWA-02, PWA-03, PWA-04]
+  user_setup: []
+  must_haves:
+  truths: - "User can install the app as a PWA (Add to Home Screen)" - "App loads and functions when offline" - "Audio cue files play when offline (precached)" - "Layout is responsive and mobile-first"
+  artifacts: - path: vite.config.ts
+  provides: "VitePWA plugin, manifest, workbox precache + audio"
+  contains: "VitePWA|workbox|manifest" - path: src/services/offlineQueue.ts
+  provides: "IndexedDB queue for completions; sync when online"
+  contains: "queueCompletion|flushQueue|getPendingCount" - path: src/services/progressService.ts
+  provides: "recordCompletion with offline queue fallback"
+  contains: "navigator.onLine|queueCompletion" - path: src/components/InstallPrompt.tsx
+  provides: "Install prompt on Dashboard after engagement"
+  contains: "beforeinstallprompt|Add to Home Screen"
+  key_links: - from: src/contexts/TrainingContext.tsx
+  to: src/services/progressService.ts
+  via: "recordCompletion on session_complete"
+  pattern: "recordCompletion" - from: vite.config.ts
+  to: "Service Worker"
+  via: "VitePWA plugin auto-registers SW"
+  pattern: "VitePWA|registerType" - from: vite.config.ts
+  to: public/audio/\*.m4a
+  via: "workbox additionalManifestEntries"
+  pattern: "hold.m4a|prepare.m4a|30s.m4a|breathe.m4a"
+
 ---
 
 ## Objective
@@ -77,6 +69,7 @@ Make the Freediving Breathhold Trainer installable as a PWA, functional offline,
 **Existing:** Phases 1–5 complete. Vite 8, no PWA plugin. progressService.recordCompletion → POST /api/progress. TrainingContext calls recordCompletion on session_complete. Audio: hold.m4a, prepare.m4a, 30s.m4a, breathe.m4a in public/audio/. Dashboard is main training view. index.html has viewport meta; index.css has min-height max(884px, 100dvh); BottomNavBar has pb-safe.
 
 **Design decisions (from 6-CONTEXT):**
+
 - Offline: queue completions in IndexedDB; flush on load or online event; credentials: 'include' on sync POST
 - Install prompt: Dashboard, after engagement; beforeinstallprompt only on Chromium; iOS: manual "Add to Home Screen" instructions
 - Manifest: standalone, theme_color #52dad3, background_color #0d1416
@@ -94,6 +87,7 @@ Make the Freediving Breathhold Trainer installable as a PWA, functional offline,
 **Files:** `vite.config.ts`, `package.json`, `public/icons/icon-192.png`, `public/icons/icon-512.png`
 
 **Action:**
+
 1. Install dependencies:
    ```bash
    npm install -D vite-plugin-pwa
@@ -126,18 +120,20 @@ Make the Freediving Breathhold Trainer installable as a PWA, functional offline,
            { url: '/audio/30s.m4a', revision: null },
            { url: '/audio/breathe.m4a', revision: null },
          ],
-         runtimeCaching: [{
-           urlPattern: /\.(m4a|mp3|wav|ogg)$/,
-           handler: 'CacheFirst',
-           options: {
-             cacheName: 'audio-cache',
-             expiration: { maxEntries: 50 },
-             cacheableResponse: { statuses: [200] },
-             rangeRequests: true,
+         runtimeCaching: [
+           {
+             urlPattern: /\.(m4a|mp3|wav|ogg)$/,
+             handler: 'CacheFirst',
+             options: {
+               cacheName: 'audio-cache',
+               expiration: { maxEntries: 50 },
+               cacheableResponse: { statuses: [200] },
+               rangeRequests: true,
+             },
            },
-         }],
+         ],
        },
-     })
+     });
      ```
 3. Create `public/icons/` directory and add placeholder icons:
    ```bash
@@ -149,10 +145,12 @@ Make the Freediving Breathhold Trainer installable as a PWA, functional offline,
 4. Ensure `index.html` does not need manual manifest link — vite-plugin-pwa injects it. Verify no conflicting link rel="manifest".
 
 **Verify:**
+
 ```bash
 npm run build
 # Build must succeed. If vite-plugin-pwa errors with Vite 8, document and try: npm install vite@^6 --save-dev
 ```
+
 ```bash
 npm run preview
 # Open https://localhost:4173 (or preview URL). DevTools > Application > Manifest: name, icons, display standalone present.
@@ -170,6 +168,7 @@ npm run preview
 **Files:** `src/services/offlineQueue.ts`, `src/services/progressService.ts`, `src/contexts/TrainingContext.tsx`, `src/main.tsx`
 
 **Action:**
+
 1. Create `src/services/offlineQueue.ts`:
    - Use `idb` (already installed in Task 1). DB name: `submerged-offline`, store: `pending_completions`
    - Schema: `{ plan_id: string, day_index: number, completed_at: number, created_at: number }`
@@ -191,13 +190,14 @@ npm run preview
 4. Update `src/main.tsx`:
    - Import and call `registerSW()` from `virtual:pwa-register/react` (vite-plugin-pwa provides this). Use `registerType: 'autoUpdate'` so no prompt needed; registration happens automatically. Check vite-plugin-pwa docs: it may auto-inject registration. If so, no main.tsx change. Otherwise add:
      ```ts
-     import { registerSW } from 'virtual:pwa-register/react'
-     registerSW({ immediate: true })
+     import { registerSW } from 'virtual:pwa-register/react';
+     registerSW({ immediate: true });
      ```
    - Actually, vite-plugin-pwa with registerType: 'autoUpdate' injects the SW registration automatically. Only add explicit registration if we need prompt-for-update. Skip main.tsx for SW — plugin handles it.
    - For offline flush: the TrainingProvider is the right place. When `user` is truthy, we need to flush on load and on online. Add to the useEffect that fetches completions: before fetchCompletions, call flushOfflineQueue (from progressService). And add window.addEventListener('online', handler). The progressService should export `flushOfflineQueue` which calls flushQueue and returns. The TrainingContext will call it and then fetchCompletions.
 
 **Verify:**
+
 ```bash
 npm run dev
 # 1. Go offline (DevTools Network > Offline). Complete a session. Expect "Saved". Check IndexedDB: pending_completions has 1 entry.
@@ -214,6 +214,7 @@ npm run dev
 **Files:** `src/components/InstallPrompt.tsx`, `src/pages/Dashboard.tsx`
 
 **Action:**
+
 1. Create `src/components/InstallPrompt.tsx`:
    - State: `deferredPrompt: BeforeInstallPromptEvent | null`, `showPrompt: boolean`, `dismissed: boolean`
    - `useEffect`: `window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); setDeferredPrompt(e); setShowPrompt(true) })`. Cleanup.
@@ -227,6 +228,7 @@ npm run dev
 2. Add `<InstallPrompt hasEngaged={completions.length > 0} />` to `src/pages/Dashboard.tsx`. Place after TopAppBar or at top of main, before day list. Only show when `!showSessionPreview` (dashboard view) so it doesn't compete with session preview.
 
 **Verify:**
+
 ```bash
 npm run build && npm run preview
 # Chrome: Open in non-installed state. beforeinstallprompt fires. Install banner/button appears. Click Install → install flow. After install, prompt hidden.
@@ -242,6 +244,7 @@ npm run build && npm run preview
 **Files:** `src/components/ActiveSessionView.tsx`, `src/pages/Dashboard.tsx`, `src/components/BottomNavBar.tsx`, `src/components/PrimaryButton.tsx` (if exists)
 
 **Action:**
+
 1. Validate viewport: `index.html` has `width=device-width, initial-scale=1.0, viewport-fit=cover` — ✓
 2. Validate touch targets (UI-SPEC: min 44px for critical actions):
    - ActiveSessionView "Abort Session" button: currently `h-24` (96px) — exceeds 44px ✓
@@ -258,6 +261,7 @@ npm run build && npm run preview
 5. Document any fixes in task. If all pass, add a brief validation note. If issues found, fix them.
 
 **Verify:**
+
 ```bash
 npm run dev
 # Chrome DevTools > Toggle device toolbar. Test:
@@ -274,13 +278,13 @@ npm run dev
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| PWA-01: Installable | Chrome: Add to Home Screen; manifest valid; icons present |
-| PWA-02: Works offline | DevTools Offline; app loads; session runs; completions queue |
+| Success Criterion     | How to Verify                                                                |
+| --------------------- | ---------------------------------------------------------------------------- |
+| PWA-01: Installable   | Chrome: Add to Home Screen; manifest valid; icons present                    |
+| PWA-02: Works offline | DevTools Offline; app loads; session runs; completions queue                 |
 | PWA-03: Audio offline | DevTools Offline; start session; all cues play (hold, prepare, 30s, breathe) |
-| PWA-04: Responsive | 320px, 375px, 768px; touch targets 44px; safe-area |
-| Offline sync | Complete offline → go online → completions sync to backend |
+| PWA-04: Responsive    | 320px, 375px, 768px; touch targets 44px; safe-area                           |
+| Offline sync          | Complete offline → go online → completions sync to backend                   |
 
 ---
 
@@ -296,6 +300,7 @@ npm run dev
 ## Output
 
 After completion:
+
 - `vite.config.ts` — VitePWA, manifest, workbox precache + audio
 - `public/icons/icon-192.png`, `icon-512.png`
 - `src/services/offlineQueue.ts` — queueCompletion, flushQueue, getPendingCount

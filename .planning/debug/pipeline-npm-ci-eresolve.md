@@ -1,6 +1,6 @@
 ---
 status: resolved
-trigger: "npm ci fails in pipeline with ERESOLVE dependency conflict"
+trigger: 'npm ci fails in pipeline with ERESOLVE dependency conflict'
 created: 2025-03-20
 updated: 2025-03-20
 ---
@@ -10,6 +10,7 @@ updated: 2025-03-20
 **Root cause:** Peer dependency conflict between `vite-plugin-pwa@1.2.0` and `vite@8.0.1`.
 
 **Evidence:**
+
 - `vite-plugin-pwa@1.2.0` declares peer: `vite@"^3.1.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"` (no Vite 8)
 - Project `package.json` has `vite@^8.0.1`
 - npm ci uses strict peer resolution → ERESOLVE

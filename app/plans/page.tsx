@@ -1,5 +1,5 @@
-import { PlansView } from '@/src/views/PlansView'
+import { PlansView } from '@/src/views/PlansView';
 
 export default function PlansPage() {
-  return <PlansView />
+  return <PlansView />;
 }

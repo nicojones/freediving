@@ -1,45 +1,40 @@
 # Phase 13: Deployment — Executable Plan
 
 ---
+
 phase: 13-deployment
 plans:
-  - id: "01"
-    tasks: 6
-    files: 12
-    depends_on: [12-tests]
-type: execute
-wave: 1
-files_modified:
-  - server/index.js
-  - package.json
-  - start_freediving.sh
-  - .github/workflows/deploy.yml
-  - .env.production.example
-autonomous: false
-requirements: []
-user_setup:
-  - "Create GitHub repo secrets: SSH_HOST, SSH_USER, SSH_PRIVATE_KEY"
-  - "Create systemd service on DigitalOcean VM"
-  - "Create /var/www/freediving on server"
-must_haves:
-  truths:
-    - "Server serves Vite dist/ and API in production"
-    - "CORS origin configurable via CORS_ORIGIN env"
-    - "GitHub Actions deploys on push to main"
-    - "Deploy uses SCP + SSH (zip build, conditional node_modules)"
-    - "systemctl restart freediving.service after deploy"
-  artifacts:
-    - path: .github/workflows/deploy.yml
-      provides: "CI/CD deploy on push to main"
-      contains: "Deploy Fishly"
-    - path: start_freediving.sh
-      provides: "Production start script"
-      contains: "node server"
-  key_links:
-    - from: server/index.js
-      to: dist/
-      via: "express.static"
-      pattern: "static"
+
+- id: "01"
+  tasks: 6
+  files: 12
+  depends_on: [12-tests]
+  type: execute
+  wave: 1
+  files_modified:
+- server/index.js
+- package.json
+- start_freediving.sh
+- .github/workflows/deploy.yml
+- .env.production.example
+  autonomous: false
+  requirements: []
+  user_setup:
+- "Create GitHub repo secrets: SSH_HOST, SSH_USER, SSH_PRIVATE_KEY"
+- "Create systemd service on DigitalOcean VM"
+- "Create /var/www/freediving on server"
+  must_haves:
+  truths: - "Server serves Vite dist/ and API in production" - "CORS origin configurable via CORS_ORIGIN env" - "GitHub Actions deploys on push to main" - "Deploy uses SCP + SSH (zip build, conditional node_modules)" - "systemctl restart freediving.service after deploy"
+  artifacts: - path: .github/workflows/deploy.yml
+  provides: "CI/CD deploy on push to main"
+  contains: "Deploy Fishly" - path: start_freediving.sh
+  provides: "Production start script"
+  contains: "node server"
+  key_links: - from: server/index.js
+  to: dist/
+  via: "express.static"
+  pattern: "static"
+
 ---
 
 ## Objective
@@ -49,6 +44,7 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
 **Purpose:** Automated deployment; single source of truth (GitHub); no manual FTP/rsync.
 
 **Principles:**
+
 - Same pattern as Geonaut: zip build + conditional node_modules
 - Server serves both API and static frontend
 - Secrets in GitHub; env on VM for DB path, session secret, etc.
@@ -76,6 +72,7 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
 **Files:** `server/index.js`
 
 **Action:**
+
 1. Add static file serving for production:
    - If `NODE_ENV === 'production'`, serve `dist/` with `express.static('dist')`
    - Add SPA fallback: `app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../dist/index.html')))` — only for non-API routes
@@ -94,6 +91,7 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
 **Files:** `start_freediving.sh`
 
 **Action:**
+
 1. Create `start_freediving.sh` at project root:
    ```bash
    #!/bin/bash
@@ -113,6 +111,7 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
 **Files:** `.env.production.example`
 
 **Action:**
+
 1. Create `.env.production.example` (do NOT commit real secrets):
    ```
    NODE_ENV=production
@@ -134,6 +133,7 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
 **Files:** `.github/workflows/deploy.yml`
 
 **Action:**
+
 1. Create `.github/workflows/deploy.yml`:
    - **Trigger:** `push` to `main`
    - **Steps:**
@@ -162,7 +162,9 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
 **Files:** `.planning/phases/13-deployment/freediving.service.example`
 
 **Action:**
+
 1. Create `freediving.service.example` in phase directory:
+
    ```ini
    [Unit]
    Description=Fishly — Freediving Breathhold Trainer
@@ -180,6 +182,7 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
    [Install]
    WantedBy=multi-user.target
    ```
+
 2. Document in plan: Copy to `/etc/systemd/system/freediving.service`, `systemctl daemon-reload`, `systemctl enable freediving`, `systemctl start freediving`. User must create `.env.production` on server.
 
 **Verification:** Example file exists; docs clear.
@@ -191,6 +194,7 @@ Deploy the app to DigitalOcean via GitHub Actions. Push to `main` triggers build
 **Files:** `vite.config.ts`
 
 **Action:**
+
 1. Ensure Vite build works when served from root. Default `base: '/'` is correct.
 2. If API is same-origin in production (server serves both), frontend fetches `/api` — no proxy needed. Verify `fetch('/api/...')` or base URL in auth/progress services uses relative path.
 3. Add `base: '/'` explicitly if needed for clarity.
@@ -214,15 +218,15 @@ Task 6 ──> (verify build)
 
 ## Success Criteria Checklist
 
-| Criterion | Task | Verification |
-|-----------|------|--------------|
-| Server serves dist + API | 1 | NODE_ENV=production node server |
-| CORS configurable | 1 | CORS_ORIGIN env |
-| Start script | 2 | ./start_freediving.sh |
-| Env example | 3 | .env.production.example |
-| Deploy on push to main | 4 | .github/workflows/deploy.yml |
-| systemd template | 5 | freediving.service.example |
-| Build works for prod | 6 | npm run build; serve from Express |
+| Criterion                | Task | Verification                      |
+| ------------------------ | ---- | --------------------------------- |
+| Server serves dist + API | 1    | NODE_ENV=production node server   |
+| CORS configurable        | 1    | CORS_ORIGIN env                   |
+| Start script             | 2    | ./start_freediving.sh             |
+| Env example              | 3    | .env.production.example           |
+| Deploy on push to main   | 4    | .github/workflows/deploy.yml      |
+| systemd template         | 5    | freediving.service.example        |
+| Build works for prod     | 6    | npm run build; serve from Express |
 
 ---
 

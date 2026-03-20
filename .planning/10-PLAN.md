@@ -1,67 +1,61 @@
 # Phase 10: Reset + Plan Change — Executable Plan
 
 ---
+
 phase: 10-reset-plan-change
 plans:
-  - id: "01"
-    tasks: 3
-    files: 6
-    depends_on: [09-refactor-code]
-  - id: "02"
-    tasks: 3
-    files: 8
-    depends_on: ["01"]
-type: execute
-wave: 1
-files_modified:
-  - src/data/default-plan.json
-  - src/data/minimal-plan.json
-  - src/types/plan.ts
-  - src/services/planService.ts
-  - src/services/progressService.ts
-  - src/services/offlineQueue.ts
-  - src/contexts/TrainingContext.tsx
-  - src/components/SettingsView.tsx
-  - src/components/SessionCompleteView.tsx
-  - src/components/TopAppBar.tsx
-  - src/pages/Dashboard.tsx
-  - server/schema.sql
-  - server/routes/progress.js
-  - server/routes/user.js
-  - server/index.js
-autonomous: false
-requirements:
-  - RESET-01
-  - PLAN-10-01
-  - PLAN-10-02
-  - PLAN-10-03
-  - PLAN-10-04
-user_setup: []
-must_haves:
-  truths:
-    - "User can reset progress from the settings page"
-    - "Multiple plans exist in src/data; plan structure is {id, name, description, days}"
-    - "Active training plan is stored per user in the DB"
-    - "Settings page has a dropdown to select plan; changing plan shows warning that progress will be reset"
-  artifacts:
-    - path: src/services/planService.ts
-      provides: "getAvailablePlans(), loadPlanById(planId)"
-      contains: "getAvailablePlans"
-    - path: src/services/offlineQueue.ts
-      provides: "clearByPlanId(planId)"
-      contains: "clearByPlanId"
-    - path: src/components/SettingsView.tsx
-      provides: "Plan dropdown, Reset progress button"
-      contains: "Reset progress"
-  key_links:
-    - from: src/contexts/TrainingContext.tsx
-      to: src/services/planService.ts
-      via: "loadPlanById, getAvailablePlans"
-      pattern: "loadPlanById"
-    - from: src/contexts/TrainingContext.tsx
-      to: src/services/progressService.ts
-      via: "fetchActivePlan, setActivePlan, resetProgress"
-      pattern: "fetchActivePlan"
+
+- id: "01"
+  tasks: 3
+  files: 6
+  depends_on: [09-refactor-code]
+- id: "02"
+  tasks: 3
+  files: 8
+  depends_on: ["01"]
+  type: execute
+  wave: 1
+  files_modified:
+- src/data/default-plan.json
+- src/data/minimal-plan.json
+- src/types/plan.ts
+- src/services/planService.ts
+- src/services/progressService.ts
+- src/services/offlineQueue.ts
+- src/contexts/TrainingContext.tsx
+- src/components/SettingsView.tsx
+- src/components/SessionCompleteView.tsx
+- src/components/TopAppBar.tsx
+- src/pages/Dashboard.tsx
+- server/schema.sql
+- server/routes/progress.js
+- server/routes/user.js
+- server/index.js
+  autonomous: false
+  requirements:
+- RESET-01
+- PLAN-10-01
+- PLAN-10-02
+- PLAN-10-03
+- PLAN-10-04
+  user_setup: []
+  must_haves:
+  truths: - "User can reset progress from the settings page" - "Multiple plans exist in src/data; plan structure is {id, name, description, days}" - "Active training plan is stored per user in the DB" - "Settings page has a dropdown to select plan; changing plan shows warning that progress will be reset"
+  artifacts: - path: src/services/planService.ts
+  provides: "getAvailablePlans(), loadPlanById(planId)"
+  contains: "getAvailablePlans" - path: src/services/offlineQueue.ts
+  provides: "clearByPlanId(planId)"
+  contains: "clearByPlanId" - path: src/components/SettingsView.tsx
+  provides: "Plan dropdown, Reset progress button"
+  contains: "Reset progress"
+  key_links: - from: src/contexts/TrainingContext.tsx
+  to: src/services/planService.ts
+  via: "loadPlanById, getAvailablePlans"
+  pattern: "loadPlanById" - from: src/contexts/TrainingContext.tsx
+  to: src/services/progressService.ts
+  via: "fetchActivePlan, setActivePlan, resetProgress"
+  pattern: "fetchActivePlan"
+
 ---
 
 ## Objective
@@ -71,6 +65,7 @@ Add reset progress from settings, multiple training plans with `{id, name, descr
 **Purpose:** Allow users to reset progress and switch between training plans; ensure progress is scoped per plan and persisted correctly.
 
 **Principles:**
+
 - Plan structure migration first; then backend; then frontend wiring.
 - Reset clears both DB and offline queue for the active plan.
 - Plan change: confirmation modal → switch + clear new plan's completions.
@@ -89,6 +84,7 @@ Add reset progress from settings, multiple training plans with `{id, name, descr
 **Existing:** Phases 1–9 complete. Single plan `default-plan.json` (array of days). TrainingContext loads plan and completions with hardcoded `plan_id: 'default'`. Settings has logout only.
 
 **Design decisions (from 10-CONTEXT):**
+
 - Reset: Settings button; confirmation; clears active plan's completions (DB + offline queue).
 - Plan structure: `{ id, name, description?, days: PlanDay[] }`.
 - Active plan: stored per user in DB; API GET/PUT `/api/user/active-plan`.
@@ -103,14 +99,15 @@ Add reset progress from settings, multiple training plans with `{id, name, descr
 **Files:** `src/types/plan.ts`, `src/data/default-plan.json`
 
 **Action:**
+
 1. Add to `src/types/plan.ts`:
    ```ts
    /** Plan with metadata; new structure for multi-plan support */
    export interface PlanWithMeta {
-     id: string
-     name: string
-     description?: string
-     days: PlanDay[]
+     id: string;
+     name: string;
+     description?: string;
+     days: PlanDay[];
    }
    ```
 2. Migrate `src/data/default-plan.json` from array to object:
@@ -128,11 +125,21 @@ Add reset progress from settings, multiple training plans with `{id, name, descr
      "id": "minimal",
      "name": "Minimal Test",
      "description": "Single-day test plan",
-     "days": [{ "id": "a1b2c3d4", "day": 1, "phases": [{ "type": "hold", "duration": 5 }, { "type": "recovery", "duration": 10 }] }]
+     "days": [
+       {
+         "id": "a1b2c3d4",
+         "day": 1,
+         "phases": [
+           { "type": "hold", "duration": 5 },
+           { "type": "recovery", "duration": 10 }
+         ]
+       }
+     ]
    }
    ```
 
 **Verify:**
+
 ```bash
 npm run build
 # JSON is valid; types compile
@@ -147,12 +154,13 @@ npm run build
 **Files:** `src/services/planService.ts`
 
 **Action:**
+
 1. Add `import.meta.glob` for plan loading:
    ```ts
    const planModules = import.meta.glob<{ default: PlanWithMeta }>('../data/*-plan.json', {
      eager: true,
      import: 'default',
-   })
+   });
    ```
 2. Add `getAvailablePlans(): PlanWithMeta[]` — returns `Object.values(planModules).filter(Boolean)`.
 3. Add `loadPlanById(planId: string): PlanWithMeta | { error: string }` — finds plan by id from getAvailablePlans; returns error if not found.
@@ -163,6 +171,7 @@ npm run build
 **Note:** All existing functions (getPhasesForDay, getDayId, etc.) take `Plan` = `PlanDay[]`. Callers with PlanWithMeta pass `plan.days`. No changes to those function signatures.
 
 **Verify:**
+
 ```bash
 npm run build
 # getAvailablePlans returns at least default plan; loadPlanById('default') works
@@ -177,6 +186,7 @@ npm run build
 **Files:** `server/schema.sql`, `server/routes/user.js`, `server/routes/progress.js`, `server/index.js`
 
 **Action:**
+
 1. Add to `server/schema.sql`:
    ```sql
    CREATE TABLE IF NOT EXISTS user_active_plan (
@@ -194,6 +204,7 @@ npm run build
 5. Register user router in `server/index.js`: `app.use('/api/user', userRouter)`.
 
 **Verify:**
+
 ```bash
 # Run server, test:
 # GET /api/user/active-plan (after login) — 404 or { plan_id }
@@ -214,16 +225,17 @@ npm run build
 **Files:** `src/services/offlineQueue.ts`, `src/services/progressService.ts`
 
 **Action:**
+
 1. Add to `src/services/offlineQueue.ts`:
    ```ts
    export async function clearByPlanId(planId: string): Promise<number> {
-     const db = await getDB()
-     const items = (await db.getAll(STORE_NAME)) as PendingCompletion[]
-     const toDelete = items.filter((i) => i.plan_id === planId)
+     const db = await getDB();
+     const items = (await db.getAll(STORE_NAME)) as PendingCompletion[];
+     const toDelete = items.filter((i) => i.plan_id === planId);
      for (const item of toDelete) {
-       if (item.id != null) await db.delete(STORE_NAME, item.id)
+       if (item.id != null) await db.delete(STORE_NAME, item.id);
      }
-     return toDelete.length
+     return toDelete.length;
    }
    ```
 2. Add to `src/services/progressService.ts`:
@@ -232,6 +244,7 @@ npm run build
    - `resetProgress(planId: string): Promise<{ ok: boolean } | { error: string }>` — call DELETE /api/progress?plan_id=...; then `clearByPlanId(planId)`; return ok or error.
 
 **Verify:**
+
 ```bash
 npm run build
 # Manual: resetProgress clears DB and offline queue
@@ -248,6 +261,7 @@ npm run build
 **Files:** `src/contexts/TrainingContext.tsx`
 
 **Action:**
+
 1. Add state: `activePlanId`, `availablePlans`, `activePlanLoading`.
 2. On user load: fetch `fetchActivePlan()`; if null/404, use first plan from `getAvailablePlans()` as default; call `setActivePlan(firstPlan.id)` to persist.
 3. Load plan: `loadPlanById(activePlanId)` (or loadPlan(activePlanId)); store PlanWithMeta; expose `plan` as `planWithMeta?.days ?? null` for existing consumers that expect Plan (array), OR expose `planWithMeta` and update callers to use `plan.days`. Simpler: keep `plan` as `PlanDay[]` = `planWithMeta?.days ?? null`; add `planWithMeta` to context for name/description.
@@ -258,6 +272,7 @@ npm run build
 8. Expose: `activePlanId`, `availablePlans`, `planWithMeta` (or `planName`), `resetProgress`, `setActivePlan`.
 
 **Verify:**
+
 ```bash
 npm run build
 # Manual: login → dashboard shows plan; completions load for active plan
@@ -274,6 +289,7 @@ npm run build
 **Files:** `src/components/SettingsView.tsx`, `src/App.tsx` (or parent that renders SettingsView)
 
 **Action:**
+
 1. SettingsView receives from TrainingContext: `availablePlans`, `activePlanId`, `planWithMeta`, `resetProgress`, `setActivePlan`.
 2. Add **Plan selector** section:
    - Dropdown (`<select>`) listing `availablePlans.map(p => ({ value: p.id, label: p.name }))`.
@@ -286,6 +302,7 @@ npm run build
 5. Update Dashboard, SessionCompleteView, TopAppBar: use `planWithMeta?.name ?? 'CO2 Tolerance III'` instead of hardcoded plan name. Add `SessionCompleteView.tsx` and `TopAppBar.tsx` to files_modified.
 
 **Verify:**
+
 ```bash
 npm run build
 npm run dev
@@ -300,12 +317,12 @@ npm run dev
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| User can reset progress from settings | Settings → Reset progress → confirm → completions cleared (DB + offline) |
-| Multiple plans; structure {id, name, description, days} | default-plan.json migrated; getAvailablePlans returns PlanWithMeta |
-| Active plan stored per user in DB | PUT active-plan; refresh; GET returns same plan_id |
-| Plan selector + warning | Dropdown in Settings; change → confirm modal; Cancel reverts dropdown |
+| Success Criterion                                       | How to Verify                                                            |
+| ------------------------------------------------------- | ------------------------------------------------------------------------ |
+| User can reset progress from settings                   | Settings → Reset progress → confirm → completions cleared (DB + offline) |
+| Multiple plans; structure {id, name, description, days} | default-plan.json migrated; getAvailablePlans returns PlanWithMeta       |
+| Active plan stored per user in DB                       | PUT active-plan; refresh; GET returns same plan_id                       |
+| Plan selector + warning                                 | Dropdown in Settings; change → confirm modal; Cancel reverts dropdown    |
 
 ---
 
@@ -321,6 +338,7 @@ npm run dev
 ## Output
 
 After completion:
+
 - `src/data/default-plan.json` — `{ id, name, description, days }`
 - `src/types/plan.ts` — PlanWithMeta
 - `src/services/planService.ts` — getAvailablePlans, loadPlanById, loadPlan(planId?)

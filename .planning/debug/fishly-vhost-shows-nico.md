@@ -1,6 +1,6 @@
 ---
 status: investigating
-trigger: "fishly.kupfer.es renders nico.kupfer.es instead of Fishly app"
+trigger: 'fishly.kupfer.es renders nico.kupfer.es instead of Fishly app'
 created: 2025-03-20
 updated: 2025-03-20
 ---
@@ -154,11 +154,11 @@ cat /etc/nginx/nginx.conf | grep include
 
 ### Common root causes (prioritize checks)
 
-| Cause | What to look for |
-|-------|------------------|
-| **default_server** | nico's block has `default_server`; fishly requests fall through |
-| **Block order** | nico block appears before fishly in same file |
-| **Missing HTTPS** | fishly only has `listen 80`; HTTPS (443) goes to nico |
-| **server_name typo** | `fishy` instead of `fishly`, or wrong domain |
-| **Config not reloaded** | Added block but never ran `nginx -s reload` |
-| **Wrong file** | fishly block in disabled file or wrong sites-enabled |
+| Cause                   | What to look for                                                |
+| ----------------------- | --------------------------------------------------------------- |
+| **default_server**      | nico's block has `default_server`; fishly requests fall through |
+| **Block order**         | nico block appears before fishly in same file                   |
+| **Missing HTTPS**       | fishly only has `listen 80`; HTTPS (443) goes to nico           |
+| **server_name typo**    | `fishy` instead of `fishly`, or wrong domain                    |
+| **Config not reloaded** | Added block but never ran `nginx -s reload`                     |
+| **Wrong file**          | fishly block in disabled file or wrong sites-enabled            |

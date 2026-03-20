@@ -1,38 +1,34 @@
-'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { TopAppBar } from '../layout/TopAppBar'
-import { BottomNavBar } from '../layout/BottomNavBar'
-import { DevModeSection } from './DevModeSection'
-import { ResetProgressSection } from './ResetProgressSection'
-import { ConfirmResetModal } from './ConfirmResetModal'
-import { UserProfileCard } from './UserProfileCard'
-import { InstallPrompt } from '../layout/InstallPrompt'
-import { useTraining } from '../../hooks/useTraining'
-import { DEFAULT_USERNAME } from '../../constants/app'
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { TopAppBar } from '../layout/TopAppBar';
+import { BottomNavBar } from '../layout/BottomNavBar';
+import { DevModeSection } from './DevModeSection';
+import { ResetProgressSection } from './ResetProgressSection';
+import { ConfirmResetModal } from './ConfirmResetModal';
+import { UserProfileCard } from './UserProfileCard';
+import { InstallPrompt } from '../layout/InstallPrompt';
+import { useTraining } from '../../hooks/useTraining';
+import { DEFAULT_USERNAME } from '../../constants/app';
 
 export function SettingsView() {
-  const router = useRouter()
-  const {
-    user,
-    resetProgress,
-    handleLogout,
-  } = useTraining()
-  const username = user?.username ?? DEFAULT_USERNAME
+  const router = useRouter();
+  const { user, resetProgress, handleLogout } = useTraining();
+  const username = user?.username ?? DEFAULT_USERNAME;
 
-  const [confirmReset, setConfirmReset] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false);
 
   const handleRequestReset = () => {
-    setConfirmReset(true)
-  }
+    setConfirmReset(true);
+  };
 
   const handleCloseConfirm = () => {
-    setConfirmReset(false)
-  }
+    setConfirmReset(false);
+  };
 
   const handleConfirmReset = async () => {
-    await resetProgress()
-  }
+    await resetProgress();
+  };
 
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
@@ -86,10 +82,11 @@ export function SettingsView() {
         title="Reset progress"
         message={
           <>
-            This will clear all progress for this plan. Type <strong className="text-on-surface">reset</strong> to confirm.
+            This will clear all progress for this plan. Type{' '}
+            <strong className="text-on-surface">reset</strong> to confirm.
           </>
         }
       />
     </div>
-  )
+  );
 }

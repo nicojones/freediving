@@ -1,8 +1,8 @@
-'use client'
-import { useDevMode } from '../../hooks/useDevMode'
+'use client';
+import { useDevMode } from '../../hooks/useDevMode';
 
 export function DevModeSection() {
-  const [devModeEnabled, setDevModeEnabled] = useDevMode()
+  const [devModeEnabled, setDevModeEnabled] = useDevMode();
 
   return (
     <div
@@ -25,5 +25,5 @@ export function DevModeSection() {
         </span>
       </label>
     </div>
-  )
+  );
 }

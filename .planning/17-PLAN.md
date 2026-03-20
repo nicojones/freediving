@@ -1,21 +1,20 @@
 # Phase 17: Test Controls — Executable Plan
 
 ---
+
 phase: 17-test-controls
 plans:
-  - id: "01"
-    tasks: 4
-    depends_on: [16-alias-imports-component-folders-tests]
-type: execute
-wave: 1
-autonomous: false
-requirements: []
-must_haves:
-  truths:
-    - "Settings has dev mode toggle (visible to all users)"
-    - "When dev mode unchecked, test controls invisible on all pages"
-    - "Dev mode default is OFF"
-    - "Dev mode preference persisted in localStorage"
+
+- id: "01"
+  tasks: 4
+  depends_on: [16-alias-imports-component-folders-tests]
+  type: execute
+  wave: 1
+  autonomous: false
+  requirements: []
+  must_haves:
+  truths: - "Settings has dev mode toggle (visible to all users)" - "When dev mode unchecked, test controls invisible on all pages" - "Dev mode default is OFF" - "Dev mode preference persisted in localStorage"
+
 ---
 
 ## Objective
@@ -25,6 +24,7 @@ Add a Settings toggle (dev mode) to show/hide test controls. When unchecked, tes
 **Purpose:** Developer experience — users can enable test controls for faster iteration when needed.
 
 **Principles:**
+
 - Dev mode toggle in Settings, visible to all users
 - localStorage for persistence (`freediving_dev_mode` or similar)
 - Default: dev mode off (test controls hidden)
@@ -47,6 +47,7 @@ Add a Settings toggle (dev mode) to show/hide test controls. When unchecked, tes
 **Files:** `src/hooks/useDevMode.ts` (new), or `src/utils/devMode.ts` + hook
 
 **Action:**
+
 1. Define localStorage key (e.g. `freediving_dev_mode`)
 2. Create hook `useDevMode()` that returns `[devModeEnabled: boolean, setDevModeEnabled: (v: boolean) => void]`
 3. Read from localStorage on mount; write on change
@@ -61,6 +62,7 @@ Add a Settings toggle (dev mode) to show/hide test controls. When unchecked, tes
 **Files:** `src/components/settings/SettingsView.tsx`, optionally `src/components/settings/DevModeSection.tsx`
 
 **Action:**
+
 1. Add dev mode toggle to Settings page
 2. Label: "Dev mode" or "Show test controls" — "Show test controls on session preview for faster testing"
 3. Wire to `useDevMode()` hook
@@ -75,6 +77,7 @@ Add a Settings toggle (dev mode) to show/hide test controls. When unchecked, tes
 **Files:** `src/views/Dashboard.tsx`, `src/components/session/SessionPreviewSection.tsx`, `src/contexts/TrainingContext.tsx`
 
 **Action:**
+
 1. In Dashboard (or TrainingContext): compute `showTestControls = devModeEnabled`
 2. Pass `showTestControls` to SessionPreviewSection (or derive inside)
 3. SessionPreviewSection: render the test toggle block only when `showTestControls`
@@ -90,6 +93,7 @@ Add a Settings toggle (dev mode) to show/hide test controls. When unchecked, tes
 **Files:** `src/components/settings/DevModeSection.test.tsx` (if extracted), `src/hooks/useDevMode.test.ts`, E2E
 
 **Action:**
+
 1. Unit test: `useDevMode` reads/writes localStorage correctly
 2. Unit test: Dev mode section/toggle renders for any user
 3. E2E (optional): Login → Settings → toggle dev mode → session preview shows/hides test toggle

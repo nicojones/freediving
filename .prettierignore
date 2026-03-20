@@ -1,0 +1,12 @@
+.next
+node_modules
+build.zip
+*.lock
+pnpm-lock.yaml
+yarn.lock
+public/sw.js
+public/workbox-*.js
+public/sw.js.map
+public/workbox-*.js.map
+public/swe-worker-*.js
+public/swe-worker-*.js.map

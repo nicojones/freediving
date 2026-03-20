@@ -9,24 +9,24 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write  # semantic-release needs this to create releases and tags
+  contents: write # semantic-release needs this to create releases and tags
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Check for dependency changes
+      - name: 🔎 Check for dependency changes
         id: changed-deps
         uses: tj-actions/changed-files@v42
         with:
@@ -34,30 +34,33 @@ jobs:
             package.json
             package-lock.json
 
-      - name: Install dependencies
+      - name: 📚 Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Lint
+      - name: ✨ Format check
+        run: npm run format:check
+
+      - name: 🔍 Lint
         run: npm run lint
 
-      - name: Run unit tests
+      - name: 🧪 Run unit tests
         run: npm run test:run
 
-      - name: Run E2E tests
+      - name: 🎭 Run E2E tests
         run: npm run test:e2e
 
-      - name: Semantic Release
+      - name: 🏷️ Semantic Release
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Next.js
+      - name: 🏗️ Build Next.js
         run: npm run build
 
-      - name: Prepare Deployment Packages
+      - name: 📦 Prepare Deployment Packages
         run: |
           cp -r public .next/standalone/
           cp -r .next/static .next/standalone/.next/
@@ -66,16 +69,16 @@ jobs:
           cp -r src/data .next/standalone/src/
           cd .next/standalone && zip -r ../../build.zip . && cd ../..
 
-      - name: Upload build to Server
+      - name: 🚀 Upload build to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "build.zip"
-          target: "/var/www/freediving"
+          source: 'build.zip'
+          target: '/var/www/freediving'
 
-      - name: Post-deployment on VM
+      - name: 🔄 Post-deployment on VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}

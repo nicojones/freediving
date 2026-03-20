@@ -1,12 +1,12 @@
-import { memo } from 'react'
-import { REST_DAY_DESCRIPTION } from '../../constants/app'
-import { BackButton } from '../ui/BackButton'
+import { memo } from 'react';
+import { REST_DAY_DESCRIPTION } from '../../constants/app';
+import { BackButton } from '../ui/BackButton';
 
 interface RestDayCardProps {
-  dayIndex: number
-  isCompleted: boolean
-  isPreview?: boolean
-  onBack: () => void
+  dayIndex: number;
+  isCompleted: boolean;
+  isPreview?: boolean;
+  onBack: () => void;
 }
 
 export const RestDayCard = memo(function RestDayCard({
@@ -40,12 +40,10 @@ export const RestDayCard = memo(function RestDayCard({
             >
               check_circle
             </span>
-            <span className="font-label font-semibold uppercase tracking-wider">
-              Done
-            </span>
+            <span className="font-label font-semibold uppercase tracking-wider">Done</span>
           </div>
         )}
       </section>
     </div>
-  )
-})
+  );
+});

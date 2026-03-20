@@ -1,43 +1,37 @@
 # Phase 4: Audio Service — Executable Plan
 
 ---
+
 phase: 04-audio
 plans:
-  - id: "01"
-    tasks: 2
-    files: 3
-    depends_on: [03-timer-engine]
-type: execute
-wave: 1
-files_modified:
-  - src/services/audioService.ts
-  - src/App.tsx
-autonomous: true
-requirements: [SESS-01, SESS-02, SESS-03, SESS-04, SESS-05]
-user_setup: []
-must_haves:
-  truths:
-    - "User hears 'Hold' at hold start"
-    - "User hears 'Prepare for hold' 10 seconds before each hold"
-    - "User hears '30 seconds' when recovery ≥31s, at 30s remaining"
-    - "User hears 'Breathe!' exactly when hold ends"
-    - "No audio plays during the breathhold itself"
-  artifacts:
-    - path: src/services/audioService.ts
-      provides: "Audio Service with preload, play, wireToTimer"
-      contains: "preload|play|hold.m4a|prepare.m4a|30s.m4a|breathe.m4a"
-    - path: src/App.tsx
-      provides: "Session demo with audio cues"
-      contains: "audioService|preload|wireToTimer"
-  key_links:
-    - from: src/services/audioService.ts
-      to: src/services/timerEngine.ts
-      via: "Subscribe to timer events for cue playback"
-      pattern: "on\\(|phase_start|prepare_hold|countdown_30|hold_end"
-    - from: src/App.tsx
-      to: src/services/audioService.ts
-      via: "Preload before start; wire to timer"
-      pattern: "audioService|createAudioService"
+
+- id: "01"
+  tasks: 2
+  files: 3
+  depends_on: [03-timer-engine]
+  type: execute
+  wave: 1
+  files_modified:
+- src/services/audioService.ts
+- src/App.tsx
+  autonomous: true
+  requirements: [SESS-01, SESS-02, SESS-03, SESS-04, SESS-05]
+  user_setup: []
+  must_haves:
+  truths: - "User hears 'Hold' at hold start" - "User hears 'Prepare for hold' 10 seconds before each hold" - "User hears '30 seconds' when recovery ≥31s, at 30s remaining" - "User hears 'Breathe!' exactly when hold ends" - "No audio plays during the breathhold itself"
+  artifacts: - path: src/services/audioService.ts
+  provides: "Audio Service with preload, play, wireToTimer"
+  contains: "preload|play|hold.m4a|prepare.m4a|30s.m4a|breathe.m4a" - path: src/App.tsx
+  provides: "Session demo with audio cues"
+  contains: "audioService|preload|wireToTimer"
+  key_links: - from: src/services/audioService.ts
+  to: src/services/timerEngine.ts
+  via: "Subscribe to timer events for cue playback"
+  pattern: "on\\(|phase_start|prepare_hold|countdown_30|hold_end" - from: src/App.tsx
+  to: src/services/audioService.ts
+  via: "Preload before start; wire to timer"
+  pattern: "audioService|createAudioService"
+
 ---
 
 ## Objective
@@ -60,6 +54,7 @@ Implement an Audio Service that plays cue files at the correct moments in respon
 **Existing:** Phase 3 complete. Timer Engine emits phase_start, prepare_hold, countdown_30, hold_end, session_complete. App.tsx logs events.
 
 **Design decisions (from 4-CONTEXT):**
+
 - Cue files: `public/audio/hold.m4a`, `prepare.m4a`, `30s.m4a`, `breathe.m4a`
 - Event mapping: phase_start(hold) → hold, prepare_hold → prepare, countdown_30 → 30s, hold_end → breathe
 - No session-complete cue (v2)
@@ -75,6 +70,7 @@ Implement an Audio Service that plays cue files at the correct moments in respon
 **Files:** `src/services/audioService.ts`
 
 **Action:**
+
 1. Create `src/services/audioService.ts`:
    - **Cue URLs:** Base `/audio/` (Vite serves from `public/`). Files: `hold.m4a`, `prepare.m4a`, `30s.m4a`, `breathe.m4a`.
    - **API:**
@@ -92,10 +88,11 @@ Implement an Audio Service that plays cue files at the correct moments in respon
 2. **Preload implementation:** Use `Promise.all` over 4 cues. Each cue: `new Audio(url)`, `audio.crossOrigin = 'anonymous'`, return promise that resolves on `canplaythrough` or `loadeddata`, rejects on `error`. Collect first failure message for user.
 
 **Verify:**
+
 ```typescript
-const audio = createAudioService()
-await audio.preload()  // Should resolve if files exist
-audio.play('hold')     // Should hear hold cue
+const audio = createAudioService();
+await audio.preload(); // Should resolve if files exist
+audio.play('hold'); // Should hear hold cue
 ```
 
 **Done:** Audio Service created; preload validates; play works for each cue.
@@ -107,6 +104,7 @@ audio.play('hold')     // Should hear hold cue
 **Files:** `src/App.tsx`
 
 **Action:**
+
 1. In `handleStartSession`:
    - Before creating timer engine: call `createAudioService()`, then `await audioService.preload()`. If preload rejects, set `sessionMessage` to the error message and return (do not start session).
    - Create timer engine as before.
@@ -115,6 +113,7 @@ audio.play('hold')     // Should hear hold cue
 2. Ensure "Start session" is disabled during preload (optional: show "Loading audio..." briefly). If preload fails, re-enable button and show error.
 
 **Verify:**
+
 ```bash
 npm run dev
 # Login, click "Start session (day 0)"
@@ -132,14 +131,14 @@ npm run dev
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| SESS-01: "Hold" at hold start | Hear hold.m4a when phase_start(hold) fires |
-| SESS-02: "Prepare for hold" 10s before | Hear prepare.m4a when prepare_hold fires |
+| Success Criterion                        | How to Verify                                                 |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| SESS-01: "Hold" at hold start            | Hear hold.m4a when phase_start(hold) fires                    |
+| SESS-02: "Prepare for hold" 10s before   | Hear prepare.m4a when prepare_hold fires                      |
 | SESS-03: "30 seconds" when recovery ≥31s | Hear 30s.m4a when countdown_30 fires (day 0 has 90s recovery) |
-| SESS-04: "Breathe!" at hold end | Hear breathe.m4a when hold_end fires |
-| SESS-05: No audio during hold | Silence between phase_start(hold) and hold_end |
-| Preload validation | Remove a file → error shown, session does not start |
+| SESS-04: "Breathe!" at hold end          | Hear breathe.m4a when hold_end fires                          |
+| SESS-05: No audio during hold            | Silence between phase_start(hold) and hold_end                |
+| Preload validation                       | Remove a file → error shown, session does not start           |
 
 ---
 
@@ -156,6 +155,7 @@ npm run dev
 ## Output
 
 After completion:
+
 - `src/services/audioService.ts` — createAudioService, preload, play, wireToTimer
 - `src/App.tsx` — Preload before start; wire Audio Service to timer; play cues
 

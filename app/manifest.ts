@@ -1,4 +1,4 @@
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -8,8 +8,6 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: '#0d1416',
     display: 'standalone',
     start_url: '/',
-    icons: [
-      { src: '/fish.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
-    ],
-  }
+    icons: [{ src: '/fish.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
+  };
 }

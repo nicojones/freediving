@@ -1,17 +1,17 @@
-import type { Metadata, Viewport } from 'next'
-import { AppShell } from '@/src/components/layout/AppShell'
-import type { ChildrenNode } from '@/src/types/common'
-import './globals.css'
+import type { Metadata, Viewport } from 'next';
+import { AppShell } from '@/src/components/layout/AppShell';
+import type { ChildrenNode } from '@/src/types/common';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Fishly — Breathhold Protocol',
   applicationName: 'Fishly',
   icons: { icon: '/fish.svg' },
-}
+};
 
 export const viewport: Viewport = {
   themeColor: '#52dad3',
-}
+};
 
 export default function RootLayout({ children }: Readonly<ChildrenNode>) {
   return (
@@ -26,5 +26,5 @@ export default function RootLayout({ children }: Readonly<ChildrenNode>) {
         <AppShell>{children}</AppShell>
       </body>
     </html>
-  )
+  );
 }

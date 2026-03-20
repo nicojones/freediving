@@ -1,37 +1,39 @@
-'use client'
-import { useCallback, useEffect, useState } from 'react'
+'use client';
+import { useCallback, useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'freediving_dev_mode'
+const STORAGE_KEY = 'freediving_dev_mode';
 
 function readFromStorage(): boolean {
-  if (typeof window === 'undefined') {return false}
+  if (typeof window === 'undefined') {
+    return false;
+  }
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw === 'true'
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw === 'true';
   } catch {
-    return false
+    return false;
   }
 }
 
 function writeToStorage(value: boolean): void {
   try {
-    localStorage.setItem(STORAGE_KEY, String(value))
+    localStorage.setItem(STORAGE_KEY, String(value));
   } catch {
     // ignore
   }
 }
 
 export function useDevMode(): [boolean, (value: boolean) => void] {
-  const [devModeEnabled, setDevModeEnabledState] = useState(false)
+  const [devModeEnabled, setDevModeEnabledState] = useState(false);
 
   useEffect(() => {
-    setDevModeEnabledState(readFromStorage())
-  }, [])
+    setDevModeEnabledState(readFromStorage());
+  }, []);
 
   const setDevModeEnabled = useCallback((value: boolean) => {
-    setDevModeEnabledState(value)
-    writeToStorage(value)
-  }, [])
+    setDevModeEnabledState(value);
+    writeToStorage(value);
+  }, []);
 
-  return [devModeEnabled, setDevModeEnabled]
+  return [devModeEnabled, setDevModeEnabled];
 }

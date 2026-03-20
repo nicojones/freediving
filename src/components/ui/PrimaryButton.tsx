@@ -1,17 +1,17 @@
-import { memo, type ReactNode } from 'react'
-import clsx from 'clsx'
-import { Loader } from './Loader'
+import { memo, type ReactNode } from 'react';
+import clsx from 'clsx';
+import { Loader } from './Loader';
 
 interface PrimaryButtonProps {
-  children: ReactNode
-  onClick?: (e?: React.MouseEvent) => void
-  type?: 'button' | 'submit'
-  disabled?: boolean
-  loading?: boolean
-  size?: 'login' | 'session'
-  icon?: string
-  className?: string
-  'data-testid'?: string
+  children: ReactNode;
+  onClick?: (e?: React.MouseEvent) => void;
+  type?: 'button' | 'submit';
+  disabled?: boolean;
+  loading?: boolean;
+  size?: 'login' | 'session';
+  icon?: string;
+  className?: string;
+  'data-testid'?: string;
 }
 
 export const PrimaryButton = memo(function PrimaryButton({
@@ -25,7 +25,7 @@ export const PrimaryButton = memo(function PrimaryButton({
   className,
   'data-testid': dataTestId = 'primary-button',
 }: PrimaryButtonProps) {
-  const isDisabled = disabled || loading
+  const isDisabled = disabled || loading;
   return (
     <button
       data-testid={dataTestId}
@@ -59,5 +59,5 @@ export const PrimaryButton = memo(function PrimaryButton({
         </>
       )}
     </button>
-  )
-})
+  );
+});

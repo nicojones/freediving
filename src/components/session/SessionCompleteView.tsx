@@ -1,11 +1,11 @@
-'use client'
-import { PrimaryButton } from '../ui/PrimaryButton'
-import { TopAppBar } from '../layout/TopAppBar'
-import { BottomNavBar } from '../layout/BottomNavBar'
-import { useTraining } from '../../hooks/useTraining'
+'use client';
+import { PrimaryButton } from '../ui/PrimaryButton';
+import { TopAppBar } from '../layout/TopAppBar';
+import { BottomNavBar } from '../layout/BottomNavBar';
+import { useTraining } from '../../hooks/useTraining';
 
 export function SessionCompleteView() {
-  const { handleBackToTraining, handleSettingsClick } = useTraining()
+  const { handleBackToTraining, handleSettingsClick } = useTraining();
 
   return (
     <div className="min-h-screen bg-background">
@@ -35,5 +35,5 @@ export function SessionCompleteView() {
         onSettingsClick={handleSettingsClick}
       />
     </div>
-  )
+  );
 }

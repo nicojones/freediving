@@ -11,40 +11,43 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. The ap
 **Primary recommendation:** Use App Router, Route Handlers for API, @serwist/next for PWA with audio precache + RangeRequestsPlugin, output: 'standalone' for VM deployment. better-sqlite3 works in Node.js runtime (default); deployment is a long-running process, not serverless.
 
 <phase_requirements>
+
 ## Phase Requirements
 
-| ID | Description | Research Support |
-|----|-------------|-----------------|
+| ID        | Description                                 | Research Support                                                                           |
+| --------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Migration | Express API routes → Next.js Route Handlers | Route Handlers use Web Request/Response; cookies via next/headers; request.json() for body |
-| Migration | React pages/components → Next.js App Router | App Router recommended; folder-based routing; client components with 'use client' |
-| PWA | PWA, offline, audio precache preserved | @serwist/next; additionalPrecacheEntries for audio; runtimeCaching + RangeRequestsPlugin |
-| Deploy | Deployment updated for .next/ | output: 'standalone'; zip .next/standalone + public + .next/static; node server.js |
-| Parity | All existing functionality works | Same API paths (/api/auth, /api/progress, /api/user); same fetch calls; E2E unchanged |
+| Migration | React pages/components → Next.js App Router | App Router recommended; folder-based routing; client components with 'use client'          |
+| PWA       | PWA, offline, audio precache preserved      | @serwist/next; additionalPrecacheEntries for audio; runtimeCaching + RangeRequestsPlugin   |
+| Deploy    | Deployment updated for .next/               | output: 'standalone'; zip .next/standalone + public + .next/static; node server.js         |
+| Parity    | All existing functionality works            | Same API paths (/api/auth, /api/progress, /api/user); same fetch calls; E2E unchanged      |
+
 </phase_requirements>
 
 ## Standard Stack
 
 ### Core
 
-| Library | Version | Purpose | Why Standard |
-|---------|---------|---------|---------------|
-| next | ^15 | Full-stack React framework | Single framework for frontend + API; App Router stable; Route Handlers replace Express |
-| @serwist/next | ^9.5 | PWA with Workbox | Next.js official PWA docs recommend Serwist; Workbox fork; precache + runtime caching |
-| serwist | ^9.5 | Service worker core | Required by @serwist/next; RangeRequestsPlugin for audio |
-| better-sqlite3 | ^11.6 | SQLite DB | Already used; works in Node.js runtime (default); VM deployment = persistent filesystem |
-| react | ^19 | UI | Already used; Next.js uses React |
+| Library        | Version | Purpose                    | Why Standard                                                                            |
+| -------------- | ------- | -------------------------- | --------------------------------------------------------------------------------------- |
+| next           | ^15     | Full-stack React framework | Single framework for frontend + API; App Router stable; Route Handlers replace Express  |
+| @serwist/next  | ^9.5    | PWA with Workbox           | Next.js official PWA docs recommend Serwist; Workbox fork; precache + runtime caching   |
+| serwist        | ^9.5    | Service worker core        | Required by @serwist/next; RangeRequestsPlugin for audio                                |
+| better-sqlite3 | ^11.6   | SQLite DB                  | Already used; works in Node.js runtime (default); VM deployment = persistent filesystem |
+| react          | ^19     | UI                         | Already used; Next.js uses React                                                        |
 
 ### Supporting
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| bcrypt | ^5.1 | Password hashing | Auth (unchanged) |
-| jsonwebtoken | ^9.0 | JWT tokens | Auth (unchanged) |
-| tailwindcss | ^4.2 | Styling | Next.js supports Tailwind 4 via @tailwindcss/postcss |
-| vitest | ^4.0 | Unit tests | Official Next.js Vitest guide; works with client components |
-| @playwright/test | ^1.58 | E2E tests | Single Next.js dev server replaces two servers |
+| Library          | Version | Purpose          | When to Use                                                 |
+| ---------------- | ------- | ---------------- | ----------------------------------------------------------- |
+| bcrypt           | ^5.1    | Password hashing | Auth (unchanged)                                            |
+| jsonwebtoken     | ^9.0    | JWT tokens       | Auth (unchanged)                                            |
+| tailwindcss      | ^4.2    | Styling          | Next.js supports Tailwind 4 via @tailwindcss/postcss        |
+| vitest           | ^4.0    | Unit tests       | Official Next.js Vitest guide; works with client components |
+| @playwright/test | ^1.58   | E2E tests        | Single Next.js dev server replaces two servers              |
 
 **Installation:**
+
 ```bash
 npm install next@latest react react-dom better-sqlite3 bcrypt jsonwebtoken cookie-parser clsx date-fns idb jsonwebtoken lodash type-fest
 npm install -D @serwist/next serwist @tailwindcss/postcss tailwindcss @playwright/test vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom @testing-library/user-event
@@ -91,38 +94,41 @@ src/
 ### Pattern 1: Route Handler (API migration)
 
 **What:** Replace Express route with Next.js Route Handler using Web Request/Response.
-**When to use:** All /api/* endpoints.
+**When to use:** All /api/\* endpoints.
 **Example:**
+
 ```typescript
 // app/api/auth/login/route.ts
-import { NextRequest } from 'next/server'
-import { cookies } from 'next/headers'
-import { db } from '@/lib/db'
-import { verifyPassword, createToken } from '@/lib/auth'
+import { NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
+import { db } from '@/lib/db';
+import { verifyPassword, createToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
-  const { username, password } = await request.json()
+  const { username, password } = await request.json();
   if (!username || !password) {
-    return Response.json({ error: 'Username and password required' }, { status: 400 })
+    return Response.json({ error: 'Username and password required' }, { status: 400 });
   }
-  const user = db.prepare('SELECT id, username, password_hash FROM users WHERE username = ?').get(username)
+  const user = db
+    .prepare('SELECT id, username, password_hash FROM users WHERE username = ?')
+    .get(username);
   if (!user) {
-    return Response.json({ error: 'Invalid credentials' }, { status: 401 })
+    return Response.json({ error: 'Invalid credentials' }, { status: 401 });
   }
-  const valid = await verifyPassword(password, user.password_hash)
+  const valid = await verifyPassword(password, user.password_hash);
   if (!valid) {
-    return Response.json({ error: 'Invalid credentials' }, { status: 401 })
+    return Response.json({ error: 'Invalid credentials' }, { status: 401 });
   }
-  const token = createToken({ id: user.id, username: user.username })
-  const cookieStore = await cookies()
+  const token = createToken({ id: user.id, username: user.username });
+  const cookieStore = await cookies();
   cookieStore.set('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
     maxAge: 7 * 24 * 60 * 60,
-  })
-  return Response.json({ user: { id: user.id, username: user.username } })
+  });
+  return Response.json({ user: { id: user.id, username: user.username } });
 }
 ```
 
@@ -130,17 +136,21 @@ export async function POST(request: NextRequest) {
 
 **What:** Shared auth check; no Express middleware — extract to helper, call in each protected route.
 **Example:**
+
 ```typescript
 // lib/auth.ts
-import { cookies } from 'next/headers'
-import { verifyToken } from './jwt'
+import { cookies } from 'next/headers';
+import { verifyToken } from './jwt';
 
 export async function getAuthUser() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('token')?.value ?? 
-    (await import('next/headers').then(m => m.headers()).then(h => h.get('authorization')?.replace('Bearer ', '')))
-  if (!token) return null
-  return verifyToken(token)
+  const cookieStore = await cookies();
+  const token =
+    cookieStore.get('token')?.value ??
+    (await import('next/headers')
+      .then((m) => m.headers())
+      .then((h) => h.get('authorization')?.replace('Bearer ', '')));
+  if (!token) return null;
+  return verifyToken(token);
 }
 
 // In route: const user = await getAuthUser(); if (!user) return Response.json({ error: 'Not authenticated' }, { status: 401 })
@@ -151,10 +161,11 @@ export async function getAuthUser() {
 **What:** Replace React Router with Next.js navigation.
 **When to use:** All pages that use useNavigate, Link, Route.
 **Example:**
+
 ```typescript
-'use client'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+'use client';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // Replace <Link to="/settings"> with <Link href="/settings">
 // Replace navigate('/') with router.push('/')
@@ -164,9 +175,10 @@ import { useRouter } from 'next/navigation'
 
 **What:** @serwist/next wraps next.config; app/sw.ts defines Serwist with precache + runtimeCaching for audio.
 **Example:**
+
 ```typescript
 // next.config.ts
-import withSerwistInit from '@serwist/next'
+import withSerwistInit from '@serwist/next';
 
 const withSerwist = withSerwistInit({
   swSrc: 'app/sw.ts',
@@ -177,24 +189,24 @@ const withSerwist = withSerwistInit({
     { url: '/audio/30s.m4a', revision: null },
     { url: '/audio/breathe.m4a', revision: null },
   ],
-})
+});
 
-export default withSerwist({ output: 'standalone', /* ... */ })
+export default withSerwist({ output: 'standalone' /* ... */ });
 ```
 
 ```typescript
 // app/sw.ts
-import { defaultCache } from '@serwist/next/worker'
-import { CacheFirst, RangeRequestsPlugin, CacheableResponsePlugin, Serwist } from 'serwist'
-import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist'
+import { defaultCache } from '@serwist/next/worker';
+import { CacheFirst, RangeRequestsPlugin, CacheableResponsePlugin, Serwist } from 'serwist';
+import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
-    __SW_MANIFEST: (PrecacheEntry | string)[] | undefined
+    __SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
   }
 }
 
-declare const self: ServiceWorkerGlobalScope
+declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
@@ -204,19 +216,18 @@ const serwist = new Serwist({
   runtimeCaching: [
     ...defaultCache,
     {
-      matcher: ({ request }) => request.destination === 'audio' || /\.(m4a|mp3|wav|ogg)$/i.test(new URL(request.url).pathname),
+      matcher: ({ request }) =>
+        request.destination === 'audio' ||
+        /\.(m4a|mp3|wav|ogg)$/i.test(new URL(request.url).pathname),
       handler: new CacheFirst({
         cacheName: 'audio-cache',
-        plugins: [
-          new CacheableResponsePlugin({ statuses: [200, 206] }),
-          new RangeRequestsPlugin(),
-        ],
+        plugins: [new CacheableResponsePlugin({ statuses: [200, 206] }), new RangeRequestsPlugin()],
       }),
     },
   ],
-})
+});
 
-serwist.addEventListeners()
+serwist.addEventListeners();
 ```
 
 **Note:** `RangeRequestsPlugin` may be in `serwist` or `serwist/legacy`; verify import. Chrome Workbox docs require it for cached audio playback.
@@ -230,13 +241,13 @@ serwist.addEventListeners()
 
 ## Don't Hand-Roll
 
-| Problem | Don't Build | Use Instead | Why |
-|---------|-------------|-------------|-----|
-| API routes | Custom Express-like layer | Next.js Route Handlers | Built-in, Web APIs, cookies/headers support |
-| PWA / offline | Custom service worker | @serwist/next + serwist | Precaching, runtime cache, Workbox patterns |
-| Audio offline | Manual cache logic | Precache + RangeRequestsPlugin | Browsers use range requests; 206 responses; complex edge cases |
-| Auth middleware | Custom middleware chain | getAuthUser() helper in each route | Next.js has no Express-style middleware for Route Handlers |
-| Deployment bundle | Manual node_modules copy | output: 'standalone' | Minimal deps, single server.js |
+| Problem           | Don't Build               | Use Instead                        | Why                                                            |
+| ----------------- | ------------------------- | ---------------------------------- | -------------------------------------------------------------- |
+| API routes        | Custom Express-like layer | Next.js Route Handlers             | Built-in, Web APIs, cookies/headers support                    |
+| PWA / offline     | Custom service worker     | @serwist/next + serwist            | Precaching, runtime cache, Workbox patterns                    |
+| Audio offline     | Manual cache logic        | Precache + RangeRequestsPlugin     | Browsers use range requests; 206 responses; complex edge cases |
+| Auth middleware   | Custom middleware chain   | getAuthUser() helper in each route | Next.js has no Express-style middleware for Route Handlers     |
+| Deployment bundle | Manual node_modules copy  | output: 'standalone'               | Minimal deps, single server.js                                 |
 
 **Key insight:** PWA audio caching has subtle failure modes (range requests, 206, Safari); use Serwist/Workbox patterns, don't hand-roll.
 
@@ -268,7 +279,7 @@ serwist.addEventListeners()
 **What goes wrong:** .next/standalone doesn't include public/ or .next/static by default.
 **Why it happens:** Standalone is minimal; static assets are separate.
 **How to avoid:** Copy `public` and `.next/static` into standalone folder before deploy. Next.js docs describe the layout.
-**Warning signs:** 404 for /audio/*, /icons/*, or JS chunks.
+**Warning signs:** 404 for /audio/_, /icons/_, or JS chunks.
 
 ### Pitfall 5: React Router imports break
 
@@ -283,12 +294,12 @@ serwist.addEventListeners()
 
 ```typescript
 // app/api/auth/logout/route.ts
-import { cookies } from 'next/headers'
+import { cookies } from 'next/headers';
 
 export async function POST() {
-  const cookieStore = await cookies()
-  cookieStore.delete('token')
-  return new Response(null, { status: 204 })
+  const cookieStore = await cookies();
+  cookieStore.delete('token');
+  return new Response(null, { status: 204 });
 }
 ```
 
@@ -296,17 +307,20 @@ export async function POST() {
 
 ```typescript
 // app/api/progress/route.ts, GET
-import { NextRequest } from 'next/server'
-import { getAuthUser } from '@/lib/auth'
-import { db } from '@/lib/db'
+import { NextRequest } from 'next/server';
+import { getAuthUser } from '@/lib/auth';
+import { db } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
-  const user = await getAuthUser()
-  if (!user) return Response.json({ error: 'Not authenticated' }, { status: 401 })
-  const planId = request.nextUrl.searchParams.get('plan_id') || 'default'
-  const rows = db.prepare('SELECT plan_id, day_id, completed_at FROM progress_completions WHERE user_id = ? AND plan_id = ?')
-    .all(user.id, planId)
-  return Response.json({ completions: rows })
+  const user = await getAuthUser();
+  if (!user) return Response.json({ error: 'Not authenticated' }, { status: 401 });
+  const planId = request.nextUrl.searchParams.get('plan_id') || 'default';
+  const rows = db
+    .prepare(
+      'SELECT plan_id, day_id, completed_at FROM progress_completions WHERE user_id = ? AND plan_id = ?'
+    )
+    .all(user.id, planId);
+  return Response.json({ completions: rows });
 }
 ```
 
@@ -337,15 +351,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ## State of the Art
 
-| Old Approach | Current Approach | When Changed | Impact |
-|--------------|------------------|--------------|--------|
-| Pages Router | App Router | Next 13+ | Folder routing, Server Components, Route Handlers |
-| getServerSideProps | Async Server Components / fetch | Next 13+ | Data in components |
-| Express API routes | Route Handlers | Next 13.2+ | Web Request/Response API |
-| next-pwa (deprecated) | @serwist/next | 2024+ | Serwist = Workbox fork; maintained |
-| Vite build | next build | N/A | Different output; use standalone |
+| Old Approach          | Current Approach                | When Changed | Impact                                            |
+| --------------------- | ------------------------------- | ------------ | ------------------------------------------------- |
+| Pages Router          | App Router                      | Next 13+     | Folder routing, Server Components, Route Handlers |
+| getServerSideProps    | Async Server Components / fetch | Next 13+     | Data in components                                |
+| Express API routes    | Route Handlers                  | Next 13.2+   | Web Request/Response API                          |
+| next-pwa (deprecated) | @serwist/next                   | 2024+        | Serwist = Workbox fork; maintained                |
+| Vite build            | next build                      | N/A          | Different output; use standalone                  |
 
 **Deprecated/outdated:**
+
 - next-pwa (wakeup0706): Unmaintained; @ducanh2912/next-pwa recommends @serwist/next
 - Pages Router for new apps: Still supported but App Router recommended
 
@@ -365,21 +380,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ### Test Framework
 
-| Property | Value |
-|----------|-------|
-| Framework | Vitest 4.x (unit), Playwright 1.58 (E2E) |
-| Config file | vitest in next.config or vitest.config.ts; playwright.config.ts |
-| Quick run command | `npm run test:run` |
-| Full suite command | `npm run test:run && npm run test:e2e` |
+| Property           | Value                                                           |
+| ------------------ | --------------------------------------------------------------- |
+| Framework          | Vitest 4.x (unit), Playwright 1.58 (E2E)                        |
+| Config file        | vitest in next.config or vitest.config.ts; playwright.config.ts |
+| Quick run command  | `npm run test:run`                                              |
+| Full suite command | `npm run test:run && npm run test:e2e`                          |
 
 ### Phase Requirements → Test Map
 
-| Req | Behavior | Test Type | Automated Command | File Exists? |
-|-----|----------|-----------|-------------------|--------------|
-| API migration | Auth, progress, user routes work | E2E | `npm run test:e2e` | ✅ e2e/login.spec.ts, session-flow.spec.ts |
-| PWA | Offline, audio precache | Manual | — | Manual validation |
-| Deploy | Build succeeds, standalone output | CI | `npm run build` | ✅ .github/workflows/deploy.yml |
-| Parity | All functionality | E2E | `npm run test:e2e` | ✅ |
+| Req           | Behavior                          | Test Type | Automated Command  | File Exists?                               |
+| ------------- | --------------------------------- | --------- | ------------------ | ------------------------------------------ |
+| API migration | Auth, progress, user routes work  | E2E       | `npm run test:e2e` | ✅ e2e/login.spec.ts, session-flow.spec.ts |
+| PWA           | Offline, audio precache           | Manual    | —                  | Manual validation                          |
+| Deploy        | Build succeeds, standalone output | CI        | `npm run build`    | ✅ .github/workflows/deploy.yml            |
+| Parity        | All functionality                 | E2E       | `npm run test:e2e` | ✅                                         |
 
 ### Sampling Rate
 
@@ -413,6 +428,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ## Metadata
 
 **Confidence breakdown:**
+
 - Standard stack: HIGH — Next.js, Serwist, better-sqlite3 verified
 - Architecture: HIGH — Route Handlers, App Router patterns from official docs
 - Pitfalls: HIGH — Documented from Workbox, Next.js, deployment experience

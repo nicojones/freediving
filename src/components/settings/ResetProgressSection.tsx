@@ -1,5 +1,5 @@
 interface ResetProgressSectionProps {
-  onRequestReset: () => void
+  onRequestReset: () => void;
 }
 
 export function ResetProgressSection({ onRequestReset }: ResetProgressSectionProps) {
@@ -23,5 +23,5 @@ export function ResetProgressSection({ onRequestReset }: ResetProgressSectionPro
         Reset progress
       </button>
     </div>
-  )
+  );
 }

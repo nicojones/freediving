@@ -51,13 +51,14 @@ User can lie down, close their eyes, and complete a breathhold session guided en
 
 ## Key Decisions
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| PWA over native | Single codebase, installable, works on phone + browser | — Pending |
-| PWA + backend | Fetch/store data server-side; cross-device progress | — Pending |
-| Pre-defined users | Small user set; username/password, no sign-up flow | — Pending |
-| JSON for plans | Admin uploads/modifies, no in-app editor | — Pending |
-| SQLite on server | Progress and auth; survives restart, syncs across devices | — Pending |
+| Decision          | Rationale                                                 | Outcome   |
+| ----------------- | --------------------------------------------------------- | --------- |
+| PWA over native   | Single codebase, installable, works on phone + browser    | — Pending |
+| PWA + backend     | Fetch/store data server-side; cross-device progress       | — Pending |
+| Pre-defined users | Small user set; username/password, no sign-up flow        | — Pending |
+| JSON for plans    | Admin uploads/modifies, no in-app editor                  | — Pending |
+| SQLite on server  | Progress and auth; survives restart, syncs across devices | — Pending |
 
 ---
-*Last updated: 2025-03-19 after initialization*
+
+_Last updated: 2025-03-19 after initialization_

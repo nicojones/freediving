@@ -1,57 +1,50 @@
 # Phase 7: Day IDs + Routing — Executable Plan
 
 ---
+
 phase: 07-day-ids-routing
 plans:
-  - id: "01"
-    tasks: 5
-    files: 12
-    depends_on: [06-pwa-offline]
-type: execute
-wave: 1
-files_modified:
-  - src/types/plan.ts
-  - src/data/default-plan.json
-  - src/services/planService.ts
-  - server/schema.sql
-  - server/routes/progress.js
-  - src/services/progressService.ts
-  - src/services/offlineQueue.ts
-  - src/utils/completions.ts
-  - src/contexts/TrainingContext.tsx
-  - src/App.tsx
-  - src/pages/Dashboard.tsx
-autonomous: false
-requirements: []
-user_setup: []
-must_haves:
-  truths:
-    - "Every day in the plan has a stable id (8 hex chars, UUID first block)"
-    - "Each day has day (ordinal) and optional group for display"
-    - "Completions use day_id instead of day_index"
-    - "Viewing a day puts its id in the URL (/day/:dayId); refresh preserves view"
-  artifacts:
-    - path: src/data/default-plan.json
-      provides: "Plan with id, day, group on each day"
-      contains: '"id"|"day"|"group"'
-    - path: src/types/plan.ts
-      provides: "PlanDay with id, day, group?"
-      contains: "id|day|group"
-    - path: src/services/planService.ts
-      provides: "getDayById, getDayIndexById"
-      contains: "getDayById|getDayIndexById"
-    - path: src/App.tsx
-      provides: "Route /day/:dayId"
-      contains: "/day/|dayId"
-  key_links:
-    - from: src/pages/Dashboard.tsx
-      to: src/App.tsx
-      via: "URL params for dayId"
-      pattern: "useParams|navigate.*day"
-    - from: src/services/progressService.ts
-      to: server/routes/progress.js
-      via: "POST /api/progress with day_id"
-      pattern: "day_id"
+
+- id: "01"
+  tasks: 5
+  files: 12
+  depends_on: [06-pwa-offline]
+  type: execute
+  wave: 1
+  files_modified:
+- src/types/plan.ts
+- src/data/default-plan.json
+- src/services/planService.ts
+- server/schema.sql
+- server/routes/progress.js
+- src/services/progressService.ts
+- src/services/offlineQueue.ts
+- src/utils/completions.ts
+- src/contexts/TrainingContext.tsx
+- src/App.tsx
+- src/pages/Dashboard.tsx
+  autonomous: false
+  requirements: []
+  user_setup: []
+  must_haves:
+  truths: - "Every day in the plan has a stable id (8 hex chars, UUID first block)" - "Each day has day (ordinal) and optional group for display" - "Completions use day_id instead of day_index" - "Viewing a day puts its id in the URL (/day/:dayId); refresh preserves view"
+  artifacts: - path: src/data/default-plan.json
+  provides: "Plan with id, day, group on each day"
+  contains: '"id"|"day"|"group"' - path: src/types/plan.ts
+  provides: "PlanDay with id, day, group?"
+  contains: "id|day|group" - path: src/services/planService.ts
+  provides: "getDayById, getDayIndexById"
+  contains: "getDayById|getDayIndexById" - path: src/App.tsx
+  provides: "Route /day/:dayId"
+  contains: "/day/|dayId"
+  key_links: - from: src/pages/Dashboard.tsx
+  to: src/App.tsx
+  via: "URL params for dayId"
+  pattern: "useParams|navigate.\*day" - from: src/services/progressService.ts
+  to: server/routes/progress.js
+  via: "POST /api/progress with day_id"
+  pattern: "day_id"
+
 ---
 
 ## Objective
@@ -73,6 +66,7 @@ Add stable day IDs to the plan schema, use them for completions and routing, and
 **Existing:** Phases 1–6 complete. Plan is array of days; completions use `day_index`; no day in URL. Backend: `progress_completions` has `day_index INTEGER`.
 
 **Design decisions (from 7-CONTEXT):**
+
 - Day ID: 8 hex chars (UUID first block), lowercase in URLs
 - Plan schema: `id`, `day` (ordinal 1..n), `group?` (e.g. warm-up, deep pool, endurance)
 - Completions: `day_id` instead of `day_index`
@@ -88,6 +82,7 @@ Add stable day IDs to the plan schema, use them for completions and routing, and
 **Files:** `src/types/plan.ts`, `src/data/default-plan.json`
 
 **Action:**
+
 1. Update `src/types/plan.ts`:
    - Add to `TrainingDay`: `id: string`, `day: number`, `group?: string`
    - Add to `RestDay`: `id: string`, `day: number`, `group?: string`
@@ -119,6 +114,7 @@ Add stable day IDs to the plan schema, use them for completions and routing, and
      ```
 
 **Verify:**
+
 ```bash
 # Generate IDs: uuidgen | tr '[:upper:]' '[:lower:]' | cut -d'-' -f1
 # Or in Node: crypto.randomUUID().slice(0, 8).toLowerCase()
@@ -134,6 +130,7 @@ Add stable day IDs to the plan schema, use them for completions and routing, and
 **Files:** `server/schema.sql`, `server/routes/progress.js`
 
 **Action:**
+
 1. Create migration or new schema:
    - Option A: New table `progress_completions_v2` with `day_id TEXT`; migrate later.
    - Option B: Alter table (SQLite limited). Simpler: drop and recreate for Phase 7 (fresh install).
@@ -156,6 +153,7 @@ Add stable day IDs to the plan schema, use them for completions and routing, and
    - Use `day_id` in INSERT and SELECT
 
 **Verify:**
+
 ```bash
 curl -b cookies.txt -X POST http://localhost:3001/api/progress \
   -H "Content-Type: application/json" \
@@ -173,12 +171,14 @@ curl -b cookies.txt "http://localhost:3001/api/progress?plan_id=default"
 **Files:** `src/services/planService.ts`
 
 **Action:**
+
 1. Add `getDayById(plan: Plan, dayId: string): PlanDay | null` — find day where `day.id === dayId` (case-insensitive match for URLs).
 2. Add `getDayIndexById(plan: Plan, dayId: string): number | null` — return index of day with given id, or null.
 3. Update `getCurrentDay` to work with completions that have `day_id` — use `getDayIndexById` to resolve last completed day from `day_id`, then compute next index. Or: keep `getCurrentDay(plan, completions)` but change `CompletionForPlan` to `{ day_id: string; completed_at: number }`; sort by completed_at; find last completed's index via `getDayIndexById`; then next index logic unchanged.
 4. Update `CompletionForPlan` type to `{ day_id: string; completed_at: number }` (or support both during transition; Phase 7 uses day_id only).
 
 **Verify:**
+
 ```typescript
 // getDayById(plan, 'a1b2c3d4') → day object or null
 // getDayIndexById(plan, 'a1b2c3d4') → 0 or correct index
@@ -194,6 +194,7 @@ curl -b cookies.txt "http://localhost:3001/api/progress?plan_id=default"
 **Files:** `src/services/progressService.ts`, `src/services/offlineQueue.ts`, `src/utils/completions.ts`, `src/contexts/TrainingContext.tsx`
 
 **Action:**
+
 1. `progressService.ts`:
    - `Completion`: change `day_index` to `day_id: string`
    - `recordCompletion(planId: string, dayId: string)` — POST body `{ plan_id, day_id }`
@@ -210,6 +211,7 @@ curl -b cookies.txt "http://localhost:3001/api/progress?plan_id=default"
    - All callers: obtain dayId from selected day (plan[selectedDayIndex].id)
 
 **Verify:**
+
 - recordCompletion called with dayId; POST has day_id
 - isDayCompleted(completions, dayId) works
 - Offline queue stores and flushes day_id
@@ -223,6 +225,7 @@ curl -b cookies.txt "http://localhost:3001/api/progress?plan_id=default"
 **Files:** `src/App.tsx`, `src/pages/Dashboard.tsx`
 
 **Action:**
+
 1. `App.tsx`:
    - Add `Route path="/day/:dayId" element={<Dashboard />}` — Dashboard handles both `/` and `/day/:dayId`. Or: Dashboard is the only component that needs dayId; both routes render it.
    - Ensure `/` and `/day/:dayId` both render Dashboard (or a wrapper). Dashboard reads `dayId` from URL when present.
@@ -236,6 +239,7 @@ curl -b cookies.txt "http://localhost:3001/api/progress?plan_id=default"
    - Ensure "Start Session" and session flow use the selected day's id for recordCompletion.
 
 **Verify:**
+
 ```bash
 npm run dev
 # 1. Open /. Select day 1. URL becomes /day/a1b2c3d4. Refresh → same day.
@@ -249,13 +253,13 @@ npm run dev
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| Day IDs in plan | default-plan.json has id, day, group on every day |
-| Groups | warm-up, deep pool, endurance present |
+| Success Criterion      | How to Verify                                              |
+| ---------------------- | ---------------------------------------------------------- |
+| Day IDs in plan        | default-plan.json has id, day, group on every day          |
+| Groups                 | warm-up, deep pool, endurance present                      |
 | Completions use day_id | POST/GET /api/progress use day_id; completions show day_id |
-| URL routing | /day/:dayId shows day; refresh keeps it |
-| Invalid dayId | Redirect to / |
+| URL routing            | /day/:dayId shows day; refresh keeps it                    |
+| Invalid dayId          | Redirect to /                                              |
 
 ---
 
@@ -271,6 +275,7 @@ npm run dev
 ## Output
 
 After completion:
+
 - `src/types/plan.ts` — id, day, group on PlanDay
 - `src/data/default-plan.json` — id, day, group, example groups
 - `src/services/planService.ts` — getDayById, getDayIndexById; getCurrentDay with day_id

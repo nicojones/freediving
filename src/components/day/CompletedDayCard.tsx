@@ -1,13 +1,13 @@
-import { memo } from 'react'
-import { pluralizeHolds } from '../../utils/phaseLabels'
+import { memo } from 'react';
+import { pluralizeHolds } from '../../utils/phaseLabels';
 
 interface CompletedDayCardProps {
-  dayIndex: number
-  dayId: string
-  duration: number
-  holdCount: number
-  isRestDay: boolean
-  onSelect: () => void
+  dayIndex: number;
+  dayId: string;
+  duration: number;
+  holdCount: number;
+  isRestDay: boolean;
+  onSelect: () => void;
 }
 
 export const CompletedDayCard = memo(function CompletedDayCard({
@@ -20,7 +20,7 @@ export const CompletedDayCard = memo(function CompletedDayCard({
 }: CompletedDayCardProps) {
   const subtitle = isRestDay
     ? 'Rest'
-    : `${duration}:00 Total • ${holdCount} ${pluralizeHolds(holdCount)}`
+    : `${duration}:00 Total • ${holdCount} ${pluralizeHolds(holdCount)}`;
 
   return (
     <button
@@ -39,9 +39,7 @@ export const CompletedDayCard = memo(function CompletedDayCard({
           </span>
         </div>
         <div>
-          <h3 className="font-headline font-bold text-on-surface">
-            Day {dayIndex + 1}
-          </h3>
+          <h3 className="font-headline font-bold text-on-surface">Day {dayIndex + 1}</h3>
           <p className="font-body text-xs text-on-surface-variant">{subtitle}</p>
         </div>
       </div>
@@ -49,5 +47,5 @@ export const CompletedDayCard = memo(function CompletedDayCard({
         Done
       </span>
     </button>
-  )
-})
+  );
+});

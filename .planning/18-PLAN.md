@@ -1,22 +1,20 @@
 # Phase 18: Dynamic Version Display & Semantic Release — Executable Plan
 
 ---
+
 phase: 18-dynamic-version-semantic-release
 plans:
-  - id: "01"
-    tasks: 4
-    depends_on: [17-test-controls]
-type: execute
-wave: 1
-autonomous: false
-requirements: []
-must_haves:
-  truths:
-    - "Login page shows version from package.json"
-    - "Push to main with fix: bumps patch"
-    - "Push to main with feat: bumps minor"
-    - "Push to main with chore: no version bump"
-    - "Major versions updated manually (BREAKING CHANGE or feat!:)"
+
+- id: "01"
+  tasks: 4
+  depends_on: [17-test-controls]
+  type: execute
+  wave: 1
+  autonomous: false
+  requirements: []
+  must_haves:
+  truths: - "Login page shows version from package.json" - "Push to main with fix: bumps patch" - "Push to main with feat: bumps minor" - "Push to main with chore: no version bump" - "Major versions updated manually (BREAKING CHANGE or feat!:)"
+
 ---
 
 ## Objective
@@ -26,6 +24,7 @@ Display app version dynamically from package.json on the login page. Automate ve
 **Purpose:** Single source of truth for version; no manual version edits; semantic versioning from commit messages.
 
 **Principles:**
+
 - Version read from package.json at build time
 - semantic-release analyzes commits and bumps version
 - fix: → patch, feat: → minor, chore: → no release, BREAKING CHANGE / feat!: → major
@@ -47,6 +46,7 @@ Display app version dynamically from package.json on the login page. Automate ve
 **Files:** `src/views/LoginPage.tsx`
 
 **Action:**
+
 1. Import version from package.json (e.g. `import { version } from '../../package.json'`)
 2. Replace hardcoded "2.0.4" with `{version}` in the footer
 3. Ensure Next.js can resolve the JSON import (works by default)
@@ -60,6 +60,7 @@ Display app version dynamically from package.json on the login page. Automate ve
 **Files:** `release.config.js` (new), `package.json`
 
 **Action:**
+
 1. Add semantic-release and @semantic-release/git as devDependencies
 2. Create release.config.js with conventional commits preset
 3. Configure @semantic-release/git to commit package.json and package-lock.json on release
@@ -74,6 +75,7 @@ Display app version dynamically from package.json on the login page. Automate ve
 **Files:** `.github/workflows/release.yml` (new)
 
 **Action:**
+
 1. Create workflow that runs on push to main
 2. Checkout with fetch-depth: 0 (full history for commit analysis)
 3. Run semantic-release with GITHUB_TOKEN
@@ -88,6 +90,7 @@ Display app version dynamically from package.json on the login page. Automate ve
 **Files:** `package.json`
 
 **Action:**
+
 1. Set initial version to current (e.g. 2.0.4) or leave at 0.0.0 for first semantic-release run
 2. Document that first release will establish version from commit history
 

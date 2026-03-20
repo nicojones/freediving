@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 interface ConfirmResetModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onConfirm: () => void | Promise<void>
-  title: string
-  message: React.ReactNode
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void | Promise<void>;
+  title: string;
+  message: React.ReactNode;
   /** Word user must type to confirm; defaults to 'reset' */
-  confirmWord?: string
+  confirmWord?: string;
 }
 
 export function ConfirmResetModal({
@@ -18,21 +18,27 @@ export function ConfirmResetModal({
   message,
   confirmWord = 'reset',
 }: ConfirmResetModalProps) {
-  const [confirmInput, setConfirmInput] = useState('')
+  const [confirmInput, setConfirmInput] = useState('');
 
   useEffect(() => {
-    if (isOpen) {setConfirmInput('')}
-  }, [isOpen])
+    if (isOpen) {
+      setConfirmInput('');
+    }
+  }, [isOpen]);
 
   const handleConfirm = async () => {
-    if (confirmInput.toLowerCase() !== confirmWord.toLowerCase()) {return}
-    onClose()
-    await onConfirm()
+    if (confirmInput.toLowerCase() !== confirmWord.toLowerCase()) {
+      return;
+    }
+    onClose();
+    await onConfirm();
+  };
+
+  const canConfirm = confirmInput.toLowerCase() === confirmWord.toLowerCase();
+
+  if (!isOpen) {
+    return null;
   }
-
-  const canConfirm = confirmInput.toLowerCase() === confirmWord.toLowerCase()
-
-  if (!isOpen) {return null}
 
   return (
     <div
@@ -48,9 +54,7 @@ export function ConfirmResetModal({
         >
           {title}
         </h2>
-        <p className="text-on-surface-variant font-body text-sm mb-4">
-          {message}
-        </p>
+        <p className="text-on-surface-variant font-body text-sm mb-4">{message}</p>
         <input
           type="text"
           data-testid="confirm-reset-input"
@@ -81,5 +85,5 @@ export function ConfirmResetModal({
         </div>
       </div>
     </div>
-  )
+  );
 }

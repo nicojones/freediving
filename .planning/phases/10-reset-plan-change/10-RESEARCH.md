@@ -47,13 +47,13 @@ Phase 10 adds: (1) Reset progress from settings with confirmation; (2) Multiple 
 
 ## Phase Requirements
 
-| ID | Description | Research Support |
-|----|-------------|------------------|
-| RESET-01 | User can reset progress from settings | Reset button; confirmation; backend DELETE; offlineQueue clearByPlanId |
-| PLAN-10-01 | Multiple plans in src/data; structure {id, name, description, days} | Migrate default-plan.json; import.meta.glob for loading |
-| PLAN-10-02 | Active plan stored per user in DB | user_active_plan table; GET/PUT /api/user/active-plan |
-| PLAN-10-03 | Plan selector dropdown in Settings | Dropdown from availablePlans; onChange → confirmation flow |
-| PLAN-10-04 | Plan-change warning before switching | Confirmation modal; Confirm = switch + reset; Cancel = revert |
+| ID         | Description                                                         | Research Support                                                       |
+| ---------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| RESET-01   | User can reset progress from settings                               | Reset button; confirmation; backend DELETE; offlineQueue clearByPlanId |
+| PLAN-10-01 | Multiple plans in src/data; structure {id, name, description, days} | Migrate default-plan.json; import.meta.glob for loading                |
+| PLAN-10-02 | Active plan stored per user in DB                                   | user_active_plan table; GET/PUT /api/user/active-plan                  |
+| PLAN-10-03 | Plan selector dropdown in Settings                                  | Dropdown from availablePlans; onChange → confirmation flow             |
+| PLAN-10-04 | Plan-change warning before switching                                | Confirmation modal; Confirm = switch + reset; Cancel = revert          |
 
 </phase_requirements>
 
@@ -63,18 +63,18 @@ Phase 10 adds: (1) Reset progress from settings with confirmation; (2) Multiple 
 
 ### Core
 
-| Library | Version | Purpose | Why Standard |
-|---------|---------|---------|--------------|
-| React | 19.x | UI | Existing |
-| idb | ^8.0 | IndexedDB for offline queue | Existing; add clearByPlanId |
-| Express | ^4.21 | Backend API | Existing |
-| better-sqlite3 | ^11.6 | SQLite | Existing |
+| Library        | Version | Purpose                     | Why Standard                |
+| -------------- | ------- | --------------------------- | --------------------------- |
+| React          | 19.x    | UI                          | Existing                    |
+| idb            | ^8.0    | IndexedDB for offline queue | Existing; add clearByPlanId |
+| Express        | ^4.21   | Backend API                 | Existing                    |
+| better-sqlite3 | ^11.6   | SQLite                      | Existing                    |
 
 ### Supporting
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| Vite import.meta.glob | Vite 8 | Load multiple plan JSONs at build time | planService getAvailablePlans |
+| Library               | Version | Purpose                                | When to Use                   |
+| --------------------- | ------- | -------------------------------------- | ----------------------------- |
+| Vite import.meta.glob | Vite 8  | Load multiple plan JSONs at build time | planService getAvailablePlans |
 
 **No new packages required.** Use existing stack.
 
@@ -113,17 +113,17 @@ src/
 const planModules = import.meta.glob<{ default: PlanWithMeta }>('../data/*-plan.json', {
   eager: true,
   import: 'default',
-})
+});
 
 export function getAvailablePlans(): PlanWithMeta[] {
-  return Object.values(planModules).filter(Boolean) as PlanWithMeta[]
+  return Object.values(planModules).filter(Boolean) as PlanWithMeta[];
 }
 
 export function loadPlanById(planId: string): PlanWithMeta | { error: string } {
-  const plans = getAvailablePlans()
-  const plan = plans.find((p) => p.id === planId)
-  if (!plan) return { error: `Plan not found: ${planId}` }
-  return plan
+  const plans = getAvailablePlans();
+  const plan = plans.find((p) => p.id === planId);
+  if (!plan) return { error: `Plan not found: ${planId}` };
+  return plan;
 }
 ```
 
@@ -160,13 +160,13 @@ export function loadPlanById(planId: string): PlanWithMeta | { error: string } {
 ```typescript
 // Source: idb API, MDN IDBObjectStore
 export async function clearByPlanId(planId: string): Promise<number> {
-  const db = await getDB()
-  const items = (await db.getAll(STORE_NAME)) as PendingCompletion[]
-  const toDelete = items.filter((i) => i.plan_id === planId)
+  const db = await getDB();
+  const items = (await db.getAll(STORE_NAME)) as PendingCompletion[];
+  const toDelete = items.filter((i) => i.plan_id === planId);
   for (const item of toDelete) {
-    if (item.id != null) await db.delete(STORE_NAME, item.id)
+    if (item.id != null) await db.delete(STORE_NAME, item.id);
   }
-  return toDelete.length
+  return toDelete.length;
 }
 ```
 
@@ -175,6 +175,7 @@ export async function clearByPlanId(planId: string): Promise<number> {
 **What:** Simple confirmation before destructive actions.  
 **When:** Reset progress; plan change.  
 **Options:**
+
 - `window.confirm` — zero code, works immediately; blocks UI; not customizable.
 - Custom modal — matches app style; requires `ConfirmModal` component.
 
@@ -190,11 +191,11 @@ export async function clearByPlanId(planId: string): Promise<number> {
 
 ## Don't Hand-Roll
 
-| Problem | Don't Build | Use Instead | Why |
-|---------|-------------|-------------|-----|
-| IndexedDB delete by plan_id | Raw cursor loop | getAll + filter + delete by id | idb already used; no index needed for small queue |
-| Confirmation dialogs | Full modal library | window.confirm or minimal ~30-line modal | No Radix/Headless UI in project; keep simple |
-| Plan loading from API | fetch from server | import.meta.glob | Plans are static; CONTEXT says plans in src/data |
+| Problem                     | Don't Build        | Use Instead                              | Why                                               |
+| --------------------------- | ------------------ | ---------------------------------------- | ------------------------------------------------- |
+| IndexedDB delete by plan_id | Raw cursor loop    | getAll + filter + delete by id           | idb already used; no index needed for small queue |
+| Confirmation dialogs        | Full modal library | window.confirm or minimal ~30-line modal | No Radix/Headless UI in project; keep simple      |
+| Plan loading from API       | fetch from server  | import.meta.glob                         | Plans are static; CONTEXT says plans in src/data  |
 
 **Key insight:** Plans are bundled at build time. Backend does not serve plan files; it only stores active plan and progress.
 
@@ -265,12 +266,15 @@ CREATE TABLE IF NOT EXISTS user_active_plan (
 ```javascript
 // DELETE /api/progress?plan_id=default
 progressRouter.delete('/', async (req, res) => {
-  const planId = req.query.plan_id
-  if (!planId) return res.status(400).json({ error: 'plan_id required' })
-  const userId = req.user.id
-  db.prepare('DELETE FROM progress_completions WHERE user_id = ? AND plan_id = ?').run(userId, planId)
-  res.json({ ok: true })
-})
+  const planId = req.query.plan_id;
+  if (!planId) return res.status(400).json({ error: 'plan_id required' });
+  const userId = req.user.id;
+  db.prepare('DELETE FROM progress_completions WHERE user_id = ? AND plan_id = ?').run(
+    userId,
+    planId
+  );
+  res.json({ ok: true });
+});
 ```
 
 ### PlanService getAvailablePlans
@@ -279,10 +283,10 @@ progressRouter.delete('/', async (req, res) => {
 const planModules = import.meta.glob<{ default: PlanWithMeta }>('../data/*-plan.json', {
   eager: true,
   import: 'default',
-})
+});
 
 export function getAvailablePlans(): PlanWithMeta[] {
-  return Object.values(planModules).filter(Boolean) as PlanWithMeta[]
+  return Object.values(planModules).filter(Boolean) as PlanWithMeta[];
 }
 ```
 
@@ -290,12 +294,13 @@ export function getAvailablePlans(): PlanWithMeta[] {
 
 ## State of the Art
 
-| Old Approach | Current Approach | When Changed | Impact |
-|--------------|------------------|--------------|--------|
-| Single plan file | Plan manifest + glob | Phase 10 | Multiple plans in src/data |
+| Old Approach                | Current Approach           | When Changed | Impact                         |
+| --------------------------- | -------------------------- | ------------ | ------------------------------ |
+| Single plan file            | Plan manifest + glob       | Phase 10     | Multiple plans in src/data     |
 | Plan ID in completions only | plan_id + user_active_plan | Phase 7 → 10 | Active plan persisted per user |
 
 **Deprecated/outdated:**
+
 - None for this phase.
 
 ---
@@ -318,22 +323,22 @@ export function getAvailablePlans(): PlanWithMeta[] {
 
 ### Test Framework
 
-| Property | Value |
-|----------|-------|
-| Framework | None installed |
-| Config file | N/A |
-| Quick run command | N/A |
-| Full suite command | N/A |
+| Property           | Value          |
+| ------------------ | -------------- |
+| Framework          | None installed |
+| Config file        | N/A            |
+| Quick run command  | N/A            |
+| Full suite command | N/A            |
 
 ### Phase Requirements → Test Map
 
-| Req ID | Behavior | Test Type | Automated Command | File Exists? |
-|--------|----------|-----------|-------------------|--------------|
-| RESET-01 | Reset clears DB + queue | manual | N/A | — |
-| PLAN-10-01 | Plans load with correct structure | manual | N/A | — |
-| PLAN-10-02 | Active plan stored/retrieved | manual | N/A | — |
-| PLAN-10-03 | Dropdown shows plans | manual | N/A | — |
-| PLAN-10-04 | Plan change shows warning | manual | N/A | — |
+| Req ID     | Behavior                          | Test Type | Automated Command | File Exists? |
+| ---------- | --------------------------------- | --------- | ----------------- | ------------ |
+| RESET-01   | Reset clears DB + queue           | manual    | N/A               | —            |
+| PLAN-10-01 | Plans load with correct structure | manual    | N/A               | —            |
+| PLAN-10-02 | Active plan stored/retrieved      | manual    | N/A               | —            |
+| PLAN-10-03 | Dropdown shows plans              | manual    | N/A               | —            |
+| PLAN-10-04 | Plan change shows warning         | manual    | N/A               | —            |
 
 ### Sampling Rate
 
@@ -372,6 +377,7 @@ export function getAvailablePlans(): PlanWithMeta[] {
 ## Metadata
 
 **Confidence breakdown:**
+
 - Standard stack: HIGH — no new packages; existing stack sufficient
 - Architecture: HIGH — patterns from CONTEXT and codebase
 - Pitfalls: HIGH — from codebase analysis and CONTEXT

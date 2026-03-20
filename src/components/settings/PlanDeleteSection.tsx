@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import type { PlanWithMeta } from '@/src/types/plan'
-import { BUNDLED_PLAN_IDS } from '@/src/constants/app'
-import { ConfirmResetModal } from './ConfirmResetModal'
+import { useState } from 'react';
+import type { PlanWithMeta } from '@/src/types/plan';
+import { BUNDLED_PLAN_IDS } from '@/src/constants/app';
+import { ConfirmResetModal } from './ConfirmResetModal';
 
 interface PlanDeleteSectionProps {
-  plans: PlanWithMeta[]
-  activePlanId: string | null
-  currentUserId: number | undefined
-  onPlanDeleted: () => void
+  plans: PlanWithMeta[];
+  activePlanId: string | null;
+  currentUserId: number | undefined;
+  onPlanDeleted: () => void;
 }
 
 export function PlanDeleteSection({
@@ -18,9 +18,9 @@ export function PlanDeleteSection({
   currentUserId,
   onPlanDeleted,
 }: PlanDeleteSectionProps) {
-  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null)
+  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Deletable: DB plans (not bundled) that are not active. Include plans with created_by null (pre-migration).
   const deletablePlans = plans.filter(
@@ -28,43 +28,45 @@ export function PlanDeleteSection({
       !BUNDLED_PLAN_IDS.includes(p.id) &&
       p.id !== activePlanId &&
       (p.created_by === currentUserId || p.created_by === undefined)
-  )
+  );
 
   if (deletablePlans.length === 0) {
-    return null
+    return null;
   }
 
   const handleDelete = async (planId: string) => {
-    setError(null)
-    setDeletingPlanId(planId)
+    setError(null);
+    setDeletingPlanId(planId);
     try {
       const res = await fetch(`/api/plans/${encodeURIComponent(planId)}`, {
         method: 'DELETE',
         credentials: 'include',
-      })
-      const data = (await res.json().catch(() => ({}))) as { error?: string }
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
-        setError(data.error ?? `Failed to delete (${res.status})`)
-        return
+        setError(data.error ?? `Failed to delete (${res.status})`);
+        return;
       }
-      setDeletingPlanId(null)
-      onPlanDeleted()
+      setDeletingPlanId(null);
+      onPlanDeleted();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Network error')
+      setError(err instanceof Error ? err.message : 'Network error');
     } finally {
-      setDeletingPlanId(null)
+      setDeletingPlanId(null);
     }
-  }
+  };
 
   const handleRequestDelete = (planId: string, planName: string) => {
-    setPendingDelete({ id: planId, name: planName })
-  }
+    setPendingDelete({ id: planId, name: planName });
+  };
 
   const handleConfirmDelete = async () => {
-    if (!pendingDelete) {return}
-    await handleDelete(pendingDelete.id)
-    setPendingDelete(null)
-  }
+    if (!pendingDelete) {
+      return;
+    }
+    await handleDelete(pendingDelete.id);
+    setPendingDelete(null);
+  };
 
   return (
     <div className="bg-surface-container-low rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/30">
@@ -122,7 +124,9 @@ export function PlanDeleteSection({
         message={
           pendingDelete ? (
             <>
-              This will permanently delete <strong className="text-on-surface">{pendingDelete.name}</strong>. Type <strong className="text-on-surface">delete</strong> to confirm.
+              This will permanently delete{' '}
+              <strong className="text-on-surface">{pendingDelete.name}</strong>. Type{' '}
+              <strong className="text-on-surface">delete</strong> to confirm.
             </>
           ) : (
             ''
@@ -131,5 +135,5 @@ export function PlanDeleteSection({
         confirmWord="delete"
       />
     </div>
-  )
+  );
 }

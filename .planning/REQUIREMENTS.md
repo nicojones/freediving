@@ -57,45 +57,47 @@ Deferred to future release. Tracked but not in current roadmap.
 
 Explicitly excluded. Documented to prevent scope creep.
 
-| Feature | Reason |
-|---------|--------|
-| User registration | Pre-defined users only; admin configures credentials |
-| Records / best times | Progress is "what's next", not performance metrics |
-| In-app plan editor | Plans come from JSON |
-| Audio generation | User provides audio files |
-| Social features | Not core to training |
-| Paywall on core timer | Free to use |
+| Feature               | Reason                                               |
+| --------------------- | ---------------------------------------------------- |
+| User registration     | Pre-defined users only; admin configures credentials |
+| Records / best times  | Progress is "what's next", not performance metrics   |
+| In-app plan editor    | Plans come from JSON                                 |
+| Audio generation      | User provides audio files                            |
+| Social features       | Not core to training                                 |
+| Paywall on core timer | Free to use                                          |
 
 ## Traceability
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| PROF-01 | Phase 2 | Complete |
-| PROF-02 | Phase 2 | Complete |
-| PLAN-01 | Phase 1 | Complete |
-| PLAN-02 | Phase 5 | Complete |
-| PLAN-03 | Phase 5 | Complete |
-| PLAN-04 | Phase 5 | Complete |
-| SESS-01 | Phase 4 | Complete |
-| SESS-02 | Phase 4 | Complete |
-| SESS-03 | Phase 4 | Complete |
-| SESS-04 | Phase 4 | Complete |
-| SESS-05 | Phase 4 | Complete |
-| SESS-06 | Phase 3 | Complete |
-| SESS-07 | Phase 2 | Complete |
-| PWA-01 | Phase 6 | Pending |
-| PWA-02 | Phase 6 | Pending |
-| PWA-03 | Phase 6 | Pending |
-| PWA-04 | Phase 6 | Pending |
-| ADMN-01 | Phase 1 | Complete |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| PROF-01     | Phase 2 | Complete |
+| PROF-02     | Phase 2 | Complete |
+| PLAN-01     | Phase 1 | Complete |
+| PLAN-02     | Phase 5 | Complete |
+| PLAN-03     | Phase 5 | Complete |
+| PLAN-04     | Phase 5 | Complete |
+| SESS-01     | Phase 4 | Complete |
+| SESS-02     | Phase 4 | Complete |
+| SESS-03     | Phase 4 | Complete |
+| SESS-04     | Phase 4 | Complete |
+| SESS-05     | Phase 4 | Complete |
+| SESS-06     | Phase 3 | Complete |
+| SESS-07     | Phase 2 | Complete |
+| PWA-01      | Phase 6 | Pending  |
+| PWA-02      | Phase 6 | Pending  |
+| PWA-03      | Phase 6 | Pending  |
+| PWA-04      | Phase 6 | Pending  |
+| ADMN-01     | Phase 1 | Complete |
 
 **Coverage:**
+
 - v1 requirements: 17 total
 - Mapped to phases: 17
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2025-03-19*
-*Last updated: 2025-03-19 — PWA + backend, username/password auth*
+
+_Requirements defined: 2025-03-19_
+_Last updated: 2025-03-19 — PWA + backend, username/password auth_

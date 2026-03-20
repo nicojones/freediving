@@ -1,8 +1,8 @@
-import { memo } from 'react'
+import { memo } from 'react';
 
 interface BackButtonProps {
-  onClick: () => void
-  'aria-label'?: string
+  onClick: () => void;
+  'aria-label'?: string;
 }
 
 export const BackButton = memo(function BackButton({
@@ -17,9 +17,7 @@ export const BackButton = memo(function BackButton({
       aria-label={ariaLabel}
     >
       <span className="material-symbols-outlined text-xl">arrow_back</span>
-      <span className="font-label text-sm font-semibold uppercase tracking-wider">
-        Back
-      </span>
+      <span className="font-label text-sm font-semibold uppercase tracking-wider">Back</span>
     </button>
-  )
-})
+  );
+});

@@ -1,44 +1,38 @@
-'use client'
+'use client';
 
-import { useRouter, usePathname } from 'next/navigation'
-import type { ChildrenNode } from '@/src/types/common'
-import { FishIcon } from '@/src/components/ui/FishIcon'
-import { Loader } from '@/src/components/ui/Loader'
-import { LoginPage } from '@/src/views/LoginPage'
-import { TopAppBar } from '@/src/components/layout/TopAppBar'
-import { TrainingProvider } from '@/src/contexts/TrainingContext'
-import { useTraining } from '@/src/hooks/useTraining'
-import { isNil } from '@/src/utils/lang'
+import { useRouter, usePathname } from 'next/navigation';
+import type { ChildrenNode } from '@/src/types/common';
+import { FishIcon } from '@/src/components/ui/FishIcon';
+import { Loader } from '@/src/components/ui/Loader';
+import { LoginPage } from '@/src/views/LoginPage';
+import { TopAppBar } from '@/src/components/layout/TopAppBar';
+import { TrainingProvider } from '@/src/contexts/TrainingContext';
+import { useTraining } from '@/src/hooks/useTraining';
+import { isNil } from '@/src/utils/lang';
 
 function SessionRouteGuard({ children }: ChildrenNode) {
-  const { sessionStatus } = useTraining()
-  const router = useRouter()
+  const { sessionStatus } = useTraining();
+  const router = useRouter();
   if (sessionStatus !== 'running' && sessionStatus !== 'awaitingCompletionConfirm') {
-    router.replace('/')
-    return null
+    router.replace('/');
+    return null;
   }
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 function SessionCompleteRouteGuard({ children }: ChildrenNode) {
-  const { sessionStatus } = useTraining()
-  const router = useRouter()
+  const { sessionStatus } = useTraining();
+  const router = useRouter();
   if (sessionStatus !== 'complete') {
-    router.replace('/')
-    return null
+    router.replace('/');
+    return null;
   }
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 function AppContent({ children }: ChildrenNode) {
-  const {
-    user,
-    refreshUser,
-    plan,
-    error,
-    handleLogout,
-  } = useTraining()
-  const pathname = usePathname()
+  const { user, refreshUser, plan, error, handleLogout } = useTraining();
+  const pathname = usePathname();
 
   if (user === undefined) {
     return (
@@ -51,11 +45,11 @@ function AppContent({ children }: ChildrenNode) {
           <Loader />
         </div>
       </main>
-    )
+    );
   }
 
   if (!user) {
-    return <LoginPage onLoginSuccess={refreshUser} />
+    return <LoginPage onLoginSuccess={refreshUser} />;
   }
 
   if (error) {
@@ -64,15 +58,12 @@ function AppContent({ children }: ChildrenNode) {
         <TopAppBar variant="dashboard" />
         <div className="pt-8">
           <p className="text-error font-body mb-4">{error}</p>
-          <button
-            onClick={handleLogout}
-            className="text-primary font-label hover:underline"
-          >
+          <button onClick={handleLogout} className="text-primary font-label hover:underline">
             Sign out
           </button>
         </div>
       </main>
-    )
+    );
   }
 
   if (isNil(plan)) {
@@ -81,34 +72,23 @@ function AppContent({ children }: ChildrenNode) {
         <TopAppBar variant="dashboard" />
         <div className="pt-8">
           <Loader label="Loading plan…" className="mb-4" />
-          <button
-            onClick={handleLogout}
-            className="text-primary font-label hover:underline"
-          >
+          <button onClick={handleLogout} className="text-primary font-label hover:underline">
             Sign out
           </button>
         </div>
       </main>
-    )
+    );
   }
 
   if (pathname?.startsWith('/session/complete')) {
-    return (
-      <SessionCompleteRouteGuard>
-        {children}
-      </SessionCompleteRouteGuard>
-    )
+    return <SessionCompleteRouteGuard>{children}</SessionCompleteRouteGuard>;
   }
 
   if (pathname === '/session') {
-    return (
-      <SessionRouteGuard>
-        {children}
-      </SessionRouteGuard>
-    )
+    return <SessionRouteGuard>{children}</SessionRouteGuard>;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 export function AppShell({ children }: ChildrenNode) {
@@ -116,5 +96,5 @@ export function AppShell({ children }: ChildrenNode) {
     <TrainingProvider>
       <AppContent>{children}</AppContent>
     </TrainingProvider>
-  )
+  );
 }

@@ -53,13 +53,13 @@
 
 ## Traceability
 
-| Decision | Outcome |
-|----------|---------|
-| Day ID format | 8 hex chars (UUID first block), lowercase in URLs |
-| Plan schema | `id`, `day` (ordinal), `group` (optional) on each day |
-| Example groups | warm-up, deep pool, endurance |
-| URL | `/day/:dayId` for day view; refresh preserves view |
-| Completions | `day_id` instead of `day_index` |
+| Decision       | Outcome                                               |
+| -------------- | ----------------------------------------------------- |
+| Day ID format  | 8 hex chars (UUID first block), lowercase in URLs     |
+| Plan schema    | `id`, `day` (ordinal), `group` (optional) on each day |
+| Example groups | warm-up, deep pool, endurance                         |
+| URL            | `/day/:dayId` for day view; refresh preserves view    |
+| Completions    | `day_id` instead of `day_index`                       |
 
 ---
 
@@ -76,4 +76,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 7*
+_Context captured from /gsd-discuss-phase 7_

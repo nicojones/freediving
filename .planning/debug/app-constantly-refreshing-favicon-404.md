@@ -1,6 +1,6 @@
 ---
 status: awaiting_human_verify
-trigger: "Investigate issue: app-constantly-refreshing-favicon-404"
+trigger: 'Investigate issue: app-constantly-refreshing-favicon-404'
 created: 2026-03-20T00:00:00Z
 updated: 2026-03-20T00:00:00Z
 ---

@@ -1,24 +1,23 @@
 # Phase 19: Create Plan in Settings — Executable Plan
 
 ---
+
 phase: 19-create-plan-settings
 plans:
-  - id: "01"
-    tasks: 5
-    depends_on: [18-dynamic-version-semantic-release]
-  - id: "02"
-    tasks: 4
-    depends_on: [19-plan-01]
-type: execute
-wave: 1
-autonomous: false
-requirements: []
-must_haves:
-  truths:
-    - "User can upload JSON file in Settings; validated against PlanWithMeta schema"
-    - "Valid plans stored (DB preferred)"
-    - "Invalid JSON shows clear validation errors"
-    - "(Optional) AI mode: dictate → Gemini → valid JSON → auto-fill → user confirms"
+
+- id: "01"
+  tasks: 5
+  depends_on: [18-dynamic-version-semantic-release]
+- id: "02"
+  tasks: 4
+  depends_on: [19-plan-01]
+  type: execute
+  wave: 1
+  autonomous: false
+  requirements: []
+  must_haves:
+  truths: - "User can upload JSON file in Settings; validated against PlanWithMeta schema" - "Valid plans stored (DB preferred)" - "Invalid JSON shows clear validation errors" - "(Optional) AI mode: dictate → Gemini → valid JSON → auto-fill → user confirms"
+
 ---
 
 ## Objective
@@ -31,6 +30,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Storage decision:** DB is cleaner (per-user or global plans, no static file deployment). Public/static: simpler, but requires deploy to add plans. Document pros/cons; implement DB path.
 
 **Principles:**
+
 - PlanWithMeta schema is the single source of truth (see `src/types/plan.ts` lines 30–37)
 - Validation must be strict; invalid JSON never reaches storage
 - AI mode is optional; JSON upload path works standalone
@@ -55,6 +55,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `src/schemas/planSchema.ts` (or `planWithMeta.schema.json`)
 
 **Action:**
+
 1. Define JSON schema that validates PlanWithMeta: `id`, `name`, `description?`, `days` (array of PlanDay)
 2. PlanDay: TrainingDay | RestDay | null; TrainingDay: `id`, `day`, `group?`, `phases`, `type?`; RestDay: `id`, `day`, `group?`, `rest: true`; Phase: `type`, `duration`
 3. Use a validation library (e.g. Ajv, Zod) — choice is yours
@@ -69,6 +70,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `src/app/api/plans/route.ts` (or equivalent Next.js route)
 
 **Action:**
+
 1. Add POST endpoint that accepts `PlanWithMeta` JSON body
 2. Validate with schema from Task 1; return 400 + error messages if invalid
 3. Store plan in DB (new table or JSON column); generate id if needed, ensure uniqueness
@@ -83,6 +85,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `src/components/settings/CreatePlanSection.tsx` (new), `SettingsView.tsx`
 
 **Action:**
+
 1. Add "Create plan" section in Settings (below PlanSelectorSection or in a collapsible area)
 2. File input for JSON upload
 3. On file select: read file, parse JSON, run validation
@@ -98,6 +101,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `src/services/planService.ts`, API for listing plans
 
 **Action:**
+
 1. Add API endpoint to list plans (bundled + DB)
 2. Update `getAvailablePlans()` (or equivalent) to fetch from API when user is logged in, merging bundled + DB plans
 3. Ensure `loadPlanById` can resolve DB plans
@@ -111,6 +115,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `.planning/19-STORAGE.md` (new) or inline in plan
 
 **Action:**
+
 1. Document: DB vs public/static storage
 2. Pros: DB — no deploy for new plans, per-user possible, centralized. Public — simpler, no backend change, works offline for bundled
 3. Decision: DB for user-created plans; bundled plans remain in `src/data`
@@ -121,13 +126,14 @@ Add a feature in Settings to create new training plans. Two paths:
 
 ## Plan 02: AI Voice Mode (PRO)
 
-*If complex, split into 19b, 19c, etc.*
+_If complex, split into 19b, 19c, etc._
 
 ### Task 6: Server-Side Gemini Integration
 
 **Files:** `src/app/api/plans/transcribe/route.ts` (new), env for `GEMINI_API_KEY`
 
 **Action:**
+
 1. POST endpoint: accepts multipart/form-data with audio file
 2. Send audio + PlanWithMeta JSON schema + minimal example to Google Gemini (e.g. "Convert this speech to a valid PlanWithMeta JSON. Return only valid JSON.")
 3. Parse Gemini response; validate against schema
@@ -142,6 +148,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `src/components/settings/CreatePlanSection.tsx` (or `AIVoicePlanInput.tsx`)
 
 **Action:**
+
 1. Add "AI mode" or "PRO" toggle/button with microphone icon
 2. Use MediaRecorder (or similar) to record audio when user clicks
 3. Stop recording on second click or timeout
@@ -156,6 +163,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `CreatePlanSection.tsx`
 
 **Action:**
+
 1. When transcribe API returns valid JSON, auto-populate the JSON textarea/editor
 2. User can edit before submitting
 3. "OK" or "Save" button runs same validation + create flow as JSON upload
@@ -169,6 +177,7 @@ Add a feature in Settings to create new training plans. Two paths:
 **Files:** `CreatePlanSection.tsx`, transcribe API
 
 **Action:**
+
 1. Handle: network error, invalid audio, Gemini returning invalid JSON
 2. Show clear messages: "Could not transcribe. Try again or paste JSON manually."
 3. Ensure API key is server-side only; never expose in client

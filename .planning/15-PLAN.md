@@ -1,20 +1,20 @@
 # Phase 15: Refactor Code (Cleanup) — Executable Plan
 
 ---
+
 phase: 15-refactor-cleanup
 plans:
-  - id: "01"
-    tasks: 5
-    depends_on: [14-nextjs-migration]
-type: execute
-wave: 1
-autonomous: false
-requirements: []
-must_haves:
-  truths:
-    - "ESLint configured and passing (flat config)"
-    - "All if statements use curly braces"
-    - "No unused variables, functions, imports, or exports"
+
+- id: "01"
+  tasks: 5
+  depends_on: [14-nextjs-migration]
+  type: execute
+  wave: 1
+  autonomous: false
+  requirements: []
+  must_haves:
+  truths: - "ESLint configured and passing (flat config)" - "All if statements use curly braces" - "No unused variables, functions, imports, or exports"
+
 ---
 
 ## Objective
@@ -24,6 +24,7 @@ Third refactor pass: add ESLint, enforce style (curly braces for all `if`), remo
 **Purpose:** Reduce noise, improve maintainability, keep codebase lean.
 
 **Principles:**
+
 - ESLint flat config with strict rules.
 - All `if` statements use curly braces (no single-line `if (x) return`).
 - Zero unused code — variables, functions, imports, exports, types.
@@ -48,6 +49,7 @@ Third refactor pass: add ESLint, enforce style (curly braces for all `if`), remo
 **Files:** `eslint.config.mjs`, `package.json`
 
 **Action:**
+
 1. Create `eslint.config.mjs` (flat config) with:
    - `typescript-eslint` for TS/TSX
    - `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh` (Next.js)
@@ -66,6 +68,7 @@ Third refactor pass: add ESLint, enforce style (curly braces for all `if`), remo
 **Files:** `eslint.config.mjs`, all `src/**/*.{ts,tsx}` and `app/**/*.{ts,tsx}`
 
 **Action:**
+
 1. Add rule: `curly: ['error', 'all']` — requires curly braces for all `if`, `else`, `for`, `while`, `do`.
 2. Run `npm run lint -- --fix` — autofix curly violations (do NOT convert manually).
 3. Run `npm run lint` — fix any remaining violations that cannot be autofixed.
@@ -79,6 +82,7 @@ Third refactor pass: add ESLint, enforce style (curly braces for all `if`), remo
 **Files:** All `src/**/*.{ts,tsx}`, `app/**/*.{ts,tsx}`, `lib/**/*.ts`
 
 **Action:**
+
 1. Run `npm run lint -- --fix` — autofix what can be autofixed (e.g. unused imports).
 2. Manually fix remaining: unused variables, function parameters (prefix with `_` if intentionally unused), exports, types, dead functions/components.
 3. Remove unused constants from `src/constants/*` if any.
@@ -91,6 +95,7 @@ Third refactor pass: add ESLint, enforce style (curly braces for all `if`), remo
 ### Task 4: Verify and Document
 
 **Action:**
+
 1. Run full test suite: `npm run test` (unit + E2E).
 2. Manual smoke: login, start session, complete session — unchanged behavior.
 
@@ -103,6 +108,7 @@ Third refactor pass: add ESLint, enforce style (curly braces for all `if`), remo
 **Files:** `.github/workflows/deploy.yml` or CI config
 
 **Action:**
+
 1. Ensure `npm run lint` runs in CI (if not already).
 2. Lint must pass before deploy.
 

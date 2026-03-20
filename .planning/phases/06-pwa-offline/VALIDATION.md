@@ -78,9 +78,9 @@ npm run lint
 
 ## Traceability
 
-| Requirement | Verification |
-|-------------|--------------|
-| PWA-01 | Manifest valid; SW registered; Install prompt; install flow |
-| PWA-02 | Offline load; session runs; completions queue; sync on online |
-| PWA-03 | Precached audio; offline session; all cues play |
-| PWA-04 | 320px–768px; touch targets 44px; safe-area |
+| Requirement | Verification                                                  |
+| ----------- | ------------------------------------------------------------- |
+| PWA-01      | Manifest valid; SW registered; Install prompt; install flow   |
+| PWA-02      | Offline load; session runs; completions queue; sync on online |
+| PWA-03      | Precached audio; offline session; all cues play               |
+| PWA-04      | 320px–768px; touch targets 44px; safe-area                    |

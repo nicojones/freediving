@@ -14,12 +14,12 @@ Phase 19 adds plan creation in Settings via two paths: (1) JSON upload with sche
 
 ## Phase Requirements
 
-| ID | Description | Research Support |
-|----|-------------|-----------------|
-| JSON upload | User uploads JSON; validate against PlanWithMeta; store in DB | Zod or Ajv; existing plan types in `src/types/plan.ts` |
-| AI mode | Microphone → audio → Gemini → valid JSON → auto-fill → user confirms | Gemini Files API + generateContent; structured output for JSON |
-| Modular AI | AI code removable without affecting JSON path or plan types | Feature folder; single import in CreatePlanSection; no AI imports in planService, types, or core |
-| API key | Server-side only; developer can test locally | `.env.local` (Next.js auto-loads; add to .gitignore) |
+| ID          | Description                                                          | Research Support                                                                                 |
+| ----------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| JSON upload | User uploads JSON; validate against PlanWithMeta; store in DB        | Zod or Ajv; existing plan types in `src/types/plan.ts`                                           |
+| AI mode     | Microphone → audio → Gemini → valid JSON → auto-fill → user confirms | Gemini Files API + generateContent; structured output for JSON                                   |
+| Modular AI  | AI code removable without affecting JSON path or plan types          | Feature folder; single import in CreatePlanSection; no AI imports in planService, types, or core |
+| API key     | Server-side only; developer can test locally                         | `.env.local` (Next.js auto-loads; add to .gitignore)                                             |
 
 ---
 
@@ -27,19 +27,20 @@ Phase 19 adds plan creation in Settings via two paths: (1) JSON upload with sche
 
 ### Core (AI mode)
 
-| Library | Version | Purpose | Why Standard |
-|---------|---------|---------|--------------|
-| @google/genai | ^1.x | Gemini API client | Official Google SDK; supports Files API, audio, structured JSON output; Node.js 20+ |
-| zod | ^3.x | Schema validation | Already common in Next.js; PlanWithMeta validation; shared with JSON upload path |
+| Library       | Version | Purpose           | Why Standard                                                                        |
+| ------------- | ------- | ----------------- | ----------------------------------------------------------------------------------- |
+| @google/genai | ^1.x    | Gemini API client | Official Google SDK; supports Files API, audio, structured JSON output; Node.js 20+ |
+| zod           | ^3.x    | Schema validation | Already common in Next.js; PlanWithMeta validation; shared with JSON upload path    |
 
 ### Supporting
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| MediaRecorder | Browser API | Client-side audio recording | No npm package; use `navigator.mediaRecorder` |
-| multipart/form-data | Built-in | Audio upload to API | `request.formData()` in Route Handler |
+| Library             | Version     | Purpose                     | When to Use                                   |
+| ------------------- | ----------- | --------------------------- | --------------------------------------------- |
+| MediaRecorder       | Browser API | Client-side audio recording | No npm package; use `navigator.mediaRecorder` |
+| multipart/form-data | Built-in    | Audio upload to API         | `request.formData()` in Route Handler         |
 
 **Installation:**
+
 ```bash
 npm install @google/genai zod
 ```
@@ -55,6 +56,7 @@ npm install @google/genai zod
 **Goal:** AI mode is a separate module. Deleting it leaves JSON upload, plan types, and planService untouched.
 
 **Structure:**
+
 ```
 src/
 ├── features/
@@ -82,6 +84,7 @@ src/
 ### 2. Gemini Audio → PlanWithMeta Flow
 
 **Flow:**
+
 1. Client: MediaRecorder records audio → Blob
 2. Client: POST multipart/form-data to `/api/plans/transcribe`
 3. Server: Parse formData, get audio file
@@ -91,28 +94,28 @@ src/
 7. Client: Auto-fill textarea; user edits; Save uses same create flow as JSON upload
 
 **Gemini API (Node.js):**
+
 ```typescript
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from '@google/genai';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // Option A: Inline base64 (simpler for small audio)
 const response = await ai.models.generateContent({
-  model: "gemini-2.0-flash",  // or gemini-1.5-flash
-  contents: [{
-    parts: [
-      { inlineData: { mimeType: "audio/webm", data: base64Audio } },
-      { text: prompt }
-    ]
-  }],
+  model: 'gemini-2.0-flash', // or gemini-1.5-flash
+  contents: [
+    {
+      parts: [{ inlineData: { mimeType: 'audio/webm', data: base64Audio } }, { text: prompt }],
+    },
+  ],
   config: {
-    responseMimeType: "application/json",
-    responseSchema: planWithMetaSchema  // structured output
-  }
+    responseMimeType: 'application/json',
+    responseSchema: planWithMetaSchema, // structured output
+  },
 });
 
 // Option B: Files API for larger files
-const file = await ai.files.upload({ file: tempPath, config: { mimeType: "audio/webm" } });
+const file = await ai.files.upload({ file: tempPath, config: { mimeType: 'audio/webm' } });
 // then use createPartFromUri(file.uri, file.mimeType)
 ```
 
@@ -127,13 +130,13 @@ const file = await ai.files.upload({ file: tempPath, config: { mimeType: "audio/
 
 ### 4. Common Pitfalls
 
-| Pitfall | Mitigation |
-|---------|------------|
-| Gemini returns markdown-wrapped JSON | Use structured output; avoid parsing raw text |
-| Audio too large for inline | Use Files API; upload to Gemini, then reference URI |
-| API key exposed to client | Route Handler only; never in client bundle |
-| AI module leaks into planService | ESLint: block imports from `features/ai-plan` into `services/`, `types/` |
-| MediaRecorder not supported | Check `navigator.mediaRecorder`; show "Use JSON upload" fallback |
+| Pitfall                              | Mitigation                                                               |
+| ------------------------------------ | ------------------------------------------------------------------------ |
+| Gemini returns markdown-wrapped JSON | Use structured output; avoid parsing raw text                            |
+| Audio too large for inline           | Use Files API; upload to Gemini, then reference URI                      |
+| API key exposed to client            | Route Handler only; never in client bundle                               |
+| AI module leaks into planService     | ESLint: block imports from `features/ai-plan` into `services/`, `types/` |
+| MediaRecorder not supported          | Check `navigator.mediaRecorder`; show "Use JSON upload" fallback         |
 
 ---
 
@@ -141,12 +144,13 @@ const file = await ai.files.upload({ file: tempPath, config: { mimeType: "audio/
 
 **Where to put `GEMINI_API_KEY` for development and testing:**
 
-| Environment | File | Notes |
-|-------------|------|-------|
-| **Local dev** | `.env.local` | Next.js auto-loads; create in project root. Add to `.gitignore` if not already. |
+| Environment    | File              | Notes                                                                                     |
+| -------------- | ----------------- | ----------------------------------------------------------------------------------------- |
+| **Local dev**  | `.env.local`      | Next.js auto-loads; create in project root. Add to `.gitignore` if not already.           |
 | **Production** | `.env.production` | Same as other secrets (SESSION_SECRET, etc.). Server loads via systemd `EnvironmentFile`. |
 
 **Setup:**
+
 1. Create `.env.local` in project root (same level as `package.json`)
 2. Add: `GEMINI_API_KEY=your_api_key_here`
 3. Ensure `.env.local` is in `.gitignore` (Next.js default; verify)
@@ -160,13 +164,13 @@ const file = await ai.files.upload({ file: tempPath, config: { mimeType: "audio/
 
 ## Feasibility Assessment
 
-| Aspect | Feasibility | Notes |
-|--------|-------------|-------|
-| Gemini audio → JSON | **High** | Native support; structured output for PlanWithMeta; proven pattern |
-| Modular removal | **High** | Feature folder + single integration point; no core coupling |
-| MediaRecorder | **High** | Supported in all modern browsers; fallback to JSON upload |
-| Cost | **Low** | Gemini free tier; audio + JSON generation is cheap per request |
-| Latency | **Medium** | 2–5s typical for short audio; show loading state |
+| Aspect              | Feasibility | Notes                                                              |
+| ------------------- | ----------- | ------------------------------------------------------------------ |
+| Gemini audio → JSON | **High**    | Native support; structured output for PlanWithMeta; proven pattern |
+| Modular removal     | **High**    | Feature folder + single integration point; no core coupling        |
+| MediaRecorder       | **High**    | Supported in all modern browsers; fallback to JSON upload          |
+| Cost                | **Low**     | Gemini free tier; audio + JSON generation is cheap per request     |
+| Latency             | **Medium**  | 2–5s typical for short audio; show loading state                   |
 
 **Verdict:** Feasible. AI mode can be implemented as a clean optional module. JSON path remains primary; AI is additive.
 
@@ -178,48 +182,48 @@ const file = await ai.files.upload({ file: tempPath, config: { mimeType: "audio/
 
 ```typescript
 // app/api/plans/transcribe/route.ts
-import { NextRequest } from 'next/server'
-import { GoogleGenAI } from '@google/genai'
-import { validatePlanWithMeta } from '@/schemas/planSchema'
+import { NextRequest } from 'next/server';
+import { GoogleGenAI } from '@google/genai';
+import { validatePlanWithMeta } from '@/schemas/planSchema';
 
 const PROMPT = `Convert this audio (user dictating a freediving training plan) into valid PlanWithMeta JSON.
 Schema: { id, name, description?, days: [TrainingDay|RestDay|null] }
 TrainingDay: { id, day, group?, phases: [{ type: 'hold'|'recovery', duration }], type?: 'dry'|'wet' }
 RestDay: { id, day, group?, rest: true }
-Return ONLY valid JSON, no markdown.`
+Return ONLY valid JSON, no markdown.`;
 
 export async function POST(request: NextRequest) {
-  const key = process.env.GEMINI_API_KEY
-  if (!key) return Response.json({ error: 'AI mode not configured' }, { status: 503 })
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) return Response.json({ error: 'AI mode not configured' }, { status: 503 });
 
-  const formData = await request.formData()
-  const file = formData.get('audio') as File | null
-  if (!file) return Response.json({ error: 'No audio file' }, { status: 400 })
+  const formData = await request.formData();
+  const file = formData.get('audio') as File | null;
+  if (!file) return Response.json({ error: 'No audio file' }, { status: 400 });
 
-  const buffer = Buffer.from(await file.arrayBuffer())
-  const base64 = buffer.toString('base64')
-  const mimeType = file.type || 'audio/webm'
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const base64 = buffer.toString('base64');
+  const mimeType = file.type || 'audio/webm';
 
-  const ai = new GoogleGenAI({ apiKey: key })
+  const ai = new GoogleGenAI({ apiKey: key });
   const res = await ai.models.generateContent({
     model: 'gemini-2.0-flash',
-    contents: [{
-      parts: [
-        { inlineData: { mimeType, data: base64 } },
-        { text: PROMPT }
-      ]
-    }],
-    config: { responseMimeType: 'application/json' }
-  })
+    contents: [
+      {
+        parts: [{ inlineData: { mimeType, data: base64 } }, { text: PROMPT }],
+      },
+    ],
+    config: { responseMimeType: 'application/json' },
+  });
 
-  const text = res.text
-  if (!text) return Response.json({ error: 'No response from AI' }, { status: 502 })
+  const text = res.text;
+  if (!text) return Response.json({ error: 'No response from AI' }, { status: 502 });
 
-  const parsed = JSON.parse(text)
-  const result = validatePlanWithMeta(parsed)
-  if (!result.success) return Response.json({ error: 'Invalid plan', details: result.errors }, { status: 400 })
+  const parsed = JSON.parse(text);
+  const result = validatePlanWithMeta(parsed);
+  if (!result.success)
+    return Response.json({ error: 'Invalid plan', details: result.errors }, { status: 400 });
 
-  return Response.json(result.data)
+  return Response.json(result.data);
 }
 ```
 
@@ -227,17 +231,17 @@ export async function POST(request: NextRequest) {
 
 ```tsx
 // CreatePlanSection.tsx — AI is optional import
-import { AIVoicePlanInput } from '@/features/ai-plan'
+import { AIVoicePlanInput } from '@/features/ai-plan';
 
 export function CreatePlanSection() {
-  const [jsonText, setJsonText] = useState('')
+  const [jsonText, setJsonText] = useState('');
   return (
     <section>
-      <textarea value={jsonText} onChange={e => setJsonText(e.target.value)} />
-      <AIVoicePlanInput onResult={setJsonText} />  {/* Only AI import */}
+      <textarea value={jsonText} onChange={(e) => setJsonText(e.target.value)} />
+      <AIVoicePlanInput onResult={setJsonText} /> {/* Only AI import */}
       <button onClick={() => createPlan(jsonText)}>Save</button>
     </section>
-  )
+  );
 }
 ```
 

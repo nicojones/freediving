@@ -1,56 +1,48 @@
 # Phase 9: Refactor Code — Executable Plan
 
 ---
+
 phase: 09-refactor-code
 plans:
-  - id: "01"
-    tasks: 4
-    files: 8
-    depends_on: [08-session-ux]
-type: execute
-wave: 1
-files_modified:
-  - src/services/planService.ts
-  - src/contexts/TrainingContext.tsx
-  - src/hooks/useSessionEngine.ts
-  - src/pages/Dashboard.tsx
-  - src/components/DayListSection.tsx
-  - src/components/SessionPreviewSection.tsx
-autonomous: false
-requirements: []
-user_setup: []
-must_haves:
-  truths:
-    - "Refactoring scope and targets defined in plan"
-    - "Code structure improved without changing user-facing behavior"
-    - "Components under ~150 lines; logic extracted to utils or hooks"
-    - "No duplication; reusable helpers in src/utils"
-  artifacts:
-    - path: src/services/planService.ts
-      provides: "getDayId(plan, dayIndex)"
-      contains: "getDayId"
-    - path: src/hooks/useSessionEngine.ts
-      provides: "useSessionEngine hook"
-      contains: "useSessionEngine"
-    - path: src/components/DayListSection.tsx
-      provides: "Day list UI section"
-      contains: "DayListSection"
-    - path: src/components/SessionPreviewSection.tsx
-      provides: "Session preview UI section"
-      contains: "SessionPreviewSection"
-  key_links:
-    - from: src/pages/Dashboard.tsx
-      to: src/components/DayListSection.tsx
-      via: "renders DayListSection"
-      pattern: "DayListSection"
-    - from: src/pages/Dashboard.tsx
-      to: src/components/SessionPreviewSection.tsx
-      via: "renders SessionPreviewSection"
-      pattern: "SessionPreviewSection"
-    - from: src/contexts/TrainingContext.tsx
-      to: src/hooks/useSessionEngine.ts
-      via: "uses useSessionEngine for session logic"
-      pattern: "useSessionEngine"
+
+- id: "01"
+  tasks: 4
+  files: 8
+  depends_on: [08-session-ux]
+  type: execute
+  wave: 1
+  files_modified:
+- src/services/planService.ts
+- src/contexts/TrainingContext.tsx
+- src/hooks/useSessionEngine.ts
+- src/pages/Dashboard.tsx
+- src/components/DayListSection.tsx
+- src/components/SessionPreviewSection.tsx
+  autonomous: false
+  requirements: []
+  user_setup: []
+  must_haves:
+  truths: - "Refactoring scope and targets defined in plan" - "Code structure improved without changing user-facing behavior" - "Components under ~150 lines; logic extracted to utils or hooks" - "No duplication; reusable helpers in src/utils"
+  artifacts: - path: src/services/planService.ts
+  provides: "getDayId(plan, dayIndex)"
+  contains: "getDayId" - path: src/hooks/useSessionEngine.ts
+  provides: "useSessionEngine hook"
+  contains: "useSessionEngine" - path: src/components/DayListSection.tsx
+  provides: "Day list UI section"
+  contains: "DayListSection" - path: src/components/SessionPreviewSection.tsx
+  provides: "Session preview UI section"
+  contains: "SessionPreviewSection"
+  key_links: - from: src/pages/Dashboard.tsx
+  to: src/components/DayListSection.tsx
+  via: "renders DayListSection"
+  pattern: "DayListSection" - from: src/pages/Dashboard.tsx
+  to: src/components/SessionPreviewSection.tsx
+  via: "renders SessionPreviewSection"
+  pattern: "SessionPreviewSection" - from: src/contexts/TrainingContext.tsx
+  to: src/hooks/useSessionEngine.ts
+  via: "uses useSessionEngine for session logic"
+  pattern: "useSessionEngine"
+
 ---
 
 ## Objective
@@ -60,6 +52,7 @@ Improve code quality through refactoring: add plan day ID helper, extract sessio
 **Purpose:** Reduce technical debt, improve maintainability, eliminate repeated casts.
 
 **Principles:**
+
 - Components stay under ~150 lines; split when larger.
 - Pure logic → `src/utils`; React state/effects → `src/hooks`.
 - No duplication; reusable helpers in utils.
@@ -78,6 +71,7 @@ Improve code quality through refactoring: add plan day ID helper, extract sessio
 **Existing:** Phases 1–8 complete. TrainingContext ~302 lines; Dashboard ~222 lines; repeated `(plan[i] as { id?: string })?.id` in 4+ places.
 
 **Design decisions (from 9-CONTEXT):**
+
 - getDayId(plan, dayIndex) centralizes day ID access
 - useSessionEngine encapsulates timer + audio wiring
 - DayListSection and SessionPreviewSection simplify Dashboard layout
@@ -91,14 +85,15 @@ Improve code quality through refactoring: add plan day ID helper, extract sessio
 **Files:** `src/services/planService.ts`, `src/pages/Dashboard.tsx`, `src/contexts/TrainingContext.tsx`
 
 **Action:**
+
 1. Add to `src/services/planService.ts`:
    ```ts
    /** Returns the day id at the given index, or null if missing/invalid. */
    export function getDayId(plan: Plan, dayIndex: number): string | null {
-     if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) return null
-     const day = plan[dayIndex]
-     if (day == null || typeof day !== 'object' || !('id' in day)) return null
-     return (day as { id: string }).id
+     if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) return null;
+     const day = plan[dayIndex];
+     if (day == null || typeof day !== 'object' || !('id' in day)) return null;
+     return (day as { id: string }).id;
    }
    ```
 2. In `src/pages/Dashboard.tsx`:
@@ -111,6 +106,7 @@ Improve code quality through refactoring: add plan day ID helper, extract sessio
    - In handleCompleteSession: replace day id extraction with `getDayId(p, dayToRecord)`
 
 **Verify:**
+
 ```bash
 npm run build
 # Manual: day selection, session completion, URL routing — all work as before
@@ -125,6 +121,7 @@ npm run build
 **Files:** `src/hooks/useSessionEngine.ts`, `src/contexts/TrainingContext.tsx`
 
 **Action:**
+
 1. Create `src/hooks/useSessionEngine.ts`:
    - Accept: `{ plan, selectedDayIndex, speedMultiplier, testMode, completions, onSessionComplete }`
    - Return: `{ startSession, abortSession, timerState, sessionStatus, setSpeedMultiplier, audioLoading }`
@@ -142,11 +139,13 @@ npm run build
    - Hook needs to set sessionDayIndex when starting — pass `setSessionDayIndex` as dependency or have TrainingContext set it in a wrapper that calls startSession
 
 **Hook design:**
+
 - `useSessionEngine()` returns: `{ startSession(phases, options), abortSession, timerState, sessionStatus, setSpeedMultiplier, audioLoading }`
 - `startSession(phases, { speedMultiplier?, relaxationSecondsOverride? })` is async: preloads audio, creates engine, wires to timer, starts. On session_complete: stop engine, set sessionStatus 'awaitingCompletionConfirm'.
 - TrainingContext keeps sessionDayIndex, sessionDayIndexRef. handleStartSession: guard, getPhasesForDay, setSessionDayIndexRef + setSessionDayIndex, then call hook.startSession(phases, options). handleCompleteSession unchanged (uses sessionDayIndexRef, plan, recordCompletion).
 
 **Verify:**
+
 ```bash
 npm run build
 # Manual: start session, run to completion, abort — all work as before
@@ -161,6 +160,7 @@ npm run build
 **Files:** `src/components/DayListSection.tsx`, `src/components/SessionPreviewSection.tsx`, `src/pages/Dashboard.tsx`
 
 **Action:**
+
 1. Create `src/components/DayListSection.tsx`:
    - Props: `plan`, `completions`, `currentDayIndex`, `onSelectDay`, `getDayId` (or use from planService internally)
    - Renders: section "Training", description, map of TrainingDayCard
@@ -175,6 +175,7 @@ npm run build
    - Keep: TopAppBar, progressError, savedMessage, InstallPrompt, BottomNavBar, isPlanComplete message, URL sync, viewMode logic
 
 **Verify:**
+
 ```bash
 npm run build
 # Manual: dashboard, day list, session preview, start session — layout and behavior unchanged
@@ -189,6 +190,7 @@ npm run build
 **Files:** `src/contexts/TrainingContext.tsx`, `src/pages/Dashboard.tsx`, `src/components/DayListSection.tsx`, `src/components/SessionPreviewSection.tsx`, `src/utils/*`
 
 **Action:**
+
 1. Ensure all imports are correct; remove unused imports
 2. Ensure TrainingContextValue still exposes all required fields (sessionStatus, timerState, handleStartSession, handleAbortSession, handleCompleteSession, etc.)
 3. Run `npm run build` and fix any type/lint errors
@@ -199,6 +201,7 @@ npm run build
 5. Verify no duplicate or dead code introduced
 
 **Verify:**
+
 ```bash
 npm run build
 npm run dev
@@ -212,12 +215,12 @@ npm run dev
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| Refactoring scope defined | 9-RESEARCH.md, 9-CONTEXT.md, this plan |
-| Code structure improved | getDayId removes casts; useSessionEngine reduces TrainingContext; Dashboard sections extracted |
-| Component size, utils, no duplication | Task 4 audit; components <150 lines; shared logic in utils/hooks |
-| No user-facing behavior change | Manual E2E: login, day select, session run, complete, abort, one-session-per-day |
+| Success Criterion                     | How to Verify                                                                                  |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Refactoring scope defined             | 9-RESEARCH.md, 9-CONTEXT.md, this plan                                                         |
+| Code structure improved               | getDayId removes casts; useSessionEngine reduces TrainingContext; Dashboard sections extracted |
+| Component size, utils, no duplication | Task 4 audit; components <150 lines; shared logic in utils/hooks                               |
+| No user-facing behavior change        | Manual E2E: login, day select, session run, complete, abort, one-session-per-day               |
 
 ---
 
@@ -231,6 +234,7 @@ npm run dev
 ## Output
 
 After completion:
+
 - `src/services/planService.ts` — getDayId
 - `src/hooks/useSessionEngine.ts` — new hook
 - `src/contexts/TrainingContext.tsx` — uses useSessionEngine, getDayId

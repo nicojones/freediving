@@ -14,4 +14,4 @@ export default {
     ],
     '@semantic-release/github',
   ],
-}
+};

@@ -15,6 +15,8 @@ npm run dev
 
 Visit http://localhost:5173
 
+Before committing, run `npm run format` to format code, or rely on lefthook pre-commit hooks (format + lint).
+
 ## Build
 
 ```bash

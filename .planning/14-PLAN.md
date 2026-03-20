@@ -1,65 +1,59 @@
 # Phase 14: Next.js Migration — Executable Plan
 
 ---
+
 phase: 14-nextjs-migration
 plans:
-  - id: "01"
-    tasks: 9
-    files: 45
-    depends_on: [13-deployment]
-type: execute
-wave: 1
-files_modified:
-  - package.json
-  - next.config.ts
-  - app/layout.tsx
-  - app/page.tsx
-  - app/globals.css
-  - app/sw.ts
-  - app/manifest.ts
-  - app/api/auth/login/route.ts
-  - app/api/auth/logout/route.ts
-  - app/api/auth/me/route.ts
-  - app/api/progress/route.ts
-  - app/api/user/active-plan/route.ts
-  - app/day/[dayId]/page.tsx
-  - app/session/page.tsx
-  - app/session/complete/page.tsx
-  - app/settings/page.tsx
-  - lib/db.ts
-  - lib/auth.ts
-  - lib/jwt.ts
-  - lib/plan.ts
-  - .github/workflows/deploy.yml
-  - playwright.config.ts
-  - vitest.config.ts
-autonomous: false
-requirements: []
-user_setup:
-  - "Update systemd service if PORT changes (Next.js default 3000)"
-  - "Verify RangeRequestsPlugin import (serwist vs serwist/legacy)"
-must_haves:
-  truths:
-    - "Express API routes migrated to Next.js Route Handlers"
-    - "React pages/components migrated to Next.js App Router"
-    - "PWA, offline support, and audio precache preserved"
-    - "Deployment updated for .next/standalone"
-    - "All existing functionality works (login, session, progress, settings)"
-  artifacts:
-    - path: app/api/auth/login/route.ts
-      provides: "Auth login Route Handler"
-      contains: "POST"
-    - path: app/api/progress/route.ts
-      provides: "Progress API Route Handler"
-      contains: "GET"
-    - path: app/sw.ts
-      provides: "Serwist service worker with audio precache"
-      contains: "additionalPrecacheEntries"
-  key_links:
-    - from: next.config.ts
-      to: app/sw.ts
-      via: "withSerwistInit"
-      pattern: "swSrc"
+
+- id: "01"
+  tasks: 9
+  files: 45
+  depends_on: [13-deployment]
+  type: execute
+  wave: 1
+  files_modified:
+- package.json
+- next.config.ts
+- app/layout.tsx
+- app/page.tsx
+- app/globals.css
+- app/sw.ts
+- app/manifest.ts
+- app/api/auth/login/route.ts
+- app/api/auth/logout/route.ts
+- app/api/auth/me/route.ts
+- app/api/progress/route.ts
+- app/api/user/active-plan/route.ts
+- app/day/[dayId]/page.tsx
+- app/session/page.tsx
+- app/session/complete/page.tsx
+- app/settings/page.tsx
+- lib/db.ts
+- lib/auth.ts
+- lib/jwt.ts
+- lib/plan.ts
+- .github/workflows/deploy.yml
+- playwright.config.ts
+- vitest.config.ts
+  autonomous: false
+  requirements: []
+  user_setup:
+- "Update systemd service if PORT changes (Next.js default 3000)"
+- "Verify RangeRequestsPlugin import (serwist vs serwist/legacy)"
+  must_haves:
+  truths: - "Express API routes migrated to Next.js Route Handlers" - "React pages/components migrated to Next.js App Router" - "PWA, offline support, and audio precache preserved" - "Deployment updated for .next/standalone" - "All existing functionality works (login, session, progress, settings)"
+  artifacts: - path: app/api/auth/login/route.ts
+  provides: "Auth login Route Handler"
+  contains: "POST" - path: app/api/progress/route.ts
+  provides: "Progress API Route Handler"
+  contains: "GET" - path: app/sw.ts
+  provides: "Serwist service worker with audio precache"
+  contains: "additionalPrecacheEntries"
+  key_links: - from: next.config.ts
+  to: app/sw.ts
+  via: "withSerwistInit"
+  pattern: "swSrc"
+
 ---
 
 ## Objective
@@ -69,6 +63,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Purpose:** Simplify stack; single dev server; unified routing; modern React patterns.
 
 **Principles:**
+
 - App Router + Route Handlers (no Pages Router)
 - Same API paths: /api/auth, /api/progress, /api/user
 - @serwist/next for PWA (audio precache + RangeRequestsPlugin)
@@ -98,6 +93,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `package.json`, `next.config.ts`, `tsconfig.json` (or extend existing)
 
 **Action:**
+
 1. Add Next.js and Serwist deps; remove Vite, vite-plugin-pwa, express, cors, cookie-parser:
    ```bash
    npm install next@^15 react react-dom better-sqlite3 bcrypt jsonwebtoken clsx date-fns idb lodash type-fest
@@ -107,7 +103,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 2. Create `next.config.ts`:
    - `output: 'standalone'`
    - `withSerwistInit` from @serwist/next (swSrc: 'app/sw.ts', swDest: 'public/sw.js')
-   - `additionalPrecacheEntries` for /audio/*.m4a (hold, prepare, 30s, breathe)
+   - `additionalPrecacheEntries` for /audio/\*.m4a (hold, prepare, 30s, breathe)
    - `transpilePackages` if needed for idb
 3. Update `package.json` scripts:
    - `dev`: `next dev`
@@ -126,6 +122,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `lib/db.ts`, `lib/auth.ts`, `lib/jwt.ts`, `lib/schema.sql` (or inline)
 
 **Action:**
+
 1. Create `lib/db.ts`:
    - Port from `server/db.js`; use `path.join(process.cwd(), ...)` for schema/data paths
    - DB_PATH from `process.env.FREEDIVING_DB_PATH` or `join(process.cwd(), 'data.db')`
@@ -145,6 +142,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `app/api/auth/login/route.ts`, `app/api/auth/logout/route.ts`, `app/api/auth/me/route.ts`
 
 **Action:**
+
 1. `app/api/auth/login/route.ts` (POST):
    - Parse `request.json()` for username, password
    - Query db for user; verify password; create token
@@ -167,6 +165,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `app/api/progress/route.ts`, `app/api/user/active-plan/route.ts`
 
 **Action:**
+
 1. `app/api/progress/route.ts`:
    - GET: `getAuthUser()`; query `plan_id` from `request.nextUrl.searchParams`; return completions
    - POST: parse body for `plan_id`, `day_id` or `day_index`; resolve day_id from plan if needed; INSERT OR REPLACE
@@ -186,6 +185,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `app/layout.tsx`, `app/page.tsx`, `app/globals.css`
 
 **Action:**
+
 1. `app/layout.tsx`:
    - Metadata: title "Fishly — Breathhold Protocol", applicationName "Fishly"
    - Viewport: themeColor "#52dad3"
@@ -208,6 +208,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `app/page.tsx`, `app/day/[dayId]/page.tsx`, `app/session/page.tsx`, `app/session/complete/page.tsx`, `app/settings/page.tsx`
 
 **Action:**
+
 1. Replace React Router with Next.js:
    - `useNavigate` → `useRouter` from `next/navigation`; `navigate('/x')` → `router.push('/x')`
    - `<Link to="/x">` → `<Link href="/x">` from `next/link`
@@ -231,6 +232,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `app/sw.ts`, `next.config.ts`, `app/manifest.ts` (or `manifest.json`)
 
 **Action:**
+
 1. In `next.config.ts` (withSerwistInit):
    - `additionalPrecacheEntries`: `/audio/hold.m4a`, `/audio/prepare.m4a`, `/audio/30s.m4a`, `/audio/breathe.m4a` (revision: null)
 2. Create `app/sw.ts`:
@@ -250,6 +252,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `.github/workflows/deploy.yml`, `start_freediving.sh`, `.env.production.example`, `freediving.service.example`
 
 **Action:**
+
 1. Update deploy workflow:
    - Build: `npm run build` (produces `.next/`)
    - Copy into standalone, then zip:
@@ -278,6 +281,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
 **Files:** `vitest.config.ts`, `playwright.config.ts`, `next.config.ts` (vitest integration)
 
 **Action:**
+
 1. Playwright:
    - Single webServer: `npm run dev` (Next.js serves both frontend and API)
    - baseURL: `http://localhost:3000` (or `process.env.PORT` if different)
@@ -286,7 +290,7 @@ Migrate the Freediving Breathhold Trainer from Vite + Express to Next.js. Single
    - Use `@vitejs/plugin-react` or Next.js Vitest setup (see nextjs.org/docs/app/building-your-application/testing/vitest)
    - Ensure `src/test/setup.ts` still loads (fake-indexeddb)
    - Exclude `app/`, `e2e/` from unit test glob if needed
-3. Update E2E tests: baseURL, any API path changes (should be same /api/*)
+3. Update E2E tests: baseURL, any API path changes (should be same /api/\*)
 4. Ensure `npm run test:run` and `npm run test:e2e` pass
 
 **Verification:** `npm run test:run` passes; `npm run test:e2e` passes with single Next.js dev server.
@@ -312,13 +316,13 @@ Task 1,6 ──> Task 9 (tests)
 
 ## Success Criteria Checklist
 
-| Criterion | Task | Verification |
-|-----------|------|--------------|
-| Express → Route Handlers | 3, 4 | /api/auth, /api/progress, /api/user work |
-| React → App Router | 5, 6 | /, /day/:dayId, /session, /session/complete, /settings |
-| PWA + offline + audio | 7 | Serwist SW; precache; RangeRequestsPlugin |
-| Deploy .next/standalone | 8 | build; zip; node server.js |
-| All functionality | 6, 9 | E2E login, session, complete |
+| Criterion                | Task | Verification                                           |
+| ------------------------ | ---- | ------------------------------------------------------ |
+| Express → Route Handlers | 3, 4 | /api/auth, /api/progress, /api/user work               |
+| React → App Router       | 5, 6 | /, /day/:dayId, /session, /session/complete, /settings |
+| PWA + offline + audio    | 7    | Serwist SW; precache; RangeRequestsPlugin              |
+| Deploy .next/standalone  | 8    | build; zip; node server.js                             |
+| All functionality        | 6, 9 | E2E login, session, complete                           |
 
 ---
 

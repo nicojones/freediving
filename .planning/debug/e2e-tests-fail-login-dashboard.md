@@ -1,6 +1,6 @@
 ---
 status: resolved
-trigger: "E2E tests fail: login-username not found, dashboard-day-list not found"
+trigger: 'E2E tests fail: login-username not found, dashboard-day-list not found'
 created: 2025-03-20
 updated: 2025-03-20
 ---
@@ -8,11 +8,13 @@ updated: 2025-03-20
 ## Root Cause
 
 Tests were flaky due to:
+
 1. **Short timeouts** (5s) for dashboard-day-list — plan loading can take several seconds
 2. **No explicit wait** for login form before filling — app shows loader first
 3. **Default test timeout** (30s) too tight for login + plan load flow
 
 Error contexts from failed runs showed:
+
 - "Login failed" (API returned non-200)
 - Next.js "clientReferenceManifest" InvariantError on /day/invalid-day-999
 

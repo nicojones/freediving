@@ -1,10 +1,10 @@
-import { defineConfig } from '@playwright/test'
+import { defineConfig } from '@playwright/test';
 
-const E2E_PORT = '3098'
+const E2E_PORT = '3098';
 
 export default defineConfig({
   testDir: 'e2e',
-  workers: 1,
+  workers: process.env.CI ? 1 : 4,
   timeout: 60000,
   webServer: {
     command: `npx next dev -p ${E2E_PORT}`,
@@ -20,4 +20,4 @@ export default defineConfig({
     baseURL: `http://localhost:${E2E_PORT}`,
     permissions: ['clipboard-read', 'clipboard-write'],
   },
-})
+});

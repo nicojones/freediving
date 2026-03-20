@@ -1,55 +1,48 @@
 # Phase 8: Session UX Enhancements — Executable Plan
 
 ---
+
 phase: 08-session-ux
 plans:
-  - id: "01"
-    tasks: 5
-    files: 10
-    depends_on: [05-session-runner]
-type: execute
-wave: 1
-files_modified:
-  - src/utils/completions.ts
-  - src/contexts/TrainingContext.tsx
-  - src/App.tsx
-  - src/components/ActiveSessionView.tsx
-  - src/services/timerEngine.ts
-  - src/pages/Dashboard.tsx
-  - src/components/StartSessionCTA.tsx
-  - src/index.css
-autonomous: false
-requirements: [SESS-08-1, SESS-08-2, SESS-08-3, SESS-08-4]
-user_setup:
-  - "npm install date-fns"
-must_haves:
-  truths:
-    - "User cannot start a new session if they already completed one today"
-    - "After last step, user sees green glowing ring + 'Complete session' button (no auto-leave)"
-    - "Test toggle allows 3s relaxation for faster testing"
-    - "Recovery phase shows faint glowing ring with breathing animation"
-  artifacts:
-    - path: src/utils/completions.ts
-      provides: "hasCompletedToday(completions)"
-      contains: "hasCompletedToday|isSameDay"
-    - path: src/contexts/TrainingContext.tsx
-      provides: "awaitingCompletionConfirm, handleCompleteSession, testMode"
-      contains: "awaitingCompletionConfirm|handleCompleteSession|testMode"
-    - path: src/components/ActiveSessionView.tsx
-      provides: "Completion UI (green ring + button), recovery ring animation"
-      contains: "completion-glow|recovery-breathe|Complete session"
-    - path: src/services/timerEngine.ts
-      provides: "relaxationSecondsOverride in TimerStartOptions"
-      contains: "relaxationSecondsOverride|relaxationSeconds"
-  key_links:
-    - from: src/pages/Dashboard.tsx
-      to: src/utils/completions.ts
-      via: "hasCompletedToday guard before Start Session"
-      pattern: "hasCompletedToday"
-    - from: src/contexts/TrainingContext.tsx
-      to: src/services/timerEngine.ts
-      via: "relaxationSecondsOverride when testMode"
-      pattern: "relaxationSecondsOverride"
+
+- id: "01"
+  tasks: 5
+  files: 10
+  depends_on: [05-session-runner]
+  type: execute
+  wave: 1
+  files_modified:
+- src/utils/completions.ts
+- src/contexts/TrainingContext.tsx
+- src/App.tsx
+- src/components/ActiveSessionView.tsx
+- src/services/timerEngine.ts
+- src/pages/Dashboard.tsx
+- src/components/StartSessionCTA.tsx
+- src/index.css
+  autonomous: false
+  requirements: [SESS-08-1, SESS-08-2, SESS-08-3, SESS-08-4]
+  user_setup:
+- "npm install date-fns"
+  must_haves:
+  truths: - "User cannot start a new session if they already completed one today" - "After last step, user sees green glowing ring + 'Complete session' button (no auto-leave)" - "Test toggle allows 3s relaxation for faster testing" - "Recovery phase shows faint glowing ring with breathing animation"
+  artifacts: - path: src/utils/completions.ts
+  provides: "hasCompletedToday(completions)"
+  contains: "hasCompletedToday|isSameDay" - path: src/contexts/TrainingContext.tsx
+  provides: "awaitingCompletionConfirm, handleCompleteSession, testMode"
+  contains: "awaitingCompletionConfirm|handleCompleteSession|testMode" - path: src/components/ActiveSessionView.tsx
+  provides: "Completion UI (green ring + button), recovery ring animation"
+  contains: "completion-glow|recovery-breathe|Complete session" - path: src/services/timerEngine.ts
+  provides: "relaxationSecondsOverride in TimerStartOptions"
+  contains: "relaxationSecondsOverride|relaxationSeconds"
+  key_links: - from: src/pages/Dashboard.tsx
+  to: src/utils/completions.ts
+  via: "hasCompletedToday guard before Start Session"
+  pattern: "hasCompletedToday" - from: src/contexts/TrainingContext.tsx
+  to: src/services/timerEngine.ts
+  via: "relaxationSecondsOverride when testMode"
+  pattern: "relaxationSecondsOverride"
+
 ---
 
 ## Objective
@@ -72,6 +65,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 **Existing:** Phases 1–5 complete. Session runs with audio; completion recorded on session_complete; immediate navigate to /session/complete. Recovery shows solid border; hold shows focus-glow. No test mode.
 
 **Design decisions (from 8-CONTEXT):**
+
 - One session/day: timezone-aware "today" via date-fns `isSameDay`; block start when any completion today
 - Completion flow: session_complete → show green ring + "Complete session" button → user clicks → record + navigate
 - Test toggle: 3s relaxation when on; placement in session preview (near Start Session)
@@ -86,6 +80,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 **Files:** `src/utils/completions.ts`, `src/contexts/TrainingContext.tsx`, `src/pages/Dashboard.tsx`, `src/components/StartSessionCTA.tsx`
 
 **Action:**
+
 1. Install date-fns: `npm install date-fns`
 2. Update `src/utils/completions.ts`:
    - Import `isSameDay` from `date-fns`
@@ -103,6 +98,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
    - When disabled: render disabled button with `disabledMessage` or explanatory text ("You've already trained today")
 
 **Verify:**
+
 ```bash
 # 1. Complete a session for today
 # 2. Return to session preview for same day
@@ -119,6 +115,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 **Files:** `src/contexts/TrainingContext.tsx`, `src/App.tsx`, `src/components/ActiveSessionView.tsx`, `src/index.css`
 
 **Action:**
+
 1. Update `src/contexts/TrainingContext.tsx`:
    - Add `'awaitingCompletionConfirm'` to `SessionStatus` type
    - In `engine.on('session_complete', ...)`: do NOT navigate or record yet. Instead:
@@ -144,6 +141,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
    - Add `.completion-glow { box-shadow: 0 0 80px rgba(82, 218, 211, 0.35); }` (green/teal celebratory glow)
 
 **Verify:**
+
 ```bash
 # 1. Run full session to last step
 # 2. session_complete fires → user stays on /session
@@ -160,6 +158,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 **Files:** `src/contexts/TrainingContext.tsx`, `src/services/timerEngine.ts`, `src/pages/Dashboard.tsx`
 
 **Action:**
+
 1. Update `src/services/timerEngine.ts`:
    - Add `relaxationSecondsOverride?: number` to `TimerStartOptions`
    - Change `buildTimeline(phases: Phase[])` to `buildTimeline(phases: Phase[], options?: { relaxationSeconds?: number })`
@@ -176,6 +175,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
    - Place clearly in session preview so testers see it; default off
 
 **Verify:**
+
 ```bash
 # 1. Enable Test mode in session preview
 # 2. Start session
@@ -192,6 +192,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 **Files:** `src/components/ActiveSessionView.tsx`, `src/index.css`
 
 **Action:**
+
 1. Update `src/components/ActiveSessionView.tsx`:
    - Ring container: when `timerState?.phase === 'recovery'` (and not hold, not awaitingCompletionConfirm):
      - Apply `recovery-breathe` class instead of `border-surface-container-high`
@@ -206,6 +207,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
    - Ensure recovery ring has faint blue base (border or box-shadow) — RESEARCH says "no ring = faint blue"; ring always faintly visible. Use border with rgba or box-shadow.
 
 **Verify:**
+
 ```bash
 # 1. Run session; during recovery phase
 # 2. Ring shows faint blue with subtle pulse (opacity animation)
@@ -221,6 +223,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 **Files:** `src/contexts/TrainingContext.tsx`, `src/components/ActiveSessionView.tsx`, `src/pages/Dashboard.tsx`
 
 **Action:**
+
 1. Ensure `handleCompleteSession` handles:
    - Offline: use same logic as current (recordCompletion may queue)
    - progressError: set and display
@@ -234,6 +237,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 5. Add `testMode`, `setTestMode`, `hasCompletedToday` to TrainingContextValue interface
 
 **Verify:**
+
 ```bash
 # Full flow: Start → Relaxation (or 3s if test) → Holds/Recoveries → session_complete
 # → Green ring + "Complete session" → Click → /session/complete
@@ -246,12 +250,12 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 
 ## Verification
 
-| Success Criterion | How to Verify |
-|-------------------|---------------|
-| One session per day | Complete session → Start disabled; "You've already trained today" |
-| Visible completion flow | session_complete → green ring + button; no auto-navigate |
-| Test toggle | Test mode on → 3s relaxation; off → 60s |
-| Recovery ring | Recovery phase: faint blue + breathing pulse |
+| Success Criterion       | How to Verify                                                     |
+| ----------------------- | ----------------------------------------------------------------- |
+| One session per day     | Complete session → Start disabled; "You've already trained today" |
+| Visible completion flow | session_complete → green ring + button; no auto-navigate          |
+| Test toggle             | Test mode on → 3s relaxation; off → 60s                           |
+| Recovery ring           | Recovery phase: faint blue + breathing pulse                      |
 
 ---
 
@@ -267,6 +271,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 ## Output
 
 After completion:
+
 - `src/utils/completions.ts` — hasCompletedToday
 - `src/contexts/TrainingContext.tsx` — awaitingCompletionConfirm, handleCompleteSession, testMode, hasCompletedToday guard
 - `src/App.tsx` — SessionRouteGuard allows awaitingCompletionConfirm

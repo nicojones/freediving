@@ -1,20 +1,20 @@
 # Phase 20: Preview Future Days — Executable Plan
 
 ---
+
 phase: 20-preview-future-days
 plans:
-  - id: "01"
-    tasks: 0
-    depends_on: [19-create-plan-settings]
-type: execute
-wave: 1
-autonomous: false
-requirements: []
-must_haves:
-  truths:
-    - "User can view session structure (hold/breathe intervals) for future days in the plan"
-    - "User cannot start or execute a session for a future day"
-    - "Future days are clearly differentiated from current/available days (read-only preview, no start button)"
+
+- id: "01"
+  tasks: 0
+  depends_on: [19-create-plan-settings]
+  type: execute
+  wave: 1
+  autonomous: false
+  requirements: []
+  must_haves:
+  truths: - "User can view session structure (hold/breathe intervals) for future days in the plan" - "User cannot start or execute a session for a future day" - "Future days are clearly differentiated from current/available days (read-only preview, no start button)"
+
 ---
 
 ## Objective
@@ -22,6 +22,7 @@ must_haves:
 Add the ability to preview future days in a training plan — view their structure (hold/breathe intervals) — while ensuring there is **no way** to execute them. Future days are read-only; only the current/available day can be started.
 
 **Principles:**
+
 - Preview = view session structure only (no execution)
 - Future days: no start button, no session runner access
 - Clear visual distinction between current vs future days

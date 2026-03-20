@@ -44,13 +44,13 @@
 
 ## Event → Cue Mapping
 
-| Timer Event | Cue File | Requirement |
-|-------------|----------|-------------|
-| phase_start (hold) | hold.m4a | SESS-01 |
-| prepare_hold | prepare.m4a | SESS-02 |
-| countdown_30 | 30s.m4a | SESS-03 |
-| hold_end | breathe.m4a | SESS-04 |
-| session_complete | — | (v2) |
+| Timer Event        | Cue File    | Requirement |
+| ------------------ | ----------- | ----------- |
+| phase_start (hold) | hold.m4a    | SESS-01     |
+| prepare_hold       | prepare.m4a | SESS-02     |
+| countdown_30       | 30s.m4a     | SESS-03     |
+| hold_end           | breathe.m4a | SESS-04     |
+| session_complete   | —           | (v2)        |
 
 ---
 
@@ -65,13 +65,13 @@
 
 ## Traceability
 
-| Requirement | Decision |
-|-------------|----------|
-| SESS-01 | Play hold.m4a on phase_start (hold) |
-| SESS-02 | Play prepare.m4a on prepare_hold |
-| SESS-03 | Play 30s.m4a on countdown_30 |
-| SESS-04 | Play breathe.m4a on hold_end |
-| SESS-05 | No events during hold → no audio during hold |
+| Requirement | Decision                                     |
+| ----------- | -------------------------------------------- |
+| SESS-01     | Play hold.m4a on phase_start (hold)          |
+| SESS-02     | Play prepare.m4a on prepare_hold             |
+| SESS-03     | Play 30s.m4a on countdown_30                 |
+| SESS-04     | Play breathe.m4a on hold_end                 |
+| SESS-05     | No events during hold → no audio during hold |
 
 ---
 
@@ -85,4 +85,4 @@
 
 ---
 
-*Context captured from /gsd-discuss-phase 4*
+_Context captured from /gsd-discuss-phase 4_
