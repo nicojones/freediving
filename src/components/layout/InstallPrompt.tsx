@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 
+const STORAGE_KEY = 'install-prompt-dismissed'
+
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
-export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
+type Variant = 'banner' | 'compact'
+
+export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null)
   const [showPrompt, setShowPrompt] = useState(false)
@@ -17,9 +21,11 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
       return
     }
 
-    const dismissedSession = sessionStorage.getItem('install-prompt-dismissed')
-    if (dismissedSession) {
-      setDismissed(true)
+    if (variant === 'banner') {
+      const dismissedStorage = localStorage.getItem(STORAGE_KEY)
+      if (dismissedStorage) {
+        setDismissed(true)
+      }
     }
 
     const handler = (e: Event) => {
@@ -29,7 +35,7 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
     }
     window.addEventListener('beforeinstallprompt', handler)
     return () => window.removeEventListener('beforeinstallprompt', handler)
-  }, [])
+  }, [variant])
 
   useEffect(() => {
     const isIOS =
@@ -45,18 +51,74 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
     await deferredPrompt.userChoice
     setDeferredPrompt(null)
     setDismissed(true)
+    if (variant === 'banner') {
+      localStorage.setItem(STORAGE_KEY, '1')
+    }
   }
 
   const handleDismiss = () => {
     setDismissed(true)
-    sessionStorage.setItem('install-prompt-dismissed', '1')
+    localStorage.setItem(STORAGE_KEY, '1')
   }
+
+  const handleShare = async () => {
+    if (!navigator.share) {return}
+    try {
+      await navigator.share({
+        title: 'Fishly',
+        text: 'Add to home screen for the best experience.',
+        url: typeof window !== 'undefined' ? window.location.origin : '',
+      })
+    } catch {
+      // User cancelled or share failed
+    }
+  }
+
+  const canShare = true;// typeof navigator !== 'undefined' && 'share' in navigator
 
   const isIOS =
     typeof navigator !== 'undefined' &&
     (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad'))
 
-  if (!showPrompt || dismissed || !hasEngaged) {return null}
+  const isInstalled = typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches
+  if (isInstalled) {return null}
+
+  if (variant === 'banner' && (!showPrompt || dismissed)) {return null}
+
+  if (variant === 'compact') {
+    return (
+      <div className="mb-6 flex items-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-low/50 px-4 py-3">
+        <span className="material-symbols-outlined text-primary text-xl shrink-0">
+          {deferredPrompt ? 'download_2' : 'add_to_home_screen'}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-on-surface-variant text-sm">
+            {deferredPrompt
+              ? 'Add to home screen for the best experience.'
+              : 'Tap Share → Add to Home Screen to install.'}
+          </p>
+        </div>
+        {deferredPrompt ? (
+          <button
+            type="button"
+            onClick={handleInstall}
+            className="primary-pulse-gradient shrink-0 px-4 py-2 rounded-lg font-headline font-bold text-on-primary text-sm"
+          >
+            Install
+          </button>
+        ) : canShare ? (
+          <button
+            type="button"
+            onClick={handleShare}
+            className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg font-headline font-bold text-sm border-2 border-primary text-primary hover:bg-primary/10 transition-colors"
+          >
+            <span className="material-symbols-outlined text-lg">ios_share</span>
+            Share
+          </button>
+        ) : null}
+      </div>
+    )
+  }
 
   return (
     <div className="mb-6 bg-surface-container-low rounded-3xl p-5 border border-outline-variant/30 overflow-hidden flex flex-col sm:flex-row sm:items-center gap-4">
@@ -83,6 +145,15 @@ export function InstallPrompt({ hasEngaged = true }: { hasEngaged?: boolean }) {
             className="primary-pulse-gradient px-5 py-2.5 rounded-xl font-headline font-bold text-on-primary text-sm shadow-[0_4px_12px_rgba(82,218,211,0.2)] hover:shadow-[0_4px_16px_rgba(82,218,211,0.3)] active:scale-[0.98] transition-all duration-300"
           >
             Install
+          </button>
+        ) : canShare ? (
+          <button
+            type="button"
+            onClick={handleShare}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-headline font-bold text-sm border-2 border-primary text-primary hover:bg-primary/10 transition-all duration-300"
+          >
+            <span className="material-symbols-outlined text-xl">share</span>
+            Share
           </button>
         ) : isIOS ? (
           <span className="text-primary font-label text-xs font-medium tracking-wide">

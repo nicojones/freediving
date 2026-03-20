@@ -7,6 +7,7 @@ import { DevModeSection } from './DevModeSection'
 import { ResetProgressSection } from './ResetProgressSection'
 import { ConfirmResetModal } from './ConfirmResetModal'
 import { UserProfileCard } from './UserProfileCard'
+import { InstallPrompt } from '../layout/InstallPrompt'
 import { useTraining } from '../../hooks/useTraining'
 import { DEFAULT_USERNAME } from '../../constants/app'
 
@@ -50,6 +51,8 @@ export function SettingsView() {
           <p className="text-on-surface-variant font-body text-sm max-w-[80%] mb-10">
             Account and app preferences.
           </p>
+
+          <InstallPrompt variant="compact" />
 
           <ResetProgressSection onRequestReset={handleRequestReset} />
 

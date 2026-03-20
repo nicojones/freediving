@@ -128,7 +128,7 @@ export function Dashboard() {
         <StatusBanner progressError={progressError} savedMessage={savedMessage} />
 
         {!showSessionPreview && (
-          <InstallPrompt hasEngaged={completions.length > 0} />
+          <InstallPrompt />
         )}
 
         {showDayDetail && isRestDay && viewMode === 'session-preview' ? (
