@@ -50,7 +50,6 @@ export function SessionPreviewSection({
   const isCurrentDay = selectedDayIndex === currentDayIndex
   const showStartCTA = isCurrentDay && !isDayCompleted
   const showCompletedCTA = isDayCompleted && completedAt != null
-  const isFutureDay = !isCurrentDay && !isDayCompleted
 
   return (
     <>
@@ -72,24 +71,14 @@ export function SessionPreviewSection({
 
       <SessionPreviewStats phases={selectedPhases} />
 
-      {isFutureDay && (
-        <p
-          data-testid="preview-only-message"
-          className="mb-6 font-body text-on-surface-variant bg-surface-container-low rounded-2xl p-4"
-        >
-          This is a future day. You can preview the structure but cannot start a
-          session yet.
-        </p>
-      )}
-
-      {showTestControls && isCurrentDay && (
+      {showTestControls && (
         <SpeedMultiplierSelector
           value={speedMultiplier}
           onChange={onSpeedMultiplierChange}
         />
       )}
 
-      {showTestControls && isCurrentDay && (
+      {showTestControls && (
         <label data-testid="test-mode-toggle" className="flex items-center gap-3 cursor-pointer mb-4">
           <input
             type="checkbox"

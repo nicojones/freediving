@@ -99,52 +99,6 @@ describe('SessionPreviewSection', () => {
     expect(screen.queryByTestId('speed-selector')).not.toBeInTheDocument()
   })
 
-  it('does not render start button when future day selected', () => {
-    render(
-      <SessionPreviewSection
-        selectedDayIndex={2}
-        selectedPhases={mockPhases}
-        currentDayIndex={0}
-        speedMultiplier={1}
-        testMode={false}
-        showTestControls={true}
-        audioLoading={false}
-        hasCompletedToday={false}
-        isDayCompleted={false}
-        completedAt={null}
-        onBack={() => {}}
-        onSpeedMultiplierChange={() => {}}
-        onTestModeChange={() => {}}
-        onStartSession={() => {}}
-      />
-    )
-    expect(screen.queryByTestId('start-session-button')).not.toBeInTheDocument()
-    expect(screen.getByTestId('preview-only-message')).toBeInTheDocument()
-  })
-
-  it('hides test controls when future day selected even if showTestControls is true', () => {
-    render(
-      <SessionPreviewSection
-        selectedDayIndex={3}
-        selectedPhases={mockPhases}
-        currentDayIndex={0}
-        speedMultiplier={1}
-        testMode={true}
-        showTestControls={true}
-        audioLoading={false}
-        hasCompletedToday={false}
-        isDayCompleted={false}
-        completedAt={null}
-        onBack={() => {}}
-        onSpeedMultiplierChange={() => {}}
-        onTestModeChange={() => {}}
-        onStartSession={() => {}}
-      />
-    )
-    expect(screen.queryByTestId('test-mode-toggle')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('speed-selector')).not.toBeInTheDocument()
-  })
-
   it('shows test controls (toggle and speed selector) when showTestControls is true', () => {
     render(
       <SessionPreviewSection

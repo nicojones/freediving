@@ -148,8 +148,6 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
 
   const handleStartSession = useCallback(async () => {
     if (isNil(plan) || selectedDayIndex === null) {return}
-    const currentDay = getCurrentDay(plan, completions)
-    if (selectedDayIndex !== currentDay) {return}
     if (hasCompletedToday(completions)) {return}
     const phases = getPhasesForDay(plan!, selectedDayIndex)
     if (!phases) {return}

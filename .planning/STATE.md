@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-20 — Phase 20 marked complete
+**Last updated:** 2025-03-20 — Phase 18 marked complete
 
 ---
 
@@ -21,7 +21,7 @@
 | Status | Pending |
 | Progress | 0/9 tasks |
 
-*Phase 20 (Preview Future Days) completed.*
+*Phase 20 (Preview Future Days) added to roadmap.*
 
 ```
 [            ] 0%
@@ -33,10 +33,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases complete | 18 |
+| Phases complete | 17 |
 | Phases total | 20 |
 | Requirements mapped | 17/17 |
-| Plans executed | 18 |
+| Plans executed | 17 |
 
 ---
 
@@ -72,7 +72,7 @@
 - [ ] Phase 17: Test Controls (17-PLAN.md)
 - [x] Phase 18: Dynamic Version Display & Semantic Release (18-PLAN.md)
 - [ ] Phase 19: Create Plan in Settings (19-PLAN.md)
-- [x] Phase 20: Preview Future Days (20-PLAN.md)
+- [ ] Phase 20: Preview Future Days (20-PLAN.md)
 
 ### Blockers
 
@@ -82,4 +82,4 @@ None.
 
 ## Session Continuity
 
-Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 added — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible. Phase 18 executed — Dynamic version from package.json on login; semantic-release for fix→patch, feat→minor, chore→no bump on push to main. Phase 19 added — Create plan in Settings: JSON upload with PlanWithMeta schema validation; optional AI voice mode (dictate → Gemini → valid JSON → auto-fill → user confirms); DB storage preferred. Phase 20 executed — Preview future days: LockedDayCard clickable for preview; SessionPreviewSection shows "Preview only" for future days; TrainingContext guards handleStartSession; test controls hidden for future days.
+Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 added — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible. Phase 18 executed — Dynamic version from package.json on login; semantic-release for fix→patch, feat→minor, chore→no bump on push to main. Phase 19 added — Create plan in Settings: JSON upload with PlanWithMeta schema validation; optional AI voice mode (dictate → Gemini → valid JSON → auto-fill → user confirms); DB storage preferred. Phase 20 added — Preview future days in training plan (view structure); no way to execute future days.

@@ -27,7 +27,7 @@
 - [ ] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
 - [x] **Phase 18: Dynamic Version Display & Semantic Release** - Version from package.json on login; fix→patch, feat→minor, chore→no bump on push to main; major manual
 - [ ] **Phase 19: Create Plan in Settings** - JSON upload with schema validation; optional AI voice mode (dictate → Gemini → PlanWithMeta JSON)
-- [x] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
+- [ ] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
 
 ---
 
@@ -418,7 +418,7 @@
 | 17. Test Controls | 0/4 | Pending | 17-PLAN.md |
 | 18. Dynamic Version Display & Semantic Release | 4/4 | Complete | 18-PLAN.md |
 | 19. Create Plan in Settings | 0/9 | Pending | 19-PLAN.md |
-| 20. Preview Future Days | 5/5 | Complete | 20-PLAN.md |
+| 20. Preview Future Days | 0/TBD | Pending | 20-PLAN.md |
 
 ---
 
