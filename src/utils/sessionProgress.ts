@@ -28,10 +28,10 @@ const getCurrentTimelineIndex = (
   timerState: TimerState | null,
   timeline: TimelineItem[]
 ): number => {
-  if (!timerState) return 0
-  if (timerState.phase === 'relaxation') return 0
-  if (timerState.phase === 'hold') return 1 + timerState.intervalIndex * 2
-  if (timerState.phase === 'recovery') return 2 + timerState.intervalIndex * 2
+  if (!timerState) {return 0}
+  if (timerState.phase === 'relaxation') {return 0}
+  if (timerState.phase === 'hold') {return 1 + timerState.intervalIndex * 2}
+  if (timerState.phase === 'recovery') {return 2 + timerState.intervalIndex * 2}
   return timeline.length - 1
 }
 

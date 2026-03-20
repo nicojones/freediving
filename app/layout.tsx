@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { AppShell } from '@/src/components/AppShell'
+import { AppShell } from '@/src/components/layout/AppShell'
 import type { ChildrenNode } from '@/src/types/common'
 import './globals.css'
 

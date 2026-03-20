@@ -25,7 +25,7 @@ export async function recordCompletion(
   }
 
   const reqBody: Record<string, string | number> = { plan_id: planId, day_id: dayId }
-  if (typeof dayIndex === 'number') reqBody.day_index = dayIndex
+  if (typeof dayIndex === 'number') {reqBody.day_index = dayIndex}
 
   let res: Response
   try {
@@ -35,7 +35,7 @@ export async function recordCompletion(
       body: JSON.stringify(reqBody),
       credentials: 'include',
     })
-  } catch (e) {
+  } catch {
     return { error: 'Network error — is the server running? (npm run server)' }
   }
   if (res.ok) {
@@ -73,7 +73,7 @@ export async function fetchActivePlan(): Promise<string | null> {
     const data = await res.json()
     return data.plan_id ?? null
   }
-  if (res.status === 404) return null
+  if (res.status === 404) {return null}
   return null
 }
 
@@ -87,13 +87,13 @@ export async function setActivePlan(
       body: JSON.stringify({ plan_id: planId }),
       credentials: 'include',
     })
-    if (res.ok) return { ok: true }
+    if (res.ok) {return { ok: true }}
     if (res.status === 401) {
       return { error: 'Session expired — please log in again' }
     }
     const errBody = (await res.json().catch(() => ({}))) as { error?: string }
     return { error: errBody?.error ?? `Failed to set active plan (${res.status})` }
-  } catch (e) {
+  } catch {
     return { error: 'Network error — is the server running?' }
   }
 }
@@ -115,7 +115,7 @@ export async function resetProgress(
     }
     await clearByPlanId(planId)
     return { ok: true }
-  } catch (e) {
+  } catch {
     return { error: 'Network error — is the server running?' }
   }
 }

@@ -21,7 +21,7 @@ export function isDayCompleted(
   completions: CompletionForDay[],
   dayId: string | undefined
 ): boolean {
-  if (!dayId) return false
+  if (!dayId) {return false}
   return completions.some(
     (c) => c?.day_id && c.day_id.toLowerCase() === dayId.toLowerCase()
   )

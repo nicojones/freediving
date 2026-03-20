@@ -1,4 +1,4 @@
-import { ActiveSessionView } from '@/src/components/ActiveSessionView'
+import { ActiveSessionView } from '@/src/components/session/ActiveSessionView'
 
 export default function SessionPage() {
   return <ActiveSessionView />

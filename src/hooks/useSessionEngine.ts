@@ -27,7 +27,7 @@ export function useSessionEngine() {
   const audioServiceRef = useRef<AudioServiceAPI | null>(null)
 
   useEffect(() => {
-    if (sessionStatus !== 'running') return
+    if (sessionStatus !== 'running') {return}
     const id = setInterval(() => {
       const engine = engineRef.current
       if (engine) {

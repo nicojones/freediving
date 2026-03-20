@@ -131,7 +131,7 @@ export function createTimerEngine(): TimerEngineAPI {
   }
 
   function tick() {
-    if (startTime === null || timeline === null) return
+    if (startTime === null || timeline === null) {return}
     const realElapsedMs = Date.now() - startTime
     const elapsedMs = Math.floor(realElapsedMs * speedMultiplier)
 
@@ -191,7 +191,7 @@ export function createTimerEngine(): TimerEngineAPI {
   }
 
   function on(eventType: EventType, callback: EventCallback) {
-    if (!listeners[eventType]) listeners[eventType] = []
+    if (!listeners[eventType]) {listeners[eventType] = []}
     listeners[eventType]!.push(callback)
   }
 
@@ -200,7 +200,7 @@ export function createTimerEngine(): TimerEngineAPI {
   }
 
   function setSpeedMultiplier(multiplier: number) {
-    if (startTime === null || timeline === null) return
+    if (startTime === null || timeline === null) {return}
     const now = Date.now()
     const currentSimulatedMs = Math.floor((now - startTime) * speedMultiplier)
     speedMultiplier = multiplier

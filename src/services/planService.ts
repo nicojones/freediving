@@ -87,9 +87,9 @@ export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
  * Returns the day id at the given index, or null if missing/invalid.
  */
 export function getDayId(plan: Plan, dayIndex: number): string | null {
-  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) return null
+  if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {return null}
   const day = plan[dayIndex]
-  if (day == null || typeof day !== 'object' || !('id' in day)) return null
+  if (day == null || typeof day !== 'object' || !('id' in day)) {return null}
   return (day as { id: string }).id
 }
 
@@ -97,7 +97,7 @@ export function getDayId(plan: Plan, dayIndex: number): string | null {
  * Returns the day object for a given id, or null. Case-insensitive for URLs.
  */
 export function getDayById(plan: Plan, dayId: string): (typeof plan)[number] | null {
-  if (!Array.isArray(plan) || !dayId) return null
+  if (!Array.isArray(plan) || !dayId) {return null}
   const lower = dayId.toLowerCase()
   const day = plan.find((d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower)
   return day ?? null
@@ -107,7 +107,7 @@ export function getDayById(plan: Plan, dayId: string): (typeof plan)[number] | n
  * Returns the index of the day with the given id, or null.
  */
 export function getDayIndexById(plan: Plan, dayId: string): number | null {
-  if (!Array.isArray(plan) || !dayId) return null
+  if (!Array.isArray(plan) || !dayId) {return null}
   const lower = dayId.toLowerCase()
   const idx = plan.findIndex((d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower)
   return idx >= 0 ? idx : null
@@ -122,7 +122,7 @@ export function getCurrentDay(
   plan: Plan,
   completions: CompletionForPlan[]
 ): number | null {
-  if (!Array.isArray(plan) || isEmpty(plan)) return null
+  if (!Array.isArray(plan) || isEmpty(plan)) {return null}
 
   let lastCompletedDayIndex = -1
   if (completions.length > 0) {
@@ -132,8 +132,8 @@ export function getCurrentDay(
     lastCompletedDayIndex = idx ?? -1
   }
 
-  let nextDayIndex = lastCompletedDayIndex + 1
-  if (nextDayIndex >= plan.length) return null
+  const nextDayIndex = lastCompletedDayIndex + 1
+  if (nextDayIndex >= plan.length) {return null}
 
   const lastDate =
     completions.length > 0
@@ -157,7 +157,7 @@ export function getCurrentDay(
     let idx = nextDayIndex
     while (idx < plan.length && getPhasesForDay(plan, idx) === null) {
       const restDayDate = lastDate ? new Date(lastDate) : null
-      if (restDayDate) restDayDate.setDate(restDayDate.getDate() + 1)
+      if (restDayDate) {restDayDate.setDate(restDayDate.getDate() + 1)}
       const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate())
       const restNorm = restDayDate
         ? new Date(restDayDate.getFullYear(), restDayDate.getMonth(), restDayDate.getDate())
@@ -173,7 +173,7 @@ export function getCurrentDay(
 
   // Behind: skip rest days, return first training day
   for (let i = nextDayIndex; i < plan.length; i++) {
-    if (getPhasesForDay(plan, i) !== null) return i
+    if (getPhasesForDay(plan, i) !== null) {return i}
   }
   return null
 }
@@ -194,7 +194,7 @@ export function computeSessionDurationSeconds(phases: Phase[]): number {
  */
 export function getDaySummary(plan: Plan, dayIndex: number): string {
   const phases = getPhasesForDay(plan, dayIndex)
-  if (phases === null) return 'Rest'
+  if (phases === null) {return 'Rest'}
   const holdCount = phases.filter((p) => p.type === 'hold').length
   return holdCount === 1 ? '1 cycle' : `${holdCount} cycles`
 }

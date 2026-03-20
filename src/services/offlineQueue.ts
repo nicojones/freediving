@@ -39,7 +39,7 @@ export async function queueCompletion(
     completed_at: now,
     created_at: now,
   }
-  if (typeof dayIndex === 'number') item.day_index = dayIndex
+  if (typeof dayIndex === 'number') {item.day_index = dayIndex}
   await db.add(STORE_NAME, item)
 }
 
@@ -55,7 +55,7 @@ export async function flushQueue(): Promise<{ synced: number; failed: number }> 
         plan_id: item.plan_id,
         day_id: item.day_id,
       }
-      if (typeof item.day_index === 'number') body.day_index = item.day_index
+      if (typeof item.day_index === 'number') {body.day_index = item.day_index}
       const res = await fetch('/api/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,7 +86,7 @@ export async function clearByPlanId(planId: string): Promise<number> {
   const items = (await db.getAll(STORE_NAME)) as PendingCompletion[]
   const toDelete = items.filter((i) => i.plan_id === planId)
   for (const item of toDelete) {
-    if (item.id != null) await db.delete(STORE_NAME, item.id)
+    if (item.id != null) {await db.delete(STORE_NAME, item.id)}
   }
   return toDelete.length
 }

@@ -21,7 +21,9 @@
 - [x] **Phase 11: Refactor Code (Quality Pass)** - clsx correctness; small components; extract sub-components for clarity and testability
 - [x] **Phase 12: Tests** - Unit tests across the app; simple E2E tests with isolated test DB
 - [x] **Phase 13: Deployment** - GitHub Actions deploy to DigitalOcean on push to main
-- [ ] **Phase 14: Next.js Migration** - Migrate all the code (express + react) to Next.js
+- [x] **Phase 14: Next.js Migration** - Migrate all the code (express + react) to Next.js
+- [ ] **Phase 15: Refactor Code (Cleanup)** - Remove all unused variables, functions, imports; no dead code
+- [ ] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
 
 ---
 
@@ -277,7 +279,43 @@
 4. Deployment updated for Next.js build output (.next/)
 5. All existing functionality works as before
 
-**Plans:** `.planning/14-PLAN.md` (to be created)
+**Plans:** `.planning/14-PLAN.md` (9 tasks)
+
+---
+
+### Phase 15: Refactor Code (Cleanup)
+
+**Goal:** Remove all unused code — variables, functions, imports, exports. No dead code.
+
+**Depends on:** Phase 14 (Next.js Migration)
+
+**Requirements:** (Enhancement — code quality)
+
+**Success Criteria** (what must be TRUE):
+1. ESLint configured (flat config) and passing
+2. All `if` statements use curly braces
+3. No unused variables, functions, imports, or exports in codebase
+4. No behavior change; tests pass
+
+**Plans:** `.planning/15-PLAN.md` (5 tasks: ESLint config → curly braces → remove unused code → verify → CI)
+
+---
+
+### Phase 16: Alias Imports, Component Folders & Extended Tests
+
+**Goal:** Add `~` path alias for `src/*`, reorganize `src/components` into subfolders, add component unit tests, and extend E2E coverage with reset progress, plan change, abort session, and non-happy-path flows.
+
+**Depends on:** Phase 15 (Refactor Code Cleanup)
+
+**Requirements:** (Enhancement — code structure and test coverage)
+
+**Success Criteria** (what must be TRUE):
+1. `~` alias maps to `src/`; imports like `import X from '~/components/...'` work
+2. `src/components` organized into subfolders (e.g. ui, session, day, layout, settings)
+3. Component unit tests added for components that lacked them
+4. E2E tests cover: reset progress, plan change, abort breathhold session, non-happy-path (invalid login, invalid day, etc.)
+
+**Plans:** `.planning/16-PLAN.md` (6 tasks: ~ alias → component subfolders → component tests → E2E reset → E2E plan change & abort → E2E error paths)
 
 ---
 
@@ -298,7 +336,9 @@
 | 11. Refactor Code (Quality Pass) | 6/6 | Complete | 11-PLAN.md |
 | 12. Tests | 8/8 | Complete | 12-PLAN.md |
 | 13. Deployment | 6/6 | Complete | 13-PLAN.md |
-| 14. Next.js Migration | 0/0 | Pending | 14-PLAN.md |
+| 14. Next.js Migration | 9/9 | Complete | 14-PLAN.md |
+| 15. Refactor Code (Cleanup) | 0/5 | Pending | 15-PLAN.md |
+| 16. Alias Imports, Component Folders & Extended Tests | 0/6 | Pending | 16-PLAN.md |
 
 ---
 

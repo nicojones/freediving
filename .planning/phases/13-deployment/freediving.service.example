@@ -4,8 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
+User=root
 WorkingDirectory=/var/www/freediving
+Environment=PATH=/root/.nvm/versions/node/v20.20.1/bin:/usr/local/bin:/usr/bin:/bin
 EnvironmentFile=/var/www/freediving/.env.production
 ExecStart=/var/www/freediving/start_freediving.sh
 Restart=on-failure

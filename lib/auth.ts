@@ -23,6 +23,6 @@ export async function getAuthUser(): Promise<{ id: number; username: string } | 
     cookieStore.get('token')?.value ??
     (await headers()).get('authorization')?.replace(/^Bearer\s+/i, '') ??
     null
-  if (!token) return null
+  if (!token) {return null}
   return verifyToken(token)
 }

@@ -3,14 +3,14 @@ import clsx from 'clsx'
 import isNil from 'lodash/isNil'
 import { useCallback, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { BottomNavBar } from '../components/BottomNavBar'
-import { DayListSection } from '../components/DayListSection'
-import { InstallPrompt } from '../components/InstallPrompt'
-import { PlanCompleteMessage } from '../components/PlanCompleteMessage'
-import { RestDayCard } from '../components/RestDayCard'
-import { SessionPreviewSection } from '../components/SessionPreviewSection'
-import { StatusBanner } from '../components/StatusBanner'
-import { TopAppBar } from '../components/TopAppBar'
+import { BottomNavBar } from '../components/layout/BottomNavBar'
+import { DayListSection } from '../components/day/DayListSection'
+import { InstallPrompt } from '../components/layout/InstallPrompt'
+import { PlanCompleteMessage } from '../components/day/PlanCompleteMessage'
+import { RestDayCard } from '../components/day/RestDayCard'
+import { SessionPreviewSection } from '../components/session/SessionPreviewSection'
+import { StatusBanner } from '../components/shared/StatusBanner'
+import { TopAppBar } from '../components/layout/TopAppBar'
 import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { useTraining } from '../contexts/TrainingContext'
 import { getCurrentDay, getDayId, getDayIndexById, getPhasesForDay } from '../services/planService'
@@ -42,7 +42,7 @@ export function Dashboard() {
 
   const handleSelectDay = useCallback(
     (index: number) => {
-      if (isNil(plan)) return
+      if (isNil(plan)) {return}
       const id = getDayId(plan, index)
       if (id) {
         router.push(`/day/${id}`)
@@ -71,7 +71,7 @@ export function Dashboard() {
 
   // Sync URL dayId to selected day; invalid dayId → redirect to /
   useEffect(() => {
-    if (isNil(plan)) return
+    if (isNil(plan)) {return}
     if (urlDayId) {
       const idx = getDayIndexById(plan, urlDayId)
       if (idx === null) {
@@ -83,7 +83,7 @@ export function Dashboard() {
     }
   }, [urlDayId, plan, router, setSelectedDayIndex, setViewMode])
 
-  if (isNil(plan)) return null
+  if (isNil(plan)) {return null}
 
   const p = plan!
   const currentDayIndex = getCurrentDay(p, completions)

@@ -1,9 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { login } from '../services/authService'
-import { FishIcon } from '../components/FishIcon'
-import { TextInput } from '../components/TextInput'
-import { PrimaryButton } from '../components/PrimaryButton'
+import { FishIcon } from '../components/ui/FishIcon'
+import { TextInput } from '../components/ui/TextInput'
+import { PrimaryButton } from '../components/ui/PrimaryButton'
 
 interface LoginPageProps {
   onLoginSuccess: () => void

@@ -1,27 +1,28 @@
 import { useCallback } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { DEFAULT_USERNAME } from './constants/app'
-import { FishIcon } from './components/FishIcon'
+import { FishIcon } from './components/ui/FishIcon'
+import { Loader } from './components/ui/Loader'
 import { getCurrentDay } from './services/planService'
 import { LoginPage } from './views/LoginPage'
 import { Dashboard } from './views/Dashboard'
-import { TopAppBar } from './components/TopAppBar'
-import { ActiveSessionView } from './components/ActiveSessionView'
-import { SessionCompleteView } from './components/SessionCompleteView'
-import { SettingsView } from './components/SettingsView'
+import { TopAppBar } from './components/layout/TopAppBar'
+import { ActiveSessionView } from './components/session/ActiveSessionView'
+import { SessionCompleteView } from './components/session/SessionCompleteView'
+import { SettingsView } from './components/settings/SettingsView'
 import { TrainingProvider, useTraining } from './contexts/TrainingContext'
 import isNil from 'lodash/isNil'
 
 function SessionRouteGuard({ children }: { children: React.ReactNode }) {
   const { sessionStatus } = useTraining()
   if (sessionStatus !== 'running' && sessionStatus !== 'awaitingCompletionConfirm')
-    return <Navigate to="/" replace />
+    {return <Navigate to="/" replace />}
   return <>{children}</>
 }
 
 function SessionCompleteRouteGuard({ children }: { children: React.ReactNode }) {
   const { sessionStatus } = useTraining()
-  if (sessionStatus !== 'complete') return <Navigate to="/" replace />
+  if (sessionStatus !== 'complete') {return <Navigate to="/" replace />}
   return <>{children}</>
 }
 
@@ -53,11 +54,13 @@ function AppContent() {
   if (user === undefined) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-background text-on-surface p-8">
-        <div className="flex items-center gap-3">
-          <FishIcon className="text-primary animate-pulse" size={28} aria-hidden />
-          <span className="font-headline font-bold text-xl text-primary">Fishly</span>
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex items-center gap-3">
+            <FishIcon className="text-primary animate-pulse" size={28} aria-hidden />
+            <span className="font-headline font-bold text-xl text-primary">Fishly</span>
+          </div>
+          <Loader label="Loading…" className="mt-4" />
         </div>
-        <p className="mt-4 text-on-surface-variant font-body">Loading…</p>
       </main>
     )
   }
@@ -88,7 +91,7 @@ function AppContent() {
       <main className="min-h-screen bg-background text-on-surface p-8 max-w-2xl mx-auto">
         <TopAppBar variant="dashboard" />
         <div className="pt-8">
-          <p className="text-on-surface-variant font-body mb-4">Loading plan…</p>
+          <Loader label="Loading plan…" className="mb-4" />
           <button
             onClick={handleLogout}
             className="text-primary font-label hover:underline"

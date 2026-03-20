@@ -128,7 +128,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   }, [refreshUser])
 
   useEffect(() => {
-    if (!user) return
+    if (!user) {return}
 
     let cancelled = false
     const run = async () => {
@@ -148,7 +148,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
           return
         }
       }
-      if (cancelled) return
+      if (cancelled) {return}
       setActivePlanId(planId)
 
       const planResult = loadPlanById(planId)
@@ -160,9 +160,9 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       setPlanWithMeta(meta)
       setPlan(meta.days)
 
-      if (navigator.onLine) await flushOfflineQueue()
+      if (navigator.onLine) {await flushOfflineQueue()}
       const c = await fetchCompletions(planId)
-      if (cancelled) return
+      if (cancelled) {return}
       setCompletions(c)
     }
 
@@ -178,7 +178,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   }, [user])
 
   useEffect(() => {
-    if (!user || !activePlanId) return
+    if (!user || !activePlanId) {return}
     const handleOnline = async () => {
       await flushOfflineQueue()
       const c = await fetchCompletions(activePlanId)
@@ -196,10 +196,10 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   }, [plan, completions])
 
   const handleStartSession = useCallback(async () => {
-    if (isNil(plan) || selectedDayIndex === null) return
-    if (hasCompletedToday(completions)) return
+    if (isNil(plan) || selectedDayIndex === null) {return}
+    if (hasCompletedToday(completions)) {return}
     const phases = getPhasesForDay(plan!, selectedDayIndex)
-    if (!phases) return
+    if (!phases) {return}
 
     sessionDayIndexRef.current = selectedDayIndex
     setSessionDayIndex(selectedDayIndex)
