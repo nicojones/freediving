@@ -103,7 +103,7 @@ export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVo
         onClick={handleClick}
         disabled={disabled || loading}
         className="h-12 rounded-xl border-2 border-primary/60 bg-primary/10 hover:bg-primary/20 font-headline font-bold text-primary text-sm flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label={recording ? 'Stop recording' : 'Record with AI'}
+        aria-label={recording ? 'Stop recording' : 'Explain with voice'}
       >
         {loading ? (
           <>
@@ -124,7 +124,7 @@ export function AIVoicePlanInput({ onResult, disabled, onRecordingChange }: AIVo
             <span className="material-symbols-outlined text-xl" aria-hidden>
               mic
             </span>
-            AI voice
+            Explain
           </>
         )}
       </button>

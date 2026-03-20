@@ -27,12 +27,11 @@ export function PlansView() {
     pendingPlanId: string;
   } | null>(null);
 
-  const handlePlanChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newPlanId = e.target.value;
-    if (newPlanId === activePlanId) {
+  const handlePlanChange = (planId: string) => {
+    if (planId === activePlanId) {
       return;
     }
-    setConfirmPlanChange({ pendingPlanId: newPlanId });
+    setConfirmPlanChange({ pendingPlanId: planId });
   };
 
   const handleCloseConfirm = () => {
@@ -50,7 +49,7 @@ export function PlansView() {
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
       <TopAppBar variant="dashboard" weekLabel="Plans" />
       <main
-        className="px-6 pt-8 max-w-2xl mx-auto"
+        className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300"
         style={{
           background:
             'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',

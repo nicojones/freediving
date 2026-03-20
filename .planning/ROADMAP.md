@@ -30,11 +30,10 @@
 - [x] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
 - [x] **Phase 21: UI** - Remove hardcoded text; unify plan name/description in DayListSection; move app name to constants
 - [x] **Phase 22: Plans Tab + Settings Cleanup** - Add Plans tab; move plan-related UI from Settings; created_by + delete non-active plans; leave room for explore-without-switching
-- [ ] **Phase 23: Prettier + Lefthook + CI** - Basic formatter (Prettier); format + lint via lefthook.yml; GitHub workflow aborts if format/lint would change files
-- [ ] **Phase 24: AI Plan Input Enhancements** - Dynamic prompt from plan types; text/description-to-plan via LLM; optional dedicated plan creation screen
-- [ ] **Phase 25: Component Library (Radix/Headless UI)** - Add Radix UI or Headless UI; replace custom modals/dialogs; establish primitives for tabs, buttons
-- [ ] **Phase 26: Plan Creation UX** - Tab (natural language vs JSON); Preview instead of raw JSON; refine flow; confirm modal (name/description)
-- [ ] **Phase 27: Plan Creation UI Polish** - Visual and interaction improvements (deferred from Phase 25)
+- [x] **Phase 23: Prettier + Lefthook + CI** - Basic formatter (Prettier); format + lint via lefthook.yml; GitHub workflow aborts if format/lint would change files
+- [x] **Phase 24: AI Plan Input Enhancements** - Dynamic prompt from plan types; text/description-to-plan via LLM; optional dedicated plan creation screen
+- [x] **Phase 25: Component Library (Radix/Headless UI)** - Add Radix UI or Headless UI; replace custom modals/dialogs; establish primitives for tabs, buttons
+- [x] **Phase 26: Plan Creation UX** - Tab (natural language vs JSON); Preview instead of raw JSON; refine flow; confirm modal (name/description)
 
 ---
 
@@ -533,21 +532,27 @@
 4. Refine flow: user can send new text to LLM; repeat until satisfied
 5. Confirm modal: prefilled name/description; optional edit; hint; Save button (use Phase 25 Dialog primitive)
 
-**Plans:** `.planning/26-PLAN.md` (TBD — research and task breakdown)
+**Plans:** `.planning/26-PLAN.md` (3 plans: Tabs + state machine → Preview + Refine + Confirm → Paste + E2E)
 
 ---
 
-### Phase 27: Plan Creation UI Polish
+### Phase 27: Refactor CreatePlanSection (Component Size)
 
-**Goal:** Visual and interaction improvements for plan creation (deferred from Phase 26 scope).
+**Goal:** Reduce CreatePlanSection component size following Phase 11 refactoring rules. Prepare for eventual migration to its own page.
 
 **Depends on:** Phase 26 (Plan Creation UX)
 
-**Requirements:** (Enhancement — plan creation UI)
+**Requirements:** (Enhancement — code quality)
 
-**Success Criteria:** TBD
+**Success Criteria** (what must be TRUE):
 
-**Plans:** `.planning/27-PLAN.md` (TBD)
+1. clsx used correctly for all conditional class names (no string concatenation or template literals where clsx fits)
+2. CreatePlanSection and all extracted sub-components stay under ~150 lines
+3. Small UI blocks extracted to named sub-components for clarity and testability
+4. ESLint passes; Prettier formatting applied
+5. No user-facing behavior change; E2E tests pass
+
+**Plans:** `.planning/27-PLAN.md` (4 tasks: clsx + constants → extract Describe tab → extract Paste tab + banners → size audit + lint)
 
 ---
 
@@ -569,19 +574,19 @@
 | 12. Tests                                             | 8/8            | Complete | 12-PLAN.md |
 | 13. Deployment                                        | 6/6            | Complete | 13-PLAN.md |
 | 14. Next.js Migration                                 | 9/9            | Complete | 14-PLAN.md |
-| 15. Refactor Code (Cleanup)                           | 0/5            | Pending  | 15-PLAN.md |
-| 16. Alias Imports, Component Folders & Extended Tests | 0/6            | Pending  | 16-PLAN.md |
-| 17. Test Controls                                     | 0/4            | Pending  | 17-PLAN.md |
+| 15. Refactor Code (Cleanup)                           | 5/5            | Complete | 15-PLAN.md |
+| 16. Alias Imports, Component Folders & Extended Tests | 6/6            | Complete | 16-PLAN.md |
+| 17. Test Controls                                     | 4/4            | Complete | 17-PLAN.md |
 | 18. Dynamic Version Display & Semantic Release        | 4/4            | Complete | 18-PLAN.md |
-| 19. Create Plan in Settings                           | 0/9            | Pending  | 19-PLAN.md |
-| 20. Preview Future Days                               | 0/TBD          | Pending  | 20-PLAN.md |
-| 21. UI                                                | 0/3            | Pending  | 21-PLAN.md |
+| 19. Create Plan in Settings                           | 9/9            | Complete | 19-PLAN.md |
+| 20. Preview Future Days                               | 1/1            | Complete | 20-PLAN.md |
+| 21. UI                                                | 3/3            | Complete | 21-PLAN.md |
 | 22. Plans Tab + Settings Cleanup                      | 5/5            | Complete | 22-PLAN.md |
-| 23. Prettier + Lefthook + CI                          | 0/5            | Pending  | 23-PLAN.md |
-| 24. AI Plan Input Enhancements                        | 0/7            | Pending  | 24-PLAN.md |
-| 25. Component Library (Radix/Headless UI)             | 0/TBD          | Pending  | 25-PLAN.md |
-| 26. Plan Creation UX                                  | 0/TBD          | Pending  | 26-PLAN.md |
-| 27. Plan Creation UI Polish                           | 0/TBD          | Pending  | 27-PLAN.md |
+| 23. Prettier + Lefthook + CI                          | 5/5            | Complete | 23-PLAN.md |
+| 24. AI Plan Input Enhancements                        | 7/7            | Complete | 24-PLAN.md |
+| 25. Component Library (Radix/Headless UI)             | 7/7            | Complete | 25-PLAN.md |
+| 26. Plan Creation UX                                  | 7/7            | Complete | 26-PLAN.md |
+| 27. Refactor CreatePlanSection (Component Size)       | 0/4            | Pending  | 27-PLAN.md |
 
 ---
 

@@ -94,7 +94,7 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
 
   if (variant === 'compact') {
     return (
-      <div className="mb-6 flex items-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-low/50 px-4 py-3">
+      <div className="mb-6 flex items-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-low/50 px-4 py-3 justify-between">
         <div className="flex gap-3">
           <span className="material-symbols-outlined text-primary text-xl shrink-0">
             {deferredPrompt ? 'download_2' : 'add_to_home_screen'}

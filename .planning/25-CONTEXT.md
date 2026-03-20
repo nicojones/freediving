@@ -68,22 +68,34 @@
 
 ---
 
+## In Scope for Phase 25 (expanded)
+
+- **Dialog:** ConfirmResetModal
+- **Tabs:** Primitive for Phase 26
+- **Listbox:** PlanSelectorSection (native select → Headless Listbox)
+- **Switch:** DevModeSection (native checkbox → Headless Switch)
+- **RadioGroup:** SpeedMultiplierSelector (button group → Headless RadioGroup)
+
 ## Out of Scope for Phase 25
 
-- Replacing all buttons with library primitives
-- Adding dropdowns, tooltips, or other primitives not needed by Phase 26
+- Replacing all buttons with library primitives (PrimaryButton, BackButton stay custom)
+- BottomNavBar (navigation, not tabbed content — Headless Tabs not applicable)
+- Adding tooltips or other primitives not needed
 - Changing visual design or introducing new design tokens
 
 ---
 
 ## Traceability
 
-| Decision | Outcome                                   |
-| -------- | ----------------------------------------- |
-| Library  | Radix UI or Headless UI (TBD by research) |
-| Modals   | Replace ConfirmResetModal with Dialog     |
-| Tabs     | Add Tabs primitive for Phase 26           |
-| Buttons  | Keep custom; defer to Phase 27 if needed  |
+| Decision   | Outcome                                      |
+| ---------- | -------------------------------------------- |
+| Library    | Headless UI (from research)                  |
+| Modals     | Replace ConfirmResetModal with Dialog        |
+| Tabs       | Add Tabs primitive for Phase 26              |
+| Listbox    | Replace PlanSelectorSection native select    |
+| Switch     | Replace DevModeSection checkbox              |
+| RadioGroup | Replace SpeedMultiplierSelector button group |
+| Buttons    | Keep custom; defer to Phase 27 if needed     |
 
 ---
 

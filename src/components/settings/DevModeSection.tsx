@@ -1,4 +1,5 @@
 'use client';
+import { Switch } from '@headlessui/react';
 import { useDevMode } from '../../hooks/useDevMode';
 
 export function DevModeSection() {
@@ -13,13 +14,14 @@ export function DevModeSection() {
         Developer
       </h2>
       <label className="flex items-center gap-3 cursor-pointer">
-        <input
-          type="checkbox"
+        <Switch
           checked={devModeEnabled}
-          onChange={(e) => setDevModeEnabled(e.target.checked)}
-          className="rounded border-outline-variant bg-surface-container-low"
+          onChange={setDevModeEnabled}
           data-testid="dev-mode-toggle"
-        />
+          className="group inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-outline-variant/60 bg-surface-container-high transition data-checked:bg-primary data-checked:border-primary"
+        >
+          <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
+        </Switch>
         <span className="text-on-surface-variant font-body text-sm">
           Show test controls on session preview for faster testing
         </span>

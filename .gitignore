@@ -6,3 +6,13 @@ server/data.db
 .env.production
 .env.local
 .next
+
+# Serwist service worker (generated)
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/swe-worker-*.js
+public/swe-worker-*.js.map
+
+.DS_STORE

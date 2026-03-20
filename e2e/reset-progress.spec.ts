@@ -13,6 +13,6 @@ test('user can reset progress', async ({ page }) => {
   await page.getByTestId('confirm-reset-confirm').click();
 
   await expect(page.getByTestId('confirm-reset-input')).not.toBeVisible();
-  await page.getByRole('button', { name: /training/i }).click();
+  await page.getByTestId('nav-training').click();
   await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 10000 });
 });

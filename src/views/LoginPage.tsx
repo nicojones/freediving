@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
 import { login } from '../services/authService';
-import packageJson from '../../package.json';
 import { FishIcon } from '../components/ui/FishIcon';
 import { TextInput } from '../components/ui/TextInput';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
+import { VersionFooter } from '../components/shared/VersionFooter';
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
@@ -93,9 +93,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           </form>
 
           <footer className="mt-24 text-center">
-            <p className="font-label text-on-surface-variant/40 text-[0.6rem] uppercase tracking-widest">
-              Version {packageJson.version} • Deep Flow Encrypted
-            </p>
+            <VersionFooter />
           </footer>
         </div>
 

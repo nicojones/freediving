@@ -1,7 +1,7 @@
 # Phase 26: Plan Creation UX — Context
 
 **Created:** 2025-03-20  
-**Purpose:** Implementation decisions for plan creation UX: tab input modes, Preview, refine flow, confirm modal.  
+**Purpose:** Implementation decisions for plan creation UX: tab input modes, Preview, refine flow, confirm modal.
 **Phase:** 26. Plan Creation UX
 
 ---
