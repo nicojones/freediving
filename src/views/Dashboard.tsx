@@ -14,7 +14,7 @@ import { TopAppBar } from '../components/layout/TopAppBar'
 import { DEFAULT_PLAN_NAME } from '../constants/app'
 import { useTraining } from '../hooks/useTraining'
 import { getCurrentDay, getDayId, getDayIndexById, getPhasesForDay } from '../services/planService'
-import { isDayCompleted } from '../utils/completions'
+import { getCompletionDateForDay, isDayCompleted } from '../utils/completions'
 
 /** Dashboard: ~162 lines. Slightly over 150; further extraction would split cohesive day/session routing logic. */
 export function Dashboard() {
@@ -99,6 +99,9 @@ export function Dashboard() {
     !isRestDay
   const showDayDetail = selectedDayIndex !== null
   const planName = planWithMeta?.name ?? DEFAULT_PLAN_NAME
+  const selectedDayId = selectedDayIndex !== null ? getDayId(p, selectedDayIndex) ?? undefined : undefined
+  const isSelectedDayCompleted =
+    showSessionPreview && isDayCompleted(completions, selectedDayId)
 
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
@@ -108,7 +111,11 @@ export function Dashboard() {
         planName={planName}
       />
       <main
-        className={clsx('px-6 pt-8 max-w-2xl mx-auto', { 'pb-12': showDayDetail })}
+        className={clsx(
+          'px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300',
+          { 'pb-12': showDayDetail },
+          isSelectedDayCompleted && 'ring-2 ring-emerald-500/60 shadow-[0_0_32px_rgba(5,150,105,0.15)]'
+        )}
         style={{
           background:
             'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
@@ -144,6 +151,8 @@ export function Dashboard() {
               showTestControls={showTestControls}
               audioLoading={audioLoading}
               hasCompletedToday={hasCompletedToday}
+              isDayCompleted={isDayCompleted(completions, selectedDayId)}
+              completedAt={getCompletionDateForDay(completions, selectedDayId)}
               onBack={handleBack}
               onSpeedMultiplierChange={setSpeedMultiplier}
               onTestModeChange={showTestControls ? setTestMode : () => {}}

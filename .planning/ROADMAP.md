@@ -25,7 +25,8 @@
 - [ ] **Phase 15: Refactor Code (Cleanup)** - Remove all unused variables, functions, imports; no dead code
 - [ ] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
 - [ ] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
-- [ ] **Phase 18: Dynamic Version Display & Semantic Release** - Version from package.json on login; fix→patch, feat→minor, chore→no bump on push to main; major manual
+- [x] **Phase 18: Dynamic Version Display & Semantic Release** - Version from package.json on login; fix→patch, feat→minor, chore→no bump on push to main; major manual
+- [ ] **Phase 19: Create Plan in Settings** - JSON upload with schema validation; optional AI voice mode (dictate → Gemini → PlanWithMeta JSON)
 
 ---
 
@@ -358,6 +359,24 @@
 
 ---
 
+### Phase 19: Create Plan in Settings
+
+**Goal:** Add a feature in Settings to create new training plans. Two paths: (1) JSON file upload with schema validation; (2) optional "PRO" AI voice mode — dictate plan, audio + schema sent to Google Gemini, get valid PlanWithMeta JSON back, auto-fill form, user confirms.
+
+**Depends on:** Phase 18 (Dynamic Version Display & Semantic Release)
+
+**Requirements:** (Enhancement — plan creation)
+
+**Success Criteria** (what must be TRUE):
+1. User can upload a JSON file in Settings; file is validated against PlanWithMeta schema
+2. Valid plans are stored (DB preferred; public/static considered — pros/cons documented)
+3. Invalid JSON shows clear validation errors
+4. (Optional) AI mode: microphone icon, dictate → server sends audio + schema to Gemini → returns valid JSON → auto-fills form → user clicks OK to save
+
+**Plans:** `.planning/19-PLAN.md` (Plan 01: JSON upload + validation + storage; Plan 02: AI voice mode — may split into sub-phases if complex)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -379,7 +398,8 @@
 | 15. Refactor Code (Cleanup) | 0/5 | Pending | 15-PLAN.md |
 | 16. Alias Imports, Component Folders & Extended Tests | 0/6 | Pending | 16-PLAN.md |
 | 17. Test Controls | 0/4 | Pending | 17-PLAN.md |
-| 18. Dynamic Version Display & Semantic Release | 0/4 | Pending | 18-PLAN.md |
+| 18. Dynamic Version Display & Semantic Release | 4/4 | Complete | 18-PLAN.md |
+| 19. Create Plan in Settings | 0/9 | Pending | 19-PLAN.md |
 
 ---
 

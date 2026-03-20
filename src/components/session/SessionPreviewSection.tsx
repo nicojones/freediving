@@ -14,6 +14,8 @@ interface SessionPreviewSectionProps {
   showTestControls: boolean
   audioLoading: boolean
   hasCompletedToday: boolean
+  isDayCompleted: boolean
+  completedAt: number | null
   onBack: () => void
   onSpeedMultiplierChange: (speed: number) => void
   onTestModeChange: (v: boolean) => void
@@ -29,13 +31,16 @@ export function SessionPreviewSection({
   showTestControls,
   audioLoading,
   hasCompletedToday,
+  isDayCompleted,
+  completedAt,
   onBack,
   onSpeedMultiplierChange,
   onTestModeChange,
   onStartSession,
 }: SessionPreviewSectionProps) {
-  const showStartCTA =
-    selectedDayIndex === currentDayIndex
+  const isCurrentDay = selectedDayIndex === currentDayIndex
+  const showStartCTA = isCurrentDay && !isDayCompleted
+  const showCompletedCTA = isDayCompleted && completedAt != null
 
   return (
     <>
@@ -84,6 +89,13 @@ export function SessionPreviewSection({
           loading={audioLoading}
           disabled={hasCompletedToday}
           disabledMessage="You've already trained today"
+        />
+      )}
+
+      {showCompletedCTA && (
+        <StartSessionCTA
+          onStart={onStartSession}
+          completedAt={completedAt!}
         />
       )}
     </>

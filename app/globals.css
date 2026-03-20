@@ -4,7 +4,7 @@
   /* Fishly color tokens */
   --color-background: #0d1416;
   --color-surface: #0d1416;
-  --color-surface-container-low: #161d1f;
+  --color-surface-container-low: #0c0f10;
   --color-surface-container-high: #242b2d;
   --color-surface-container-highest: #2f3638;
   --color-surface-bright: #333a3d;
@@ -80,10 +80,12 @@ button {
 }
 
 @keyframes recovery-pulse {
+
   0%,
   100% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 1;
   }

@@ -26,3 +26,18 @@ export function isDayCompleted(
     (c) => c?.day_id && c.day_id.toLowerCase() === dayId.toLowerCase()
   )
 }
+
+/** Completion with timestamp for date lookup */
+type CompletionWithDayId = { day_id: string; completed_at: number }
+
+/** Returns completed_at (Unix seconds) for the given day, or null if not completed */
+export function getCompletionDateForDay(
+  completions: CompletionWithDayId[],
+  dayId: string | undefined
+): number | null {
+  if (!dayId) {return null}
+  const match = completions.find(
+    (c) => c?.day_id && c.day_id.toLowerCase() === dayId.toLowerCase()
+  )
+  return match?.completed_at ?? null
+}
