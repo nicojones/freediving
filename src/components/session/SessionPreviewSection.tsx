@@ -48,6 +48,7 @@ export function SessionPreviewSection({
   onStartSession,
 }: SessionPreviewSectionProps) {
   const isCurrentDay = selectedDayIndex === currentDayIndex
+  const isFutureDay = currentDayIndex !== null && selectedDayIndex > currentDayIndex
   const showStartCTA = isCurrentDay && !isDayCompleted
   const showCompletedCTA = isDayCompleted && completedAt != null
 
@@ -58,6 +59,11 @@ export function SessionPreviewSection({
           <BackButton onClick={onBack} />
         </div>
         <section className="mb-0">
+          {isFutureDay && (
+            <span className="bg-surface-variant/40 text-on-surface-variant font-label text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-widest mb-3 inline-block">
+              Preview
+            </span>
+          )}
           <h1 className="font-headline text-[3.5rem] leading-[1.1] font-bold tracking-tight text-on-surface mb-2">
             Day {selectedDayIndex + 1}{dayGroup ? `: ${titleCase(dayGroup)}` : ''}
           </h1>

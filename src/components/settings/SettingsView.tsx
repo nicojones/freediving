@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { DEFAULT_PLAN_NAME } from '../../constants/app'
 import { TopAppBar } from '../layout/TopAppBar'
 import { BottomNavBar } from '../layout/BottomNavBar'
 import { DevModeSection } from './DevModeSection'
@@ -21,7 +20,6 @@ export function SettingsView() {
     user,
     availablePlans,
     activePlanId,
-    planWithMeta,
     resetProgress,
     setActivePlan,
     refreshAvailablePlans,
@@ -58,11 +56,9 @@ export function SettingsView() {
     }
   }
 
-  const planName = planWithMeta?.name ?? DEFAULT_PLAN_NAME
-
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
-      <TopAppBar variant="dashboard" weekLabel="Settings" planName={planName} showPlanName={false} />
+      <TopAppBar variant="dashboard" weekLabel="Settings" />
       <main
         className="px-6 pt-8 max-w-2xl mx-auto"
         style={{

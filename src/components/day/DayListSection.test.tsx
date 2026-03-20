@@ -15,21 +15,23 @@ describe('DayListSection', () => {
         completions={[]}
         currentDayIndex={0}
         onSelectDay={() => {}}
+        planName="CO2 Tolerance"
       />
     )
     expect(screen.getByTestId('dashboard-day-list')).toBeInTheDocument()
   })
 
-  it('renders Training heading', () => {
+  it('renders plan name heading', () => {
     render(
       <DayListSection
         plan={mockPlan}
         completions={[]}
         currentDayIndex={0}
         onSelectDay={() => {}}
+        planName="CO2 Tolerance"
       />
     )
-    expect(screen.getByRole('heading', { name: /training/i })).toBeInTheDocument()
+    expect(screen.getByTestId('plan-name')).toHaveTextContent('CO2 Tolerance')
   })
 
   it('calls onSelectDay when day card is clicked', async () => {
@@ -40,6 +42,7 @@ describe('DayListSection', () => {
         completions={[]}
         currentDayIndex={0}
         onSelectDay={onSelectDay}
+        planName="CO2 Tolerance"
       />
     )
     const dayCards = screen.getAllByTestId(/^day-card-/)

@@ -1,15 +1,18 @@
 import { memo } from 'react'
+import { REST_DAY_DESCRIPTION } from '../../constants/app'
 import { BackButton } from '../ui/BackButton'
 
 interface RestDayCardProps {
   dayIndex: number
   isCompleted: boolean
+  isPreview?: boolean
   onBack: () => void
 }
 
 export const RestDayCard = memo(function RestDayCard({
   dayIndex,
   isCompleted,
+  isPreview,
   onBack,
 }: RestDayCardProps) {
   return (
@@ -18,11 +21,16 @@ export const RestDayCard = memo(function RestDayCard({
         <BackButton onClick={onBack} />
       </div>
       <section>
+        {isPreview && (
+          <span className="bg-surface-variant/40 text-on-surface-variant font-label text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-widest mb-3 inline-block">
+            Preview
+          </span>
+        )}
         <h1 className="font-headline text-[3.5rem] leading-[1.1] font-bold tracking-tight text-on-surface mb-2">
           Day {dayIndex + 1}: Rest
         </h1>
         <p className="text-on-surface-variant text-lg tracking-wide font-medium">
-          Recovery and light activity
+          {REST_DAY_DESCRIPTION}
         </p>
         {isCompleted && (
           <div className="mt-6 flex items-center gap-3 text-primary">

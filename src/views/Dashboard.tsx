@@ -57,7 +57,11 @@ export function Dashboard() {
   const handleBack = useCallback(() => {
     router.push('/')
     setViewMode('dashboard')
-  }, [router, setViewMode])
+    if (!isNil(plan)) {
+      const current = getCurrentDay(plan, completions)
+      setSelectedDayIndex(current)
+    }
+  }, [plan, completions, router, setViewMode, setSelectedDayIndex])
 
   const handleStartSessionClick = useCallback(async () => {
     await handleStartSession()
@@ -108,7 +112,6 @@ export function Dashboard() {
       <TopAppBar
         variant={showDayDetail ? 'session-preview' : 'dashboard'}
         weekLabel="Current Week"
-        planName={planName}
       />
       <main
         className={clsx(
@@ -127,10 +130,11 @@ export function Dashboard() {
           <InstallPrompt hasEngaged={completions.length > 0} />
         )}
 
-        {showDayDetail && isRestDay ? (
+        {showDayDetail && isRestDay && viewMode === 'session-preview' ? (
           <RestDayCard
             dayIndex={selectedDayIndex!}
             isCompleted={isDayCompleted(completions, getDayId(p, selectedDayIndex!) ?? undefined)}
+            isPreview={currentDayIndex !== null && selectedDayIndex! > currentDayIndex}
             onBack={handleBack}
           />
         ) : !showSessionPreview ? (
@@ -139,6 +143,8 @@ export function Dashboard() {
             completions={completions}
             currentDayIndex={currentDayIndex}
             onSelectDay={handleSelectDay}
+            planName={planName}
+            planDescription={planWithMeta?.description}
           />
         ) : (
           selectedPhases && (

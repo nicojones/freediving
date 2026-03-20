@@ -61,6 +61,11 @@ export const TrainingDayCard = memo(function TrainingDayCard({
   }
 
   return (
-    <LockedDayCard dayIndex={dayIndex} dayId={dayId} summary={summary} />
+    <LockedDayCard
+      dayIndex={dayIndex}
+      dayId={dayId}
+      summary={summary}
+      onSelect={onSelect}
+    />
   )
 })

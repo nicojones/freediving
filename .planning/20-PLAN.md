@@ -38,15 +38,19 @@ Add the ability to preview future days in a training plan — view their structu
 
 ---
 
-## Plan 01: Preview Future Days (TBD)
+## Plan 01: Preview Future Days — Done
 
-*Tasks to be defined after research.*
+1. **LockedDayCard** — Made clickable with optional `onSelect`; shows "Preview" + chevron when selectable
+2. **TrainingDayCard** — Passes `onSelect` to LockedDayCard so future days are tappable
+3. **SessionPreviewSection** — Shows "Preview" badge when viewing a future day; Start CTA only for current day
+4. **RestDayCard** — Added `isPreview` prop; shows "Preview" badge for future rest days
+5. **handleStartSession** — Guard: only allows starting when `selectedDayIndex === currentDayIndex`
 
 ---
 
 ## Verification
 
-- [ ] User can open/preview any future day and see its session structure
-- [ ] User cannot start a session for a future day
-- [ ] Future days are visually distinct (e.g. locked, preview-only)
-- [ ] `npm run build` and `npm run test:run` pass
+- [x] User can open/preview any future day and see its session structure
+- [x] User cannot start a session for a future day
+- [x] Future days are visually distinct (e.g. locked, preview-only)
+- [x] `npm run build` and `npm run test:run` pass

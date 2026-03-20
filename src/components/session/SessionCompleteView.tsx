@@ -1,17 +1,15 @@
 'use client'
-import { DEFAULT_PLAN_NAME } from '../../constants/app'
 import { PrimaryButton } from '../ui/PrimaryButton'
 import { TopAppBar } from '../layout/TopAppBar'
 import { BottomNavBar } from '../layout/BottomNavBar'
 import { useTraining } from '../../hooks/useTraining'
 
 export function SessionCompleteView() {
-  const { planWithMeta, handleBackToTraining, handleSettingsClick } = useTraining()
-  const planName = planWithMeta?.name ?? DEFAULT_PLAN_NAME
+  const { handleBackToTraining, handleSettingsClick } = useTraining()
 
   return (
     <div className="min-h-screen bg-background">
-      <TopAppBar variant="dashboard" planName={planName} />
+      <TopAppBar variant="dashboard" />
       <main className="px-6 pt-8 pb-32 max-w-2xl mx-auto">
         <div className="bg-surface-container-low rounded-3xl p-8 text-center">
           <span

@@ -99,6 +99,29 @@ describe('SessionPreviewSection', () => {
     expect(screen.queryByTestId('speed-selector')).not.toBeInTheDocument()
   })
 
+  it('shows Preview label and hides Start button when viewing future day', () => {
+    render(
+      <SessionPreviewSection
+        selectedDayIndex={2}
+        selectedPhases={mockPhases}
+        currentDayIndex={0}
+        speedMultiplier={1}
+        testMode={false}
+        showTestControls={true}
+        audioLoading={false}
+        hasCompletedToday={false}
+        isDayCompleted={false}
+        completedAt={null}
+        onBack={() => {}}
+        onSpeedMultiplierChange={() => {}}
+        onTestModeChange={() => {}}
+        onStartSession={() => {}}
+      />
+    )
+    expect(screen.getByText('Preview')).toBeInTheDocument()
+    expect(screen.queryByTestId('start-session-button')).not.toBeInTheDocument()
+  })
+
   it('shows test controls (toggle and speed selector) when showTestControls is true', () => {
     render(
       <SessionPreviewSection

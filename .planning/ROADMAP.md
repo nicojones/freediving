@@ -22,12 +22,14 @@
 - [x] **Phase 12: Tests** - Unit tests across the app; simple E2E tests with isolated test DB
 - [x] **Phase 13: Deployment** - GitHub Actions deploy to DigitalOcean on push to main
 - [x] **Phase 14: Next.js Migration** - Migrate all the code (express + react) to Next.js
-- [ ] **Phase 15: Refactor Code (Cleanup)** - Remove all unused variables, functions, imports; no dead code
-- [ ] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
-- [ ] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
+- [x] **Phase 15: Refactor Code (Cleanup)** - Remove all unused variables, functions, imports; no dead code
+- [x] **Phase 16: Alias Imports, Component Folders & Extended Tests** - ~ alias for src/*; subfolders in components; component tests; E2E for reset, plan change, abort, error paths
+- [x] **Phase 17: Test Controls** - Settings toggle (dev mode) to show/hide test controls; all users can toggle; default OFF; unchecked = invisible
 - [x] **Phase 18: Dynamic Version Display & Semantic Release** - Version from package.json on login; fix→patch, feat→minor, chore→no bump on push to main; major manual
-- [ ] **Phase 19: Create Plan in Settings** - JSON upload with schema validation; optional AI voice mode (dictate → Gemini → PlanWithMeta JSON)
-- [ ] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
+- [x] **Phase 19: Create Plan in Settings** - JSON upload with schema validation; optional AI voice mode (dictate → Gemini → PlanWithMeta JSON)
+- [x] **Phase 20: Preview Future Days** - Preview future days in a training plan; no way to execute them
+- [x] **Phase 21: UI** - Remove hardcoded text; unify plan name/description in DayListSection; move app name to constants
+- [ ] **Phase 22: Plans Tab + Settings Cleanup** - Add Plans tab; move plan-related UI from Settings; created_by + delete non-active plans; leave room for explore-without-switching
 
 ---
 
@@ -395,6 +397,42 @@
 
 ---
 
+### Phase 21: UI
+
+**Goal:** Remove hardcoded text and unify the UI: DayListSection uses plan name/description; TopAppBar no longer shows plan name; app name "Fishly" moved to constants.
+
+**Depends on:** Phase 20 (Preview Future Days)
+
+**Requirements:** (Enhancement — UI consistency)
+
+**Success Criteria** (what must be TRUE):
+1. DayListSection displays plan name and description from plan metadata (not hardcoded "Training" / "Focus on rhythmic breathing...")
+2. TopAppBar does not show plan name (redundant with DayListSection)
+3. App name "Fishly" lives in `src/constants/app.ts`
+
+**Plans:** `.planning/21-PLAN.md` (3 tasks: DayListSection plan metadata → remove TopAppBar plan name → app name to constants)
+
+---
+
+### Phase 22: Plans Tab + Settings Cleanup
+
+**Goal:** Settings is too polluted. Add Plans tab; move plan-related UI (change plan, add plan) from Settings; add created_by to plans table; allow permanent delete of user-created non-active plans; leave room for future "explore plans without switching".
+
+**Depends on:** Phase 21 (UI)
+
+**Requirements:** (Enhancement — settings cleanup)
+
+**Success Criteria** (what must be TRUE):
+1. Bottom nav has three tabs: Training, Plans, Settings
+2. Plan selector and create-plan live in Plans tab; Settings no longer shows them
+3. plans table has created_by; new user-created plans record creator
+4. User can permanently delete plans they created, only when plan is not active
+5. Structure leaves room for future "explore plans without switching" (do not implement)
+
+**Plans:** `.planning/22-PLAN.md` (5 tasks: Plans tab → move sections → created_by → delete non-active → leave room for explore)
+
+---
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -419,6 +457,8 @@
 | 18. Dynamic Version Display & Semantic Release | 4/4 | Complete | 18-PLAN.md |
 | 19. Create Plan in Settings | 0/9 | Pending | 19-PLAN.md |
 | 20. Preview Future Days | 0/TBD | Pending | 20-PLAN.md |
+| 21. UI | 0/3 | Pending | 21-PLAN.md |
+| 22. Plans Tab + Settings Cleanup | 0/5 | Pending | 22-PLAN.md |
 
 ---
 

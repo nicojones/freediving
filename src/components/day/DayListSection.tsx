@@ -8,6 +8,8 @@ interface DayListSectionProps {
   completions: { day_id: string }[]
   currentDayIndex: number | null
   onSelectDay: (index: number) => void
+  planName: string
+  planDescription?: string
 }
 
 export function DayListSection({
@@ -15,16 +17,17 @@ export function DayListSection({
   completions,
   currentDayIndex,
   onSelectDay,
+  planName,
+  planDescription,
 }: DayListSectionProps) {
   return (
     <>
       <section className="mb-12">
-        <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2">
-          Training
+        <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2" data-testid="plan-name">
+          {planName}
         </h1>
         <p className="text-on-surface-variant font-body text-sm max-w-[80%]">
-          Focus on rhythmic breathing and peripheral relaxation during the peak
-          CO2 phases.
+          {planDescription ?? 'Focus on rhythmic breathing and peripheral relaxation during the peak CO2 phases.'}
         </p>
       </section>
 

@@ -50,6 +50,7 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   const [devModeEnabled] = useDevMode()
   const showTestControls = devModeEnabled
   const sessionDayIndexRef = useRef<number | null>(null)
+  const prevActivePlanIdRef = useRef<string | null>(null)
 
   const {
     startSession: engineStartSession,
@@ -146,8 +147,17 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     }
   }, [plan, completions])
 
+  useEffect(() => {
+    if (prevActivePlanIdRef.current !== null && prevActivePlanIdRef.current !== activePlanId) {
+      setSelectedDayIndex(null)
+    }
+    prevActivePlanIdRef.current = activePlanId
+  }, [activePlanId])
+
   const handleStartSession = useCallback(async () => {
     if (isNil(plan) || selectedDayIndex === null) {return}
+    const currentDayIndex = getCurrentDay(plan, completions)
+    if (currentDayIndex === null || selectedDayIndex !== currentDayIndex) {return}
     if (hasCompletedToday(completions)) {return}
     const phases = getPhasesForDay(plan!, selectedDayIndex)
     if (!phases) {return}

@@ -33,11 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Semantic Release
-        run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
@@ -50,6 +45,11 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
+      - name: Semantic Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build Next.js
         run: npm run build
 
@@ -58,8 +58,9 @@ jobs:
           cp -r public .next/standalone/
           cp -r .next/static .next/standalone/.next/
           cp start_freediving.sh .next/standalone/
-          mkdir -p .next/standalone/src
+          mkdir -p .next/standalone/src .next/standalone/scripts
           cp -r src/data .next/standalone/src/
+          cp scripts/diagnose-502.sh .next/standalone/scripts/
           cd .next/standalone && zip -r ../../build.zip . && cd ../..
 
       - name: Upload build to Server
@@ -86,3 +87,13 @@ jobs:
             fi
 
             systemctl restart freediving.service
+
+            # Verify service is running (helps diagnose 502)
+            sleep 2
+            systemctl status freediving.service --no-pager || true
+            if ! systemctl is-active --quiet freediving.service; then
+              echo "::error::freediving.service is not active after restart"
+              journalctl -u freediving.service -n 30 --no-pager || true
+              exit 1
+            fi
+            ss -tlnp | grep -E '3002|LISTEN' || true

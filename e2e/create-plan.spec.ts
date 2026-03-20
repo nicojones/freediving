@@ -72,9 +72,9 @@ async function createPlanAndVerify(
     await page.getByTestId('confirm-reset-confirm').click()
     await expect(page.getByTestId('confirm-reset-input')).not.toBeVisible()
 
-    await expect(page.getByTestId('header-plan-name')).toHaveText(planName, { timeout: 5000 })
     await page.getByRole('button', { name: /training/i }).click()
     await page.waitForURL(/\/(?!settings)/)
+    await expect(page.getByTestId('plan-name')).toHaveText(planName, { timeout: 5000 })
     await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 })
   }
 }
