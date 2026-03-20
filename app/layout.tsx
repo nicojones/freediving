@@ -6,6 +6,7 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Fishly — Breathhold Protocol',
   applicationName: 'Fishly',
+  icons: { icon: '/fish.svg' },
 }
 
 export const viewport: Viewport = {

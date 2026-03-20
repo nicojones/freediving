@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   transpilePackages: ['idb'],
   async rewrites() {
-    return [{ source: '/favicon.ico', destination: '/icon' }]
+    return [{ source: '/favicon.ico', destination: '/fish.svg' }]
   },
 }
 
