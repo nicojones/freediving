@@ -13,7 +13,7 @@ import { DEFAULT_USERNAME } from '../../constants/app';
 
 export function SettingsView() {
   const router = useRouter();
-  const { user, resetProgress, handleLogout } = useTraining();
+  const { user, planWithMeta, resetProgress, handleLogout } = useTraining();
   const username = user?.username ?? DEFAULT_USERNAME;
 
   const [confirmReset, setConfirmReset] = useState(false);
@@ -44,7 +44,7 @@ export function SettingsView() {
         <div className="flex flex-col gap-y-6">
           <InstallPrompt variant="compact" />
 
-          <ResetProgressSection onRequestReset={handleRequestReset} />
+          <ResetProgressSection onRequestReset={handleRequestReset} planName={planWithMeta?.name} />
 
           <UserProfileCard username={username} />
 

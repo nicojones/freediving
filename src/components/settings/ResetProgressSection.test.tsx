@@ -14,4 +14,14 @@ describe('ResetProgressSection', () => {
     fireEvent.click(screen.getByTestId('reset-progress-button'));
     expect(onRequestReset).toHaveBeenCalledTimes(1);
   });
+
+  it('shows plan name when provided', () => {
+    render(<ResetProgressSection onRequestReset={() => {}} planName="Week 1" />);
+    expect(screen.getByText(/Clear all completed days for "Week 1"/)).toBeInTheDocument();
+  });
+
+  it('shows "the current plan" when plan name is not provided', () => {
+    render(<ResetProgressSection onRequestReset={() => {}} />);
+    expect(screen.getByText(/Clear all completed days for the current plan/)).toBeInTheDocument();
+  });
 });

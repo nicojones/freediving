@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { TabPageLayout } from '@/src/components/layout/TabPageLayout';
 import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSection';
-import { ConfirmResetModal } from '@/src/components/settings/ConfirmResetModal';
+import { ConfirmSwitchPlanModal } from '@/src/components/settings/ConfirmSwitchPlanModal';
 import { useTraining } from '@/src/hooks/useTraining';
+import { fetchCompletions } from '@/src/services/progressService';
 
 /**
  * Plans tab: change plan, add plan, delete plan (user-created, non-active).
@@ -24,6 +25,31 @@ export function PlansView() {
     pendingPlanId: string;
   } | null>(null);
 
+  const [planProgress, setPlanProgress] = useState<
+    Record<string, { completed: number; total: number }>
+  >({});
+
+  const refreshPlanProgress = useCallback(async () => {
+    if (!user || availablePlans.length === 0) {
+      return;
+    }
+    const results = await Promise.all(
+      availablePlans.map(async (p) => {
+        const c = await fetchCompletions(p.id);
+        return { id: p.id, completed: c.length, total: p.days.length };
+      })
+    );
+    const record: Record<string, { completed: number; total: number }> = {};
+    for (const r of results) {
+      record[r.id] = { completed: r.completed, total: r.total };
+    }
+    setPlanProgress(record);
+  }, [user, availablePlans]);
+
+  useEffect(() => {
+    refreshPlanProgress();
+  }, [refreshPlanProgress]);
+
   const handlePlanChange = (planId: string) => {
     if (planId === activePlanId) {
       return;
@@ -38,9 +64,14 @@ export function PlansView() {
   const handleConfirmPlanChange = async () => {
     if (confirmPlanChange?.pendingPlanId) {
       await setActivePlan(confirmPlanChange.pendingPlanId);
+      await refreshPlanProgress();
     }
     handleCloseConfirm();
   };
+
+  const pendingPlan = confirmPlanChange?.pendingPlanId
+    ? availablePlans.find((p) => p.id === confirmPlanChange.pendingPlanId)
+    : null;
 
   return (
     <>
@@ -59,20 +90,15 @@ export function PlansView() {
           currentUserId={user?.id}
           onPlanChange={handlePlanChange}
           onPlanDeleted={refreshAvailablePlans}
+          planProgress={planProgress}
         />
       </TabPageLayout>
 
-      <ConfirmResetModal
+      <ConfirmSwitchPlanModal
         isOpen={confirmPlanChange !== null}
         onClose={handleCloseConfirm}
         onConfirm={handleConfirmPlanChange}
-        title="Change training plan"
-        message={
-          <>
-            Changing plan will reset your progress. Type{' '}
-            <strong className="text-on-surface">reset</strong> to confirm.
-          </>
-        }
+        planName={pendingPlan?.name ?? 'this plan'}
       />
     </>
   );

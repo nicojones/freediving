@@ -12,6 +12,7 @@ interface PlanSelectorSectionProps {
   currentUserId: number | undefined;
   onPlanChange: (planId: string) => void;
   onPlanDeleted: () => void;
+  planProgress?: Record<string, { completed: number; total: number }>;
 }
 
 export function PlanSelectorSection({
@@ -20,6 +21,7 @@ export function PlanSelectorSection({
   currentUserId,
   onPlanChange,
   onPlanDeleted,
+  planProgress = {},
 }: PlanSelectorSectionProps) {
   const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -102,6 +104,14 @@ export function PlanSelectorSection({
             >
               <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                 <span className="font-body font-medium truncate">{p.name}</span>
+                {planProgress[p.id] && (
+                  <span
+                    data-testid={`plan-progress-${p.id}`}
+                    className="text-on-surface-variant text-sm font-normal"
+                  >
+                    {planProgress[p.id].completed}/{planProgress[p.id].total} days
+                  </span>
+                )}
                 {p.description && (
                   <span className="text-on-surface-variant text-sm font-normal line-clamp-2">
                     {p.description}

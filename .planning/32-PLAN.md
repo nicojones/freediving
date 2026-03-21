@@ -1,6 +1,6 @@
 # Phase 32: Multi-Program Switching — Plan
 
-**Status:** Pending  
+**Status:** Executed  
 **Depends on:** Phase 31 (UI Polish)
 
 ---
@@ -24,24 +24,24 @@ Users can switch between training programs; progress is preserved per plan (not 
 
 ### 1. Remove reset from setActivePlan (SC-1, SC-4)
 
-- [ ] **1.1** In `TrainingContext.tsx`, remove the call to `apiResetProgress(planId)` from `setActivePlan`. The flow becomes: `apiSetActivePlan(planId)` → load plan → `fetchCompletions(planId)` → update state. Do NOT clear the new plan's progress.
+- [x] **1.1** In `TrainingContext.tsx`, remove the call to `apiResetProgress(planId)` from `setActivePlan`. The flow becomes: `apiSetActivePlan(planId)` → load plan → `fetchCompletions(planId)` → update state. Do NOT clear the new plan's progress.
 
 ### 2. Simple switch confirmation modal (SC-3)
 
-- [ ] **2.1** Create `src/components/settings/ConfirmSwitchPlanModal.tsx`: a simple confirmation dialog with props `isOpen`, `onClose`, `onConfirm`, `planName`. Title: "Switch training plan". Message: "Switch to {planName}? Your progress in both plans will be preserved." Two buttons: Cancel (calls onClose), Confirm (calls onConfirm then onClose). Use Headless UI Dialog (same pattern as ConfirmResetModal). Add `data-testid="confirm-switch-plan-modal"` and `data-testid="confirm-switch-plan-confirm"` on Confirm button.
-- [ ] **2.2** In `PlansView.tsx`, replace the plan-change `ConfirmResetModal` with `ConfirmSwitchPlanModal`. Pass `planName` from the pending plan (look up by `confirmPlanChange.pendingPlanId` in `availablePlans`). Remove the "Type reset" flow for plan change.
+- [x] **2.1** Create `src/components/settings/ConfirmSwitchPlanModal.tsx`: a simple confirmation dialog with props `isOpen`, `onClose`, `onConfirm`, `planName`. Title: "Switch training plan". Message: "Switch to {planName}? Your progress in both plans will be preserved." Two buttons: Cancel (calls onClose), Confirm (calls onConfirm then onClose). Use Headless UI Dialog (same pattern as ConfirmResetModal). Add `data-testid="confirm-switch-plan-modal"` and `data-testid="confirm-switch-plan-confirm"` on Confirm button.
+- [x] **2.2** In `PlansView.tsx`, replace the plan-change `ConfirmResetModal` with `ConfirmSwitchPlanModal`. Pass `planName` from the pending plan (look up by `confirmPlanChange.pendingPlanId` in `availablePlans`). Remove the "Type reset" flow for plan change.
 
 ### 3. Plans tab progress display (SC-2)
 
-- [ ] **3.1** In `PlanSelectorSection.tsx`, add prop `planProgress?: Record<string, { completed: number; total: number }>` (planId → { completed, total }). For each plan in the list, if `planProgress[p.id]` exists, render a progress line below the plan name: e.g. "3/17 days" or "3 of 17 days". Use `text-on-surface-variant text-sm`. Add `data-testid="plan-progress-{planId}"` for E2E.
-- [ ] **3.2** In `PlansView.tsx`, add state `planProgress: Record<string, { completed: number; total: number }>`. On mount and when `availablePlans` or `user` changes, fetch completions for each plan in parallel: `Promise.all(availablePlans.map(async p => { const c = await fetchCompletions(p.id); return { id: p.id, completed: c.length, total: p.days.length }; }))`. Build the record and pass to `PlanSelectorSection` as `planProgress`. Use `useEffect` with `availablePlans` dependency; call `fetchCompletions` from progressService.
-- [ ] **3.3** When user switches plan (after `handleConfirmPlanChange`), refresh `planProgress` so the newly active plan's count updates if they had just completed a day elsewhere. Either re-fetch all, or optimistically update the switched-from plan if needed. Simplest: re-run the same `Promise.all` fetch after `setActivePlan` completes (e.g. in `handleConfirmPlanChange` after `await setActivePlan(...)`).
+- [x] **3.1** In `PlanSelectorSection.tsx`, add prop `planProgress?: Record<string, { completed: number; total: number }>` (planId → { completed, total }). For each plan in the list, if `planProgress[p.id]` exists, render a progress line below the plan name: e.g. "3/17 days" or "3 of 17 days". Use `text-on-surface-variant text-sm`. Add `data-testid="plan-progress-{planId}"` for E2E.
+- [x] **3.2** In `PlansView.tsx`, add state `planProgress: Record<string, { completed: number; total: number }>`. On mount and when `availablePlans` or `user` changes, fetch completions for each plan in parallel: `Promise.all(availablePlans.map(async p => { const c = await fetchCompletions(p.id); return { id: p.id, completed: c.length, total: p.days.length }; }))`. Build the record and pass to `PlanSelectorSection` as `planProgress`. Use `useEffect` with `availablePlans` dependency; call `fetchCompletions` from progressService.
+- [x] **3.3** When user switches plan (after `handleConfirmPlanChange`), refresh `planProgress` so the newly active plan's count updates if they had just completed a day elsewhere. Either re-fetch all, or optimistically update the switched-from plan if needed. Simplest: re-run the same `Promise.all` fetch after `setActivePlan` completes (e.g. in `handleConfirmPlanChange` after `await setActivePlan(...)`).
 
 ### 4. Tests
 
-- [ ] **4.1** Add unit test for `ConfirmSwitchPlanModal`: renders when open; Cancel calls onClose; Confirm calls onConfirm; planName appears in message.
-- [ ] **4.2** In `e2e/plan-change.spec.ts`, update the plan-change flow: after clicking a plan option, use `confirm-switch-plan-confirm` instead of `confirm-reset-input` + `confirm-reset-confirm` (no typing). Add assertion that progress for switched-to plan is preserved: complete a day in plan A, switch to plan B, switch back to plan A — completed day still shown.
-- [ ] **4.3** Add unit test or E2E for Plans tab: progress display shows correct counts (e.g. 0/17 for fresh plan, 3/17 after completing 3 days). Consider mocking fetchCompletions in PlanSelectorSection test if it receives planProgress as prop.
+- [x] **4.1** Add unit test for `ConfirmSwitchPlanModal`: renders when open; Cancel calls onClose; Confirm calls onConfirm; planName appears in message.
+- [x] **4.2** In `e2e/plan-change.spec.ts`, update the plan-change flow: after clicking a plan option, use `confirm-switch-plan-confirm` instead of `confirm-reset-input` + `confirm-reset-confirm` (no typing). Add assertion that progress for switched-to plan is preserved: complete a day in plan A, switch to plan B, switch back to plan A — completed day still shown.
+- [x] **4.3** Add unit test or E2E for Plans tab: progress display shows correct counts (e.g. 0/17 for fresh plan, 3/17 after completing 3 days). Consider mocking fetchCompletions in PlanSelectorSection test if it receives planProgress as prop.
 
 ---
 

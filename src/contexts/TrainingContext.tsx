@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useRef, useCallback, type ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { DEFAULT_PLAN_ID } from '../constants/app';
 import {
@@ -212,7 +213,6 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
         setProgressError(res.error);
         return;
       }
-      await apiResetProgress(planId);
       const planResult = loadPlanById(planId, availablePlans);
       if ('error' in planResult) {
         setError(planResult.error);
@@ -259,8 +259,10 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     const result = await recordCompletion(planId, dayId, dayToRecord);
     if ('ok' in result) {
       setProgressError(null);
-      engineMarkComplete();
-      setSessionDayIndex(null);
+      flushSync(() => {
+        engineMarkComplete();
+        setSessionDayIndex(null);
+      });
       router.push('/session/complete');
       setSavedMessage(true);
       setTimeout(() => setSavedMessage(false), 2500);

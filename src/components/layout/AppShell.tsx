@@ -6,6 +6,7 @@ import { FishIcon } from '@/src/components/ui/FishIcon';
 import { Loader } from '@/src/components/ui/Loader';
 import { LoginPage } from '@/src/views/LoginPage';
 import { TopAppBar } from '@/src/components/layout/TopAppBar';
+import { DeferredSignOutButton } from '@/src/components/layout/DeferredSignOutButton';
 import { TrainingProvider } from '@/src/contexts/TrainingContext';
 import { useTraining } from '@/src/hooks/useTraining';
 import { isNil } from '@/src/utils/lang';
@@ -58,10 +59,8 @@ function AppContent({ children }: ChildrenNode) {
         <TopAppBar />
         <div className="pt-8">
           <p className="text-error font-body mb-4">{error}</p>
-          <button onClick={handleLogout} className="text-primary font-label hover:underline">
-            Sign out
-          </button>
         </div>
+        <DeferredSignOutButton onSignOut={handleLogout} />
       </main>
     );
   }
@@ -72,10 +71,8 @@ function AppContent({ children }: ChildrenNode) {
         <TopAppBar />
         <div className="pt-8">
           <Loader label="Loading plan…" className="mb-4" />
-          <button onClick={handleLogout} className="text-primary font-label hover:underline">
-            Sign out
-          </button>
         </div>
+        <DeferredSignOutButton onSignOut={handleLogout} />
       </main>
     );
   }

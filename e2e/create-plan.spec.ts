@@ -72,9 +72,8 @@ async function verifyPlanCreation(
     await page.waitForURL(/\/plans/);
     await expect(planSelector).toBeVisible({ timeout: 5000 });
     await page.locator(`[data-plan-name="${planName}"]`).click();
-    await page.getByTestId('confirm-reset-input').fill('reset');
-    await page.getByTestId('confirm-reset-confirm').click();
-    await expect(page.getByTestId('confirm-reset-input')).not.toBeVisible();
+    await page.getByTestId('confirm-switch-plan-confirm').click();
+    await page.getByTestId('confirm-switch-plan-modal').waitFor({ state: 'detached' });
 
     await page.getByTestId('nav-training').click();
     await page.waitForURL(/\/(?!plans|settings)/);
