@@ -32,28 +32,20 @@ export function SettingsView() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
-      <TopAppBar variant="dashboard" weekLabel="Settings" />
-      <main
-        className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
-        }}
-      >
-        <section className="mb-12">
-          <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2">
+    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden max-sm:px-1!">
+      <TopAppBar variant="dashboard" />
+      <main className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300 content-surface-gradient">
+        <section className="mb-12 flex flex-col gap-y-6">
+          <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none">
             Settings
           </h1>
-          <p className="text-on-surface-variant font-body text-sm max-w-[80%] mb-10">
+          <p className="text-on-surface-variant font-body text-sm max-w-[80%]">
             Account and app preferences.
           </p>
 
           <InstallPrompt variant="compact" />
 
           <ResetProgressSection onRequestReset={handleRequestReset} />
-
-          <DevModeSection />
 
           <UserProfileCard username={username} />
 
@@ -68,7 +60,9 @@ export function SettingsView() {
             Sign out
           </button>
 
-          <div className="pt-12 pb-8 text-center">
+          <DevModeSection />
+
+          <div className="text-center pb-8">
             <VersionFooter />
           </div>
         </section>

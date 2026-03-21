@@ -11,9 +11,10 @@ import { useCreatePlanHandlers } from './create-plan/useCreatePlanHandlers';
 
 interface CreatePlanSectionProps {
   onPlanCreated?: () => void;
+  onNavigateToPlans?: () => void;
 }
 
-export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
+export function CreatePlanSection({ onPlanCreated, onNavigateToPlans }: CreatePlanSectionProps) {
   const handlers = useCreatePlanHandlers(onPlanCreated);
 
   return (
@@ -94,7 +95,11 @@ export function CreatePlanSection({ onPlanCreated }: CreatePlanSectionProps) {
         </TabPanels>
       </TabGroup>
 
-      <CreatePlanStatusBanner error={handlers.error} success={handlers.success} />
+      <CreatePlanStatusBanner
+        error={handlers.error}
+        success={handlers.success}
+        onNavigateToPlans={onNavigateToPlans}
+      />
 
       {handlers.draftPlan && (
         <>

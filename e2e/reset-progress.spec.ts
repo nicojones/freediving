@@ -7,7 +7,8 @@ import { loginAsAthena } from './helpers/login';
 test('user can reset progress', async ({ page }) => {
   await loginAsAthena(page);
 
-  await page.getByRole('button', { name: /settings/i }).click();
+  await page.getByTestId('nav-settings').click();
+  await page.waitForURL(/\/settings/);
   await page.getByTestId('reset-progress-button').click();
   await page.getByTestId('confirm-reset-input').fill('reset');
   await page.getByTestId('confirm-reset-confirm').click();

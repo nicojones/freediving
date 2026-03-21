@@ -16,6 +16,7 @@ server.once('error', (err) => {
       execSync(`lsof -ti :${E2E_PORT} | xargs kill -9`, { stdio: 'ignore' });
       // Inform the user the process was killed
       console.log(`\n⚠️ Port ${E2E_PORT} was in use. Killed process(es) occupying it.\n`);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       // If nothing was using the port, or kill failed, just continue
     }

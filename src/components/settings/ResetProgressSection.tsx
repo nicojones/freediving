@@ -4,11 +4,11 @@ interface ResetProgressSectionProps {
 
 export function ResetProgressSection({ onRequestReset }: ResetProgressSectionProps) {
   return (
-    <div className="bg-surface-container-low rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/30">
-      <h2 className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-3">
+    <div className="bg-surface-container-low rounded-3xl p-6 overflow-hidden border border-outline-variant/30 flex flex-col gap-y-4">
+      <h2 className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant">
         Reset progress
       </h2>
-      <p className="text-on-surface-variant font-body text-sm mb-4">
+      <p className="text-on-surface-variant font-body text-sm">
         Clear all completed days for the current plan. This cannot be undone.
       </p>
       <button

@@ -7,7 +7,7 @@ import { loginAsAthena } from './helpers/login';
 test('user can change plan', async ({ page }) => {
   await loginAsAthena(page);
 
-  await page.getByRole('button', { name: /plans/i }).click();
+  await page.getByTestId('nav-plans').click();
   await page.waitForURL(/\/plans/);
   const planSelector = page.getByTestId('plan-selector');
   await expect(planSelector).toBeVisible({ timeout: 5000 });

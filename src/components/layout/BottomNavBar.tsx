@@ -38,7 +38,9 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           timer
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Training</span>
+        <span className="font-label text-[10px] font-medium uppercase tracking-widest">
+          Training
+        </span>
       </button>
       <button
         type="button"
@@ -59,7 +61,7 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           library_books
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Plans</span>
+        <span className="font-label text-[10px] font-medium uppercase tracking-widest">Plans</span>
       </button>
       <button
         type="button"
@@ -80,10 +82,11 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           add_circle
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Create</span>
+        <span className="font-label text-[10px] font-medium uppercase tracking-widest">Create</span>
       </button>
       <button
         type="button"
+        data-testid="nav-settings"
         onClick={onSettingsClick}
         className={clsx(
           'flex flex-col items-center justify-center rounded-2xl px-4 py-2 min-h-[44px] min-w-[44px] transition-all duration-400',
@@ -101,7 +104,9 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           settings
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Settings</span>
+        <span className="font-label text-[10px] font-medium uppercase tracking-widest">
+          Settings
+        </span>
       </button>
     </nav>
   );

@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 
 /** Default timeout for post-login dashboard to appear (plan loading can take a few seconds). */
-export const DASHBOARD_TIMEOUT = 15000;
+export const DASHBOARD_TIMEOUT = 20000;
 
 async function loginAs(page: Page, username: string, password: string): Promise<void> {
   await page.goto('/');

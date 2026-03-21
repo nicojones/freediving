@@ -17,6 +17,7 @@ test('user can abort session', async ({ page }) => {
   await page.getByTestId('test-mode-toggle').click();
   await page.locator('[data-testid="speed-option"][data-testid-value="10"]').click();
   await page.getByTestId('start-session-button').click();
+  await page.waitForURL(/\/session/);
 
   await expect(page.getByTestId('abort-session-button')).toBeVisible({ timeout: 5000 });
   await page.getByTestId('abort-session-button').click();

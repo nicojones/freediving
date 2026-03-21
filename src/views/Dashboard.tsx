@@ -73,6 +73,8 @@ export function Dashboard() {
 
   const handleStartSessionClick = useCallback(async () => {
     await handleStartSession();
+    // Yield so React can flush sessionStatus before SessionRouteGuard runs
+    await new Promise((r) => setTimeout(r, 0));
     router.push('/session');
   }, [handleStartSession, router]);
 
@@ -102,6 +104,8 @@ export function Dashboard() {
 
   const p = plan!;
   const currentDayIndex = getCurrentDay(p, completions);
+  const dayNum = currentDayIndex !== null ? currentDayIndex + 1 : p.length;
+  const totalDays = p.length;
   const selectedPhases = selectedDayIndex !== null ? getPhasesForDay(p, selectedDayIndex) : null;
   const isRestDay = selectedPhases === null && selectedDayIndex !== null;
   const isPlanComplete = selectedDayIndex === null && p.length > 0;
@@ -120,19 +124,15 @@ export function Dashboard() {
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden max-sm:px-1!">
       <TopAppBar
         variant={showDayDetail ? 'session-preview' : 'dashboard'}
-        weekLabel="Current Week"
+        weekLabel={`Day ${dayNum} of ${totalDays}`}
       />
       <main
         className={clsx(
-          'px-2 sm:px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300',
+          'px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300 content-surface-gradient',
           { 'pb-12': showDayDetail },
-          isSelectedDayCompleted &&
+          (isSelectedDayCompleted || isPlanComplete) &&
             'ring-2 ring-emerald-500/60 shadow-[0_0_32px_rgba(5,150,105,0.15)]'
         )}
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
-        }}
       >
         <StatusBanner progressError={progressError} savedMessage={savedMessage} />
 

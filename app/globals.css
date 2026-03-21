@@ -65,6 +65,10 @@ button {
   background: radial-gradient(circle at top, #1a2426 0%, #0d1416 100%);
 }
 
+.content-surface-gradient {
+  background: linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%);
+}
+
 .primary-pulse-gradient {
   background: linear-gradient(135deg, #52dad3 0%, #004e4b 100%);
 }

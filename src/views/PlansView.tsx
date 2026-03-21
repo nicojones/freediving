@@ -44,15 +44,9 @@ export function PlansView() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
-      <TopAppBar variant="dashboard" weekLabel="Plans" />
-      <main
-        className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(82, 218, 211, 0.05) 0%, rgba(13, 20, 22, 0) 100%)',
-        }}
-      >
+    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden max-sm:px-1!">
+      <TopAppBar variant="dashboard" />
+      <main className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300 content-surface-gradient">
         <section className="mb-12">
           <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2">
             Plans

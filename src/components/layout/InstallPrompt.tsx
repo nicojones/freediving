@@ -77,7 +77,7 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
 
   if (variant === 'compact') {
     return (
-      <div className="mb-6 flex items-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-low/50 px-4 py-3 justify-between">
+      <div className="flex items-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-low/50 px-4 py-3 justify-between">
         <div className="flex gap-3">
           <span className="material-symbols-outlined text-primary text-xl shrink-0">
             {deferredPrompt ? 'download_2' : 'add_to_home_screen'}
@@ -110,9 +110,9 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
           {deferredPrompt ? 'download_2' : 'add_to_home_screen'}
         </span>
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 flex flex-col gap-y-1">
         <h3 className="font-headline font-bold text-on-surface text-base">Install Fishly</h3>
-        <p className="text-on-surface-variant text-sm mt-0.5 leading-relaxed">
+        <p className="text-on-surface-variant text-sm leading-relaxed">
           {deferredPrompt
             ? 'Add to your home screen for the best experience.'
             : 'Tap Share → Add to Home Screen to install.'}

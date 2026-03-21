@@ -10,12 +10,7 @@ interface TopAppBarProps {
   onShare?: () => void;
 }
 
-export function TopAppBar({
-  variant,
-  weekLabel = 'Current Week',
-  onBack,
-  onShare,
-}: TopAppBarProps) {
+export function TopAppBar({ variant, weekLabel, onBack, onShare }: TopAppBarProps) {
   return (
     <>
       <div className="h-16 w-full" />
@@ -40,7 +35,7 @@ export function TopAppBar({
           </span>
         </div>
         <div className="flex items-center gap-4">
-          {variant === 'dashboard' && (
+          {variant === 'dashboard' && weekLabel && (
             <div className="flex flex-col items-end">
               <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em]">
                 {weekLabel}

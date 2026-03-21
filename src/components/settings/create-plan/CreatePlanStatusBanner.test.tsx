@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { CreatePlanStatusBanner } from './CreatePlanStatusBanner';
 
 describe('CreatePlanStatusBanner', () => {
@@ -15,9 +15,15 @@ describe('CreatePlanStatusBanner', () => {
 
   it('renders success message when success is true', () => {
     render(<CreatePlanStatusBanner error={null} success />);
-    expect(screen.getByTestId('create-plan-success')).toHaveTextContent(
-      'Plan created successfully'
-    );
+    expect(screen.getByTestId('create-plan-success')).toHaveTextContent(/See plans here/);
+  });
+
+  it('shows Go to Plans button when success and onNavigateToPlans provided', () => {
+    const onNavigateToPlans = vi.fn();
+    render(<CreatePlanStatusBanner error={null} success onNavigateToPlans={onNavigateToPlans} />);
+    const button = screen.getByTestId('create-plan-go-to-plans');
+    expect(button).toBeVisible();
+    expect(button).toHaveTextContent('Go to Plans');
   });
 
   it('prefers error over success when both are set', () => {
