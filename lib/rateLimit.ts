@@ -9,12 +9,12 @@ const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
 const attempts = new Map<string, number[]>();
 
-function prune(timestamps: number[]): number[] {
+const prune = (timestamps: number[]): number[] => {
   const cutoff = Date.now() - WINDOW_MS;
   return timestamps.filter((t) => t > cutoff);
-}
+};
 
-export function checkLimit(ip: string): boolean {
+export const checkLimit = (ip: string): boolean => {
   const timestamps = attempts.get(ip) ?? [];
   const pruned = prune(timestamps);
   if (pruned.length > 0) {
@@ -23,11 +23,11 @@ export function checkLimit(ip: string): boolean {
     attempts.delete(ip);
   }
   return pruned.length < MAX_ATTEMPTS;
-}
+};
 
-export function recordAttempt(ip: string): void {
+export const recordAttempt = (ip: string): void => {
   const timestamps = attempts.get(ip) ?? [];
   const pruned = prune(timestamps);
   pruned.push(Date.now());
   attempts.set(ip, pruned);
-}
+};

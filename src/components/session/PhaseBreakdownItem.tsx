@@ -9,31 +9,28 @@ interface PhaseBreakdownItemProps {
   isLast: boolean;
 }
 
-function getPhaseItemBorderClass(item: TimelineItem): string {
+const getPhaseItemBorderClass = (item: TimelineItem): string => {
   if (item.type === 'hold' && 'isTargetPeak' in item && item.isTargetPeak) {
     return 'border border-primary/20 shadow-[0_0_20px_rgba(82,218,211,0.05)]';
   }
   return '';
-}
+};
 
-function getPhaseIcon(item: TimelineItem): string {
+const getPhaseIcon = (item: TimelineItem): string => {
   if (item.type === 'hold') {
     return 'isTargetPeak' in item && item.isTargetPeak ? 'stars' : 'scuba_diving';
   }
   return 'air';
-}
+};
 
-function getPhaseSubtitle(item: TimelineItem): string {
+const getPhaseSubtitle = (item: TimelineItem): string => {
   if (item.type === 'hold') {
     return 'isTargetPeak' in item && item.isTargetPeak ? 'Target Peak Effort' : 'Static Apnea';
   }
   return item.label;
-}
+};
 
-export const PhaseBreakdownItem = memo(function PhaseBreakdownItem({
-  item,
-  isLast,
-}: PhaseBreakdownItemProps) {
+export const PhaseBreakdownItem = memo(({ item, isLast }: PhaseBreakdownItemProps) => {
   const isTargetPeak = item.type === 'hold' && 'isTargetPeak' in item && item.isTargetPeak;
 
   return (

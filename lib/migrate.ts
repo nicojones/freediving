@@ -4,7 +4,7 @@ import type { PoolConnection } from 'mysql2/promise';
 
 const MIGRATIONS_DIR = join(process.cwd(), 'migrations');
 
-export async function runMigrations(connection: PoolConnection): Promise<void> {
+export const runMigrations = async (connection: PoolConnection): Promise<void> => {
   await connection.query(`
     CREATE TABLE IF NOT EXISTS schema_migrations (
       name VARCHAR(255) PRIMARY KEY,
@@ -36,4 +36,4 @@ export async function runMigrations(connection: PoolConnection): Promise<void> {
     }
     await connection.query('INSERT IGNORE INTO schema_migrations (name) VALUES (?)', [name]);
   }
-}
+};

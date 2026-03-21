@@ -2,7 +2,8 @@
 
 import clsx from 'clsx';
 import type { PlanWithMeta } from '../../types/plan';
-import { APP_NAME, CREATED_BY } from '../../constants/app';
+import { getPlanDays } from '../../services/planService';
+import { CREATED_BY } from '../../constants/app';
 import { PlanContextMenu } from './PlanContextMenu';
 
 interface PlanCardProps {
@@ -15,13 +16,16 @@ interface PlanCardProps {
   deleteDisabled?: boolean;
   onRequestDelete?: (e: React.MouseEvent, planId: string, planName: string) => void;
   onRequestEdit?: (e: React.MouseEvent, plan: PlanWithMeta) => void;
+  onRequestReset?: (e: React.MouseEvent, plan: PlanWithMeta) => void;
   onCopyError?: (msg: string) => void;
   dataTestId?: string;
   progressTestId?: string;
   creatorTestId?: string;
+  /** When false, context menu shows only Copy and Download (e.g. bundled plans). Default true. */
+  showEditResetDelete?: boolean;
 }
 
-export function PlanCard({
+export const PlanCard = ({
   plan,
   progress,
   variant,
@@ -31,18 +35,23 @@ export function PlanCard({
   deleteDisabled = false,
   onRequestDelete,
   onRequestEdit,
+  onRequestReset,
   onCopyError,
   dataTestId,
   progressTestId,
   creatorTestId,
-}: PlanCardProps) {
+  showEditResetDelete = true,
+}: PlanCardProps) => {
+  const totalDays = getPlanDays(plan).length;
+  const displayProgress = progress ?? { completed: 0, total: totalDays };
+
   const content = (
     <>
       <div className="flex flex-col gap-2 min-w-0 flex-1">
         <div className={clsx('flex justify-between items-start gap-4')}>
-          {progress && (
+          {progressTestId !== undefined && (
             <span className="subtle" data-testid={progressTestId}>
-              {progress.completed}/{progress.total} days
+              {displayProgress.completed}/{displayProgress.total} days
             </span>
           )}
           {plan.public === true && (
@@ -56,7 +65,7 @@ export function PlanCard({
                 </span>
               )}
               <span className="subtle" data-testid={creatorTestId}>
-                {CREATED_BY} {plan.creator_name ?? APP_NAME}
+                {CREATED_BY(plan.creator_name)}
               </span>
             </span>
           )}
@@ -70,13 +79,15 @@ export function PlanCard({
       </div>
 
       <div className="flex items-center shrink-0">
-        {showMenu && onRequestDelete && (
+        {(showMenu || showEditResetDelete === false) && onRequestDelete && (
           <PlanContextMenu
             plan={plan}
             deleteDisabled={deleteDisabled}
             onRequestDelete={onRequestDelete}
             onRequestEdit={onRequestEdit}
+            onRequestReset={onRequestReset}
             onCopyError={onCopyError}
+            showEditResetDelete={showEditResetDelete}
           />
         )}
         {variant === 'active' && !showMenu && !showPublicIcon && (
@@ -126,4 +137,4 @@ export function PlanCard({
       {content}
     </div>
   );
-}
+};

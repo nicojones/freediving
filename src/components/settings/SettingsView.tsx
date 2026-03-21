@@ -1,34 +1,18 @@
 'use client';
-import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
 import { TabPageLayout } from '../layout/TabPageLayout';
 import { DevModeSection } from './DevModeSection';
-import { ResetProgressSection } from './ResetProgressSection';
-import { ConfirmResetModal } from './ConfirmResetModal';
 import { UserProfileCard } from './UserProfileCard';
 import { InstallPrompt } from '../layout/InstallPrompt';
 import { VersionFooter } from '../shared/VersionFooter';
 import { useTraining } from '../../hooks/useTraining';
 import { DEFAULT_USERNAME } from '../../constants/app';
 
-export function SettingsView() {
+export const SettingsView = () => {
   const router = useRouter();
-  const { user, planWithMeta, resetProgress, handleLogout } = useTraining();
+  const { user, handleLogout } = useTraining();
   const username = user?.username ?? DEFAULT_USERNAME;
-
-  const [confirmReset, setConfirmReset] = useState(false);
-
-  const handleRequestReset = () => {
-    setConfirmReset(true);
-  };
-
-  const handleCloseConfirm = () => {
-    setConfirmReset(false);
-  };
-
-  const handleConfirmReset = async () => {
-    await resetProgress();
-  };
 
   return (
     <>
@@ -45,8 +29,6 @@ export function SettingsView() {
           <InstallPrompt variant="compact" />
 
           <UserProfileCard username={username} email={user?.email ?? undefined} />
-
-          <ResetProgressSection onRequestReset={handleRequestReset} planName={planWithMeta?.name} />
 
           <button
             type="button"
@@ -66,19 +48,6 @@ export function SettingsView() {
           </div>
         </div>
       </TabPageLayout>
-
-      <ConfirmResetModal
-        isOpen={confirmReset}
-        onClose={handleCloseConfirm}
-        onConfirm={handleConfirmReset}
-        title="Reset progress"
-        message={
-          <>
-            This will clear all progress for this plan. Type{' '}
-            <strong className="text-on-surface">reset</strong> to confirm.
-          </>
-        }
-      />
     </>
   );
-}
+};

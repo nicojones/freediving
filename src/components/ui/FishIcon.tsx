@@ -4,7 +4,11 @@ interface FishIconProps {
   'aria-hidden'?: boolean;
 }
 
-export function FishIcon({ className = '', size = 24, 'aria-hidden': ariaHidden }: FishIconProps) {
+export const FishIcon = ({
+  className = '',
+  size = 24,
+  'aria-hidden': ariaHidden,
+}: FishIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,4 +25,4 @@ export function FishIcon({ className = '', size = 24, 'aria-hidden': ariaHidden 
       <circle cx="17.6" cy="22.4" r="2" fill="var(--color-background)" />
     </svg>
   );
-}
+};

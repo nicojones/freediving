@@ -2,7 +2,7 @@
 import { Switch } from '@headlessui/react';
 import { useDevMode } from '../../hooks/useDevMode';
 
-export function DevModeSection() {
+export const DevModeSection = () => {
   const [devModeEnabled, setDevModeEnabled] = useDevMode();
 
   return (
@@ -28,4 +28,4 @@ export function DevModeSection() {
       </label>
     </div>
   );
-}
+};

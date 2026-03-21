@@ -9,14 +9,14 @@ interface SessionActionButtonsProps {
   onAbortSession: () => void;
 }
 
-export function SessionActionButtons({
+export const SessionActionButtons = ({
   sessionStatus,
   speedMultiplier,
   onSpeedMultiplierChange,
   showTestControls = false,
   onCompleteSession,
   onAbortSession,
-}: SessionActionButtonsProps) {
+}: SessionActionButtonsProps) => {
   return (
     <div className="w-full flex flex-col gap-6">
       {sessionStatus === 'awaitingCompletionConfirm' ? (
@@ -61,4 +61,4 @@ export function SessionActionButtons({
       )}
     </div>
   );
-}
+};

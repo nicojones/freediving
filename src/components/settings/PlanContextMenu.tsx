@@ -1,122 +1,151 @@
 'use client';
 
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { useCallback, useMemo } from 'react';
 import type { PlanWithMeta } from '../../types/plan';
+import { planToJson } from '../../utils/planExport';
+import { ContextMenu, type ContextMenuItem } from '../ui/ContextMenu';
 
-function planToJson(plan: PlanWithMeta): string {
-  return JSON.stringify(
-    { id: plan.id, name: plan.name, description: plan.description, days: plan.days },
-    null,
-    2
-  );
-}
-
-function sanitizeFilename(name: string): string {
-  return name.replace(/[^a-z0-9\-_]/gi, '_') + '.json';
-}
+const sanitizeFilename = (name: string): string => name.replace(/[^a-z0-9\-_]/gi, '_') + '.json';
 
 interface PlanContextMenuProps {
   plan: PlanWithMeta;
   deleteDisabled: boolean;
   onRequestDelete: (e: React.MouseEvent, planId: string, planName: string) => void;
   onRequestEdit?: (e: React.MouseEvent, plan: PlanWithMeta) => void;
+  onRequestReset?: (e: React.MouseEvent, plan: PlanWithMeta) => void;
   onCopyError?: (msg: string) => void;
+  /** When false, only Copy and Download are shown (e.g. for bundled plans). Default true. */
+  showEditResetDelete?: boolean;
 }
 
-export function PlanContextMenu({
+export const PlanContextMenu = ({
   plan,
   deleteDisabled,
   onRequestDelete,
   onRequestEdit,
+  onRequestReset,
   onCopyError,
-}: PlanContextMenuProps) {
-  const handleCopyJson = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(planToJson(plan));
-    } catch {
-      onCopyError?.('Could not copy to clipboard');
-    }
-  };
+  showEditResetDelete = true,
+}: PlanContextMenuProps) => {
+  const handleCopyJson = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      try {
+        await navigator.clipboard.writeText(planToJson(plan));
+      } catch {
+        onCopyError?.('Could not copy to clipboard');
+      }
+    },
+    [plan, onCopyError]
+  );
 
-  const handleDownload = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const blob = new Blob([planToJson(plan)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = sanitizeFilename(plan.name);
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const handleDownload = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const blob = new Blob([planToJson(plan)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = sanitizeFilename(plan.name);
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+    [plan]
+  );
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onRequestEdit) {
-      onRequestEdit(e, plan);
-    }
-  };
+  const handleEdit = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onRequestEdit?.(e, plan);
+    },
+    [plan, onRequestEdit]
+  );
 
-  const handleDelete = (e: React.MouseEvent) => {
-    onRequestDelete(e, plan.id, plan.name);
-  };
+  const handleDelete = useCallback(
+    (e: React.MouseEvent) => {
+      onRequestDelete(e, plan.id, plan.name);
+    },
+    [plan, onRequestDelete]
+  );
+
+  const handleReset = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onRequestReset?.(e, plan);
+    },
+    [plan, onRequestReset]
+  );
+
+  const items = useMemo<ContextMenuItem[]>(
+    () => [
+      ...(showEditResetDelete
+        ? [
+            {
+              key: 'edit',
+              label: 'Edit',
+              onClick: handleEdit,
+              icon: 'edit',
+              'data-testid': 'plan-menu-edit',
+            } satisfies ContextMenuItem,
+          ]
+        : []),
+      {
+        key: 'copy',
+        label: 'Copy JSON',
+        onClick: handleCopyJson,
+        icon: 'content_copy',
+        'data-testid': 'plan-menu-copy',
+      },
+      {
+        key: 'download',
+        label: 'Download plan',
+        onClick: handleDownload,
+        icon: 'download',
+        'data-testid': 'plan-menu-download',
+      },
+      ...(showEditResetDelete && onRequestReset
+        ? [
+            {
+              key: 'reset',
+              label: 'Reset progress',
+              onClick: handleReset,
+              danger: true,
+              icon: 'restart_alt',
+              'data-testid': 'reset-progress-button',
+            } satisfies ContextMenuItem,
+          ]
+        : []),
+      ...(showEditResetDelete
+        ? [
+            {
+              key: 'delete',
+              label: 'Delete',
+              onClick: handleDelete,
+              danger: true,
+              icon: 'delete',
+              disabled: deleteDisabled,
+              'data-testid': 'plan-menu-delete',
+            } satisfies ContextMenuItem,
+          ]
+        : []),
+    ],
+    [
+      showEditResetDelete,
+      onRequestReset,
+      deleteDisabled,
+      handleEdit,
+      handleCopyJson,
+      handleDownload,
+      handleReset,
+      handleDelete,
+    ]
+  );
 
   return (
-    <Menu>
-      <MenuButton
-        onClick={(e) => e.stopPropagation()}
-        className="p-1 rounded-lg hover:bg-surface-variant/50 transition-colors"
-        data-testid={`plan-menu-${plan.id}`}
-        aria-label={`Options for ${plan.name}`}
-      >
-        <span className="material-symbols-outlined text-base">more_vert</span>
-      </MenuButton>
-      <MenuItems
-        anchor="bottom end"
-        className="z-50 mt-1 min-w-40 rounded-xl border border-outline-variant/40 bg-surface-container-high shadow-lg py-1"
-      >
-        <MenuItem>
-          <button
-            type="button"
-            onClick={handleCopyJson}
-            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-on-surface hover:bg-surface-variant/50 data-focus:bg-surface-variant/50"
-            data-testid="plan-menu-copy"
-          >
-            Copy JSON
-          </button>
-        </MenuItem>
-        <MenuItem>
-          <button
-            type="button"
-            onClick={handleDownload}
-            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-on-surface hover:bg-surface-variant/50 data-focus:bg-surface-variant/50"
-            data-testid="plan-menu-download"
-          >
-            Download plan
-          </button>
-        </MenuItem>
-        <MenuItem>
-          <button
-            type="button"
-            onClick={handleEdit}
-            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-on-surface hover:bg-surface-variant/50 data-focus:bg-surface-variant/50"
-            data-testid="plan-menu-edit"
-          >
-            Edit
-          </button>
-        </MenuItem>
-        <MenuItem disabled={deleteDisabled}>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleteDisabled}
-            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-error hover:bg-error/10 data-focus:bg-error/10 disabled:opacity-50 disabled:cursor-not-allowed"
-            data-testid="plan-menu-delete"
-          >
-            Delete
-          </button>
-        </MenuItem>
-      </MenuItems>
-    </Menu>
+    <ContextMenu
+      items={items}
+      triggerTestId={`plan-menu-${plan.id}`}
+      triggerLabel={`Options for ${plan.name}`}
+    />
   );
-}
+};

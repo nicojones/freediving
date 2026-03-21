@@ -8,7 +8,7 @@ import { useTraining } from '@/src/hooks/useTraining';
 import { fetchPlansFromApi } from '@/src/services/planService';
 import type { PlanWithMeta } from '@/src/types/plan';
 
-export function CreatePlanView() {
+export const CreatePlanView = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editPlanId = searchParams?.get('edit');
@@ -56,4 +56,4 @@ export function CreatePlanView() {
       />
     </TabPageLayout>
   );
-}
+};

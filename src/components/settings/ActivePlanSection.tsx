@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { PlanWithMeta } from '../../types/plan';
 import { BUNDLED_PLAN_IDS } from '../../constants/app';
+import { useTraining } from '../../hooks/useTraining';
 import { ConfirmPlanModal } from './ConfirmPlanModal';
+import { ConfirmResetModal } from './ConfirmResetModal';
 import { PlanCard } from './PlanCard';
 
 interface ActivePlanSectionProps {
@@ -12,6 +14,7 @@ interface ActivePlanSectionProps {
   progress?: { completed: number; total: number };
   currentUserId?: number;
   onPlanEdited?: () => void;
+  onPlanReset?: () => void;
 }
 
 export const ActivePlanSection = ({
@@ -19,10 +22,13 @@ export const ActivePlanSection = ({
   progress,
   currentUserId,
   onPlanEdited,
+  onPlanReset,
 }: ActivePlanSectionProps) => {
   const router = useRouter();
+  const { resetProgress } = useTraining();
   const [editingPlan, setEditingPlan] = useState<PlanWithMeta | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+  const [resettingPlan, setResettingPlan] = useState<PlanWithMeta | null>(null);
 
   if (!plan) {
     return null;
@@ -31,12 +37,27 @@ export const ActivePlanSection = ({
   const isUserCreated =
     !BUNDLED_PLAN_IDS.includes(plan.id) &&
     (plan.created_by === currentUserId || plan.created_by === undefined);
-  const showMenu = isUserCreated;
+  const showMenu = true;
+  const showEditResetDelete = isUserCreated;
   const showPublicIcon = !isUserCreated && plan.public === true;
 
   const handleRequestEdit = (e: React.MouseEvent, p: PlanWithMeta) => {
     e.stopPropagation();
     setEditingPlan(p);
+  };
+
+  const handleRequestReset = (e: React.MouseEvent, p: PlanWithMeta) => {
+    e.stopPropagation();
+    setResettingPlan(p);
+  };
+
+  const handleConfirmReset = async () => {
+    if (!resettingPlan) {
+      return;
+    }
+    await resetProgress(resettingPlan.id);
+    setResettingPlan(null);
+    onPlanReset?.();
   };
 
   const handleConfirmEdit = async (name: string, description: string) => {
@@ -83,12 +104,32 @@ export const ActivePlanSection = ({
         onClick={() => router.push('/')}
         showMenu={showMenu}
         showPublicIcon={showPublicIcon}
+        showEditResetDelete={showEditResetDelete}
         deleteDisabled
         onRequestDelete={() => {}}
         onRequestEdit={handleRequestEdit}
+        onRequestReset={handleRequestReset}
         dataTestId="active-plan-box"
         progressTestId="active-plan-progress"
         creatorTestId="active-plan-creator"
+      />
+
+      <ConfirmResetModal
+        isOpen={resettingPlan !== null}
+        onClose={() => setResettingPlan(null)}
+        onConfirm={handleConfirmReset}
+        title="Reset progress"
+        message={
+          resettingPlan ? (
+            <>
+              This will clear all progress for{' '}
+              <strong className="text-on-surface">{resettingPlan.name}</strong>. Type{' '}
+              <strong className="text-on-surface">reset</strong> to confirm.
+            </>
+          ) : (
+            ''
+          )
+        }
       />
 
       {editingPlan && (

@@ -4,7 +4,7 @@ import { runMigrations } from './migrate';
 
 let initialized = false;
 
-export async function initDb(): Promise<void> {
+export const initDb = async (): Promise<void> => {
   if (initialized) {
     return;
   }
@@ -19,13 +19,13 @@ export async function initDb(): Promise<void> {
   } finally {
     release();
   }
-}
+};
 
 /**
  * Seeds nico and athena for E2E tests (e2e-set-session).
  * No password — legacy login removed; magic link is the only user-facing auth.
  */
-export async function seedUsers(connection: PoolConnection): Promise<void> {
+export const seedUsers = async (connection: PoolConnection): Promise<void> => {
   await connection.execute(
     'INSERT IGNORE INTO users (username, password_hash, email) VALUES (?, NULL, NULL)',
     ['nico']
@@ -34,4 +34,4 @@ export async function seedUsers(connection: PoolConnection): Promise<void> {
     'INSERT IGNORE INTO users (username, password_hash, email) VALUES (?, NULL, NULL)',
     ['athena']
   );
-}
+};

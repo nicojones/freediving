@@ -15,7 +15,7 @@ interface CreatePlanPasteTabProps {
   onClearError: () => void;
 }
 
-export function CreatePlanPasteTab({
+export const CreatePlanPasteTab = ({
   jsonText,
   setJsonText,
   loading,
@@ -25,7 +25,7 @@ export function CreatePlanPasteTab({
   onClear,
   onCreate,
   onClearError,
-}: CreatePlanPasteTabProps) {
+}: CreatePlanPasteTabProps) => {
   return (
     <div className="space-y-4">
       <input
@@ -110,4 +110,4 @@ export function CreatePlanPasteTab({
       </button>
     </div>
   );
-}
+};

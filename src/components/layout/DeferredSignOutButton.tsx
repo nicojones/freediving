@@ -7,7 +7,10 @@ interface DeferredSignOutButtonProps {
   delayMs?: number;
 }
 
-export function DeferredSignOutButton({ onSignOut, delayMs = 5000 }: DeferredSignOutButtonProps) {
+export const DeferredSignOutButton = ({
+  onSignOut,
+  delayMs = 5000,
+}: DeferredSignOutButtonProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -30,4 +33,4 @@ export function DeferredSignOutButton({ onSignOut, delayMs = 5000 }: DeferredSig
       </button>
     </div>
   );
-}
+};

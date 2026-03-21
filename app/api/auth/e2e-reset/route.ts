@@ -8,7 +8,7 @@ import { initDb } from '@/lib/db';
 
 export const runtime = 'nodejs';
 
-export async function POST() {
+export const POST = async () => {
   if (process.env.NODE_ENV !== 'test' && !process.env.E2E_MAGIC_LINK_ENABLED) {
     return Response.json({ error: 'Not available' }, { status: 404 });
   }
@@ -40,4 +40,4 @@ export async function POST() {
   } finally {
     release();
   }
-}
+};

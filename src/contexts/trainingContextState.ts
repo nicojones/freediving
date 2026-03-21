@@ -19,7 +19,7 @@ export interface TrainingContextValue {
   error: string | null;
   completions: Completion[];
   progressError: string | null;
-  resetProgress: () => Promise<void>;
+  resetProgress: (planId: string) => Promise<void>;
   setActivePlan: (planId: string) => Promise<void>;
   refreshAvailablePlans: () => Promise<void>;
 

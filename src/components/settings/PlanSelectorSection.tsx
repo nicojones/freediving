@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { PlanWithMeta } from '../../types/plan';
 import { BUNDLED_PLAN_IDS } from '../../constants/app';
+import { useTraining } from '../../hooks/useTraining';
 import { ConfirmPlanModal } from './ConfirmPlanModal';
 import { ConfirmResetModal } from './ConfirmResetModal';
 import { PlanCard } from './PlanCard';
@@ -14,6 +15,7 @@ interface PlanSelectorSectionProps {
   onPlanChange: (planId: string) => void;
   onPlanDeleted: () => void;
   onPlanEdited?: () => void;
+  onPlanReset?: () => void;
   planProgress?: Record<string, { completed: number; total: number }>;
 }
 
@@ -24,10 +26,13 @@ export const PlanSelectorSection = ({
   onPlanChange,
   onPlanDeleted,
   onPlanEdited,
+  onPlanReset,
   planProgress = {},
 }: PlanSelectorSectionProps) => {
+  const { resetProgress } = useTraining();
   const [error, setError] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
+  const [resettingPlan, setResettingPlan] = useState<PlanWithMeta | null>(null);
   const [editingPlan, setEditingPlan] = useState<PlanWithMeta | null>(null);
   const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
 
@@ -70,6 +75,20 @@ export const PlanSelectorSection = ({
   const handleRequestEdit = (e: React.MouseEvent, plan: PlanWithMeta) => {
     e.stopPropagation();
     setEditingPlan(plan);
+  };
+
+  const handleRequestReset = (e: React.MouseEvent, plan: PlanWithMeta) => {
+    e.stopPropagation();
+    setResettingPlan(plan);
+  };
+
+  const handleConfirmReset = async () => {
+    if (!resettingPlan) {
+      return;
+    }
+    await resetProgress(resettingPlan.id);
+    setResettingPlan(null);
+    onPlanReset?.();
   };
 
   const handleConfirmEdit = async (name: string, description: string) => {
@@ -119,7 +138,8 @@ export const PlanSelectorSection = ({
           </p>
         ) : (
           otherPlans.map((p) => {
-            const showMenu = isUserCreated(p);
+            const showMenu = true;
+            const showEditResetDelete = isUserCreated(p);
             const showPublicIcon = !isUserCreated(p) && p.public === true;
             const deleteDisabled = deletingPlanId === p.id;
             const progress = planProgress[p.id];
@@ -132,10 +152,12 @@ export const PlanSelectorSection = ({
                 variant="selectable"
                 onClick={() => onPlanChange(p.id)}
                 showMenu={showMenu}
+                showEditResetDelete={showEditResetDelete}
                 showPublicIcon={showPublicIcon}
                 deleteDisabled={deleteDisabled}
                 onRequestDelete={handleRequestDelete}
                 onRequestEdit={handleRequestEdit}
+                onRequestReset={handleRequestReset}
                 onCopyError={setError}
                 dataTestId="plan-selector-option"
                 progressTestId={`plan-progress-${p.id}`}
@@ -163,6 +185,24 @@ export const PlanSelectorSection = ({
           )
         }
         confirmWord="delete"
+      />
+
+      <ConfirmResetModal
+        isOpen={resettingPlan !== null}
+        onClose={() => setResettingPlan(null)}
+        onConfirm={handleConfirmReset}
+        title="Reset progress"
+        message={
+          resettingPlan ? (
+            <>
+              This will clear all progress for{' '}
+              <strong className="text-on-surface">{resettingPlan.name}</strong>. Type{' '}
+              <strong className="text-on-surface">reset</strong> to confirm.
+            </>
+          ) : (
+            ''
+          )
+        }
       />
 
       {editingPlan && (

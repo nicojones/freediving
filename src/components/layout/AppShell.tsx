@@ -12,7 +12,7 @@ import { useTraining } from '@/src/hooks/useTraining';
 import isNil from 'lodash/isNil.js';
 import { APP_NAME } from '@/src/constants/app';
 
-function SessionRouteGuard({ children }: ChildrenNode) {
+const SessionRouteGuard = ({ children }: ChildrenNode) => {
   const { sessionStatus } = useTraining();
   const router = useRouter();
   if (sessionStatus !== 'running' && sessionStatus !== 'awaitingCompletionConfirm') {
@@ -20,9 +20,9 @@ function SessionRouteGuard({ children }: ChildrenNode) {
     return null;
   }
   return <>{children}</>;
-}
+};
 
-function SessionCompleteRouteGuard({ children }: ChildrenNode) {
+const SessionCompleteRouteGuard = ({ children }: ChildrenNode) => {
   const { sessionStatus } = useTraining();
   const router = useRouter();
   if (sessionStatus !== 'complete') {
@@ -30,9 +30,9 @@ function SessionCompleteRouteGuard({ children }: ChildrenNode) {
     return null;
   }
   return <>{children}</>;
-}
+};
 
-function AppContent({ children }: ChildrenNode) {
+const AppContent = ({ children }: ChildrenNode) => {
   const { user, refreshUser, plan, error, handleLogout } = useTraining();
   const pathname = usePathname();
 
@@ -87,12 +87,12 @@ function AppContent({ children }: ChildrenNode) {
   }
 
   return <>{children}</>;
-}
+};
 
-export function AppShell({ children }: ChildrenNode) {
+export const AppShell = ({ children }: ChildrenNode) => {
   return (
     <TrainingProvider>
       <AppContent>{children}</AppContent>
     </TrainingProvider>
   );
-}
+};

@@ -83,7 +83,7 @@ Remove hardcoded text and unify the UI: plan name/description in DayListSection,
 
 ## Verification
 
-- [ ] DayListSection shows plan name and description from plan metadata
-- [ ] TopAppBar does not display plan name
-- [ ] TopAppBar displays app name from constants
-- [ ] `npm run build` and `npm run test:run` pass
+- [x] DayListSection shows plan name and description from plan metadata
+- [x] TopAppBar does not display plan name
+- [x] TopAppBar displays app name from constants
+- [x] `npm run build` and `npm run test:run` pass

@@ -6,7 +6,10 @@ import { BUNDLED_PLAN_IDS } from '@/src/constants/app';
 
 export const runtime = 'nodejs';
 
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const PATCH = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) => {
   await initDb();
   const user = await getAuthUser();
   if (!user) {
@@ -65,12 +68,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   } finally {
     release();
   }
-}
+};
 
-export async function DELETE(
+export const DELETE = async (
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   await initDb();
   const user = await getAuthUser();
   if (!user) {
@@ -119,4 +122,4 @@ export async function DELETE(
   } finally {
     release();
   }
-}
+};

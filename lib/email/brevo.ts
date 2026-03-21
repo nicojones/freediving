@@ -4,12 +4,12 @@ import { BrevoClient } from '@getbrevo/brevo';
 const apiKey = process.env.BREVO_API_KEY;
 const brevo = apiKey ? new BrevoClient({ apiKey }) : null;
 
-export async function send(msg: {
+export const send = async (msg: {
   to: string;
   from: string;
   subject: string;
   html: string;
-}): Promise<void> {
+}): Promise<void> => {
   if (!brevo) {
     throw new Error('BREVO_API_KEY is not configured');
   }
@@ -19,4 +19,4 @@ export async function send(msg: {
     subject: msg.subject,
     htmlContent: msg.html,
   });
-}
+};

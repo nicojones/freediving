@@ -29,7 +29,7 @@ export const SessionPreviewStats = memo(function SessionPreviewStats({
             {totalMinutes}m
           </div>
         </div>
-        <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+        <div className="absolute right-0 -bottom-4 opacity-5 transition-opacity duration-700">
           <span className="material-symbols-outlined text-[120px]">timer</span>
         </div>
       </div>

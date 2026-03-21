@@ -19,7 +19,7 @@ interface TimerEngineAPI {
   setSpeedMultiplier(multiplier: number): void;
 }
 
-function buildTimeline(phases: Phase[], options?: { relaxationSeconds?: number }) {
+const buildTimeline = (phases: Phase[], options?: { relaxationSeconds?: number }) => {
   const relaxationSeconds = options?.relaxationSeconds ?? RELAXATION_SECONDS;
   const relaxationMs = relaxationSeconds * 1000;
   const phaseStarts: number[] = [];
@@ -54,9 +54,12 @@ function buildTimeline(phases: Phase[], options?: { relaxationSeconds?: number }
     holdEnds,
     recoveryBeforeHold,
   };
-}
+};
 
-function computeState(elapsedMs: number, timeline: ReturnType<typeof buildTimeline>): TimerState {
+const computeState = (
+  elapsedMs: number,
+  timeline: ReturnType<typeof buildTimeline>
+): TimerState => {
   const { relaxationMs, phases, phaseStarts, phaseEnds, holdIndices } = timeline;
 
   if (elapsedMs < relaxationMs) {
@@ -89,11 +92,11 @@ function computeState(elapsedMs: number, timeline: ReturnType<typeof buildTimeli
     elapsedMs,
     remainingMs: 0,
   };
-}
+};
 
 const DEFAULT_SPEED = 1;
 
-export function createTimerEngine(): TimerEngineAPI {
+export const createTimerEngine = (): TimerEngineAPI => {
   let startTime: number | null = null;
   let phases: Phase[] = [];
   let timeline: ReturnType<typeof buildTimeline> | null = null;
@@ -109,16 +112,16 @@ export function createTimerEngine(): TimerEngineAPI {
 
   const listeners: Partial<Record<EventType, EventCallback[]>> = {};
 
-  function emit(event: TimerEvent) {
+  const emit = (event: TimerEvent) => {
     const cbs = listeners[event.type];
     if (cbs) {
       for (const cb of cbs) {
         cb(event);
       }
     }
-  }
+  };
 
-  function tick() {
+  const tick = () => {
     if (startTime === null || timeline === null) {
       return;
     }
@@ -161,9 +164,9 @@ export function createTimerEngine(): TimerEngineAPI {
     if (currentState.phase === 'complete') {
       stop();
     }
-  }
+  };
 
-  function start(phasesInput: Phase[], options?: TimerStartOptions) {
+  const start = (phasesInput: Phase[], options?: TimerStartOptions) => {
     stop();
     phases = phasesInput;
     timeline = buildTimeline(phases, {
@@ -174,20 +177,20 @@ export function createTimerEngine(): TimerEngineAPI {
     lastElapsedMs = 0;
     tickId = setInterval(tick, 100);
     tick();
-  }
+  };
 
-  function on(eventType: EventType, callback: EventCallback) {
+  const on = (eventType: EventType, callback: EventCallback) => {
     if (!listeners[eventType]) {
       listeners[eventType] = [];
     }
     listeners[eventType]!.push(callback);
-  }
+  };
 
-  function getState(): TimerState {
+  const getState = (): TimerState => {
     return { ...currentState };
-  }
+  };
 
-  function setSpeedMultiplier(multiplier: number) {
+  const setSpeedMultiplier = (multiplier: number) => {
     if (startTime === null || timeline === null) {
       return;
     }
@@ -195,9 +198,9 @@ export function createTimerEngine(): TimerEngineAPI {
     const currentSimulatedMs = Math.floor((now - startTime) * speedMultiplier);
     speedMultiplier = multiplier;
     startTime = now - currentSimulatedMs / multiplier;
-  }
+  };
 
-  function stop() {
+  const stop = () => {
     if (tickId !== null) {
       clearInterval(tickId);
       tickId = null;
@@ -213,7 +216,7 @@ export function createTimerEngine(): TimerEngineAPI {
       elapsedMs: 0,
       remainingMs: 0,
     };
-  }
+  };
 
   return { start, on, getState, stop, setSpeedMultiplier };
-}
+};

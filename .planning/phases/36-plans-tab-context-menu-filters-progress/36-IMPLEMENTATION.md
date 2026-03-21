@@ -16,13 +16,14 @@ Phase 36 delivered the planned features plus several refinements from user feedb
 ### 1. Context Menu — Replace Trash with "..."
 
 - **PlanContextMenu** (`src/components/settings/PlanContextMenu.tsx`) — Extracted as its own component.
-- Menu items: Copy JSON, Download plan, Edit, Delete.
+- Menu items: Copy JSON, Download plan, Edit, Reset progress, Delete.
 - Copy JSON: `planToJson(plan)` outputs `{ id, name, description, days }` only (no server metadata like `created_by`, `creator_name`).
 - Download: Blob + `URL.createObjectURL`; filename sanitized via `plan.name.replace(/[^a-z0-9\-_]/gi, '_') + '.json'`.
 - Edit: Opens in-place `ConfirmPlanModal` (name/description); no navigation. Calls `onRequestEdit(plan)`; parent renders modal and handles PATCH.
 - Delete: Same flow as before (ConfirmResetModal, DELETE `/api/plans/[id]`).
 - Permission: Menu only for `isUserCreated(p)`. Delete disabled when plan is active; Edit enabled even when active.
-- data-testid: `plan-menu-{id}`, `plan-menu-copy`, `plan-menu-download`, `plan-menu-edit`, `plan-menu-delete`.
+- Reset progress: Red menu item with `restart_alt` icon; opens ConfirmResetModal (type "reset" to confirm); resets progress for that plan. Available on both active plan and other plans (user-created).
+- data-testid: `plan-menu-{id}`, `plan-menu-copy`, `plan-menu-download`, `plan-menu-edit`, `reset-progress-button`, `plan-menu-delete`.
 
 ### 2. Public Plans — Greyed 🌐 Icon
 
@@ -104,9 +105,9 @@ Phase 36 delivered the planned features plus several refinements from user feedb
   - `active` — Button that navigates to `/`; shows chevron when no menu; used in ActivePlanSection.
   - `selectable` — Div with `role="button"` for keyboard support; used in PlanSelectorSection list.
 - **Shared UI:** Progress (completed/total days), creator attribution, plan name, description.
-- **Context menu:** When `showMenu` is true, renders PlanContextMenu (Edit, Copy JSON, Download, Delete).
+- **Context menu:** When `showMenu` is true, renders PlanContextMenu (Edit, Copy JSON, Download, Reset progress, Delete).
 - **Public icon:** When `showPublicIcon` is true, renders greyed `public` Material Symbol instead of menu.
-- **Props:** `plan`, `progress`, `variant`, `onClick`, `showMenu`, `showPublicIcon`, `deleteDisabled`, `onRequestDelete`, `onRequestEdit`, `onCopyError`, `dataTestId`, `progressTestId`, `creatorTestId`.
+- **Props:** `plan`, `progress`, `variant`, `onClick`, `showMenu`, `showPublicIcon`, `deleteDisabled`, `onRequestDelete`, `onRequestEdit`, `onRequestReset`, `onCopyError`, `dataTestId`, `progressTestId`, `creatorTestId`.
 
 ### ActivePlanSection Changes
 
@@ -159,6 +160,7 @@ Phase 36 delivered the planned features plus several refinements from user feedb
 | Create | `src/components/settings/ActivePlanSection.tsx`                  |
 | Create | `src/components/settings/PlanCard.tsx`                           |
 | Modify | `src/components/settings/PlanSelectorSection.tsx`                |
+| Modify | `src/components/settings/SettingsView.tsx`                       |
 | Modify | `src/views/PlansView.tsx`                                        |
 | Modify | `src/contexts/TrainingContext.tsx`                               |
 | Modify | `src/views/CreatePlanView.tsx`                                   |
@@ -170,6 +172,9 @@ Phase 36 delivered the planned features plus several refinements from user feedb
 | Modify | `app/api/plans/[id]/route.ts` (PATCH handler)                    |
 | Modify | `src/components/settings/PlanSelectorSection.test.tsx`           |
 | Modify | `e2e/create-plan.spec.ts`                                        |
+| Modify | `e2e/reset-progress.spec.ts`                                     |
+| Delete | `src/components/settings/ResetProgressSection.tsx`               |
+| Delete | `src/components/settings/ResetProgressSection.test.tsx`          |
 
 ---
 
@@ -189,3 +194,33 @@ Phase 36 delivered the planned features plus several refinements from user feedb
 - [x] Active Plan section shows current plan; click goes to Training
 - [x] PlanSelectorSection excludes active plan
 - [x] Empty state "Nothing here" when no other plans
+- [x] Reset progress in plan context menu (Plans tab); red button, restart_alt icon; opens Reset modal; resets plan progress
+
+---
+
+## Reset Progress — Moved to Plan Context Menu (2025-03-21)
+
+**User feedback:** Reset progress should be in the plan context menu on the Plans tab instead of a separate section in Settings.
+
+### Changes
+
+| File                       | Change                                                                                                     |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| PlanContextMenu.tsx        | Added `onRequestReset` prop; Reset menu item (red, restart_alt icon); data-testid="reset-progress-button"  |
+| PlanCard.tsx               | Added `onRequestReset` prop; passes to PlanContextMenu                                                     |
+| ActivePlanSection.tsx      | `resettingPlan` state; `ConfirmResetModal`; `handleRequestReset`; `handleConfirmReset`; `onPlanReset` prop |
+| PlanSelectorSection.tsx    | Same reset flow; `onPlanReset` prop; uses `useTraining().resetProgress`                                    |
+| PlansView.tsx              | Passes `onPlanReset={refreshPlanProgress}` to both sections                                                |
+| TrainingContext.tsx        | `resetProgress(planId: string)` — accepts planId; refreshes completions when resetting active plan         |
+| trainingContextState.ts    | Updated `resetProgress` type to `(planId: string) => Promise<void>`                                        |
+| SettingsView.tsx           | Removed ResetProgressSection and ConfirmResetModal                                                         |
+| e2e/reset-progress.spec.ts | Flow: nav-plans → active-plan-box menu → reset-progress-button → confirm modal → Training                  |
+
+### Removed
+
+- `ResetProgressSection.tsx` — functionality moved to PlanContextMenu
+- `ResetProgressSection.test.tsx` — component removed
+
+### E2E
+
+- `e2e/reset-progress.spec.ts`: Now navigates to Plans tab, opens menu on active plan, clicks Reset progress, confirms in modal.

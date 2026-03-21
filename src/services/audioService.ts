@@ -10,7 +10,7 @@ const CUE_FILES = {
 
 export type CueName = keyof typeof CUE_FILES;
 
-function loadCue(cue: CueName): Promise<HTMLAudioElement> {
+const loadCue = (cue: CueName): Promise<HTMLAudioElement> => {
   return new Promise((resolve, reject) => {
     const url = `${AUDIO_BASE}/${CUE_FILES[cue]}`;
     const audio = new Audio(url);
@@ -26,7 +26,7 @@ function loadCue(cue: CueName): Promise<HTMLAudioElement> {
         )
       );
   });
-}
+};
 
 export interface AudioServiceAPI {
   preload(): Promise<void>;
@@ -37,10 +37,10 @@ export interface AudioServiceAPI {
   }): void;
 }
 
-export function createAudioService(): AudioServiceAPI {
+export const createAudioService = (): AudioServiceAPI => {
   const preloaded = new Map<CueName, HTMLAudioElement>();
 
-  async function preload(): Promise<void> {
+  const preload = async (): Promise<void> => {
     const cues: CueName[] = ['hold', 'prepare', '30s', 'breathe'];
     const results = await Promise.allSettled(cues.map((cue) => loadCue(cue)));
 
@@ -59,9 +59,9 @@ export function createAudioService(): AudioServiceAPI {
         preloaded.set(cues[i], r.value);
       }
     }
-  }
+  };
 
-  function play(cue: CueName): void {
+  const play = (cue: CueName): void => {
     const audio = preloaded.get(cue);
     if (audio) {
       audio.currentTime = 0;
@@ -72,23 +72,23 @@ export function createAudioService(): AudioServiceAPI {
       a.crossOrigin = 'anonymous';
       a.play().catch(() => {});
     }
-  }
+  };
 
-  function stop(): void {
+  const stop = (): void => {
     for (const audio of preloaded.values()) {
       audio.pause();
       audio.currentTime = 0;
     }
-  }
+  };
 
-  function wireToTimer(engine: {
+  const wireToTimer = (engine: {
     on(eventType: TimerEvent['type'], callback: (e: TimerEvent) => void): void;
-  }): void {
+  }): void => {
     engine.on('hold_in_3', () => play('hold'));
     engine.on('prepare_hold', () => play('prepare'));
     engine.on('countdown_30', () => play('30s'));
     engine.on('hold_end', () => play('breathe'));
-  }
+  };
 
   return { preload, play, stop, wireToTimer };
-}
+};

@@ -17,7 +17,7 @@ interface CreatePlanDescribeInputProps {
   onClearError: () => void;
 }
 
-export function CreatePlanDescribeInput({
+export const CreatePlanDescribeInput = ({
   describeText,
   setDescribeText,
   isCreatingDraft,
@@ -28,7 +28,7 @@ export function CreatePlanDescribeInput({
   onVoiceSubmittingChange,
   getAbortSignal,
   onClearError,
-}: CreatePlanDescribeInputProps) {
+}: CreatePlanDescribeInputProps) => {
   const textDisabled = isCreatingDraft || voiceActive;
   return (
     <div className="space-y-4">
@@ -83,4 +83,4 @@ export function CreatePlanDescribeInput({
       />
     </div>
   );
-}
+};

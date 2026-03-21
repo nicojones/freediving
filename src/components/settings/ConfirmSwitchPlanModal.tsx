@@ -7,12 +7,12 @@ interface ConfirmSwitchPlanModalProps {
   planName: string;
 }
 
-export function ConfirmSwitchPlanModal({
+export const ConfirmSwitchPlanModal = ({
   isOpen,
   onClose,
   onConfirm,
   planName,
-}: ConfirmSwitchPlanModalProps) {
+}: ConfirmSwitchPlanModalProps) => {
   const handleConfirm = async () => {
     await onConfirm();
     onClose();
@@ -59,4 +59,4 @@ export function ConfirmSwitchPlanModal({
       </div>
     </Dialog>
   );
-}
+};

@@ -70,22 +70,22 @@ const EDIT_PLAN = {
   ],
 };
 
-async function goToCreatePlanSection(page: import('@playwright/test').Page) {
+const goToCreatePlanSection = async (page: import('@playwright/test').Page) => {
   await page.getByTestId('nav-create').click();
   await page.waitForURL(/\/create/);
   await expect(page.getByTestId('create-plan-tab-describe')).toBeVisible({ timeout: 5000 });
-}
+};
 
-async function switchToPasteTab(page: import('@playwright/test').Page) {
+const switchToPasteTab = async (page: import('@playwright/test').Page) => {
   await page.getByTestId('create-plan-tab-paste').click();
   await expect(page.getByTestId('create-plan-json-textarea')).toBeVisible({ timeout: 3000 });
-}
+};
 
-async function verifyPlanCreation(
+const verifyPlanCreation = async (
   page: import('@playwright/test').Page,
   planName: string,
   switchAndVerifyTraining: boolean
-) {
+) => {
   await expect(page.getByTestId('create-plan-success')).toBeVisible({ timeout: 5000 });
 
   const planSelector = page.getByTestId('plan-selector');
@@ -103,7 +103,7 @@ async function verifyPlanCreation(
     await expect(page.getByTestId('plan-name')).toHaveText(planName, { timeout: 5000 });
     await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 });
   }
-}
+};
 
 test.describe('Create plan', () => {
   test('paste JSON, create plan, switch to it, verify Training tab', async ({ page, context }) => {
@@ -281,6 +281,38 @@ test.describe('Create plan', () => {
     await page.getByTestId('confirm-plan-submit').click();
 
     await verifyPlanCreation(page, '1:30 to 2:00 14-Day Plan', true);
+  });
+
+  test('copy default plan JSON, create new plan from it, succeeds', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await loginAsAthena(page);
+
+    await page.getByTestId('nav-plans').click();
+    await page.waitForURL(/\/plans/);
+    await expect(page.getByTestId('active-plan-section')).toBeVisible({ timeout: 5000 });
+    await page.getByTestId('plan-menu-default').click();
+    await page.getByTestId('plan-menu-copy').click();
+
+    await page.getByTestId('nav-create').click();
+    await page.waitForURL(/\/create/);
+    await switchToPasteTab(page);
+    await page.getByTestId('create-plan-paste-button').click();
+    await expect(page.getByTestId('create-plan-json-textarea')).toContainText('"id"', {
+      timeout: 5000,
+    });
+
+    const modifiedJson = await page.evaluate(async () => {
+      const textarea = document.querySelector('[data-testid="create-plan-json-textarea"]');
+      const text = (textarea as HTMLTextAreaElement)?.value ?? '';
+      const parsed = JSON.parse(text);
+      parsed.id = 'e2e-copy-of-default';
+      parsed.name = 'E2E Copy of Default';
+      return JSON.stringify(parsed, null, 2);
+    });
+    await page.getByTestId('create-plan-json-textarea').fill(modifiedJson);
+
+    await page.getByTestId('create-plan-create-button').click();
+    await expect(page.getByTestId('create-plan-success')).toBeVisible({ timeout: 5000 });
   });
 
   test('edit plan name via context menu modal, changes visible without refresh', async ({

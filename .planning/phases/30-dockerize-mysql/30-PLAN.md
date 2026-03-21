@@ -1,6 +1,6 @@
 # Phase 30: Dockerize MySQL + Change Database Type — Plan
 
-**Status:** Done  
+**Status:** Complete  
 **Depends on:** Phase 29 (E2E Tests)
 
 ---
@@ -26,34 +26,34 @@ Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; versioned migration
 
 ### 1. Add dependencies and Docker
 
-- [ ] **1.1** Install `mysql2`, `named-placeholders`; remove `better-sqlite3` and `@types/better-sqlite3`
-- [ ] **1.2** Create `docker-compose.yml` with MySQL 8 service:
+- [x] **1.1** Install `mysql2`, `named-placeholders`; remove `better-sqlite3` and `@types/better-sqlite3`
+- [x] **1.2** Create `docker-compose.yml` with MySQL 8 service:
   - Image: `mysql:8.0`
   - Env: `MYSQL_ROOT_PASSWORD=root`, `MYSQL_DATABASE=freediving`, `MYSQL_USER=freediving`, `MYSQL_PASSWORD=freediving`
   - Port: `3306:3306`
   - Health check: `mysqladmin ping -h localhost -u root -proot`
   - No init script needed — E2E script creates `freediving_test_${ts}` per run
-- [ ] **1.3** Add npm scripts: `db:up` (`docker compose up -d`), `db:down` (`docker compose down`)
-- [ ] **1.4** Add `.env.example`: `DB_HOST=localhost`, `DB_PORT=3306`, `DB_USER=freediving`, `DB_PASS=freediving`, `DB_NAME=freediving`
+- [x] **1.3** Add npm scripts: `db:up` (`docker compose up -d`), `db:down` (`docker compose down`)
+- [x] **1.4** Add `.env.example`: `DB_HOST=localhost`, `DB_PORT=3306`, `DB_USER=freediving`, `DB_PASS=freediving`, `DB_NAME=freediving`
 
 ### 2. Migration system
 
-- [ ] **2.1** Create `lib/migrate.ts`: custom migration runner
+- [x] **2.1** Create `lib/migrate.ts`: custom migration runner
   - Read `migrations/*.sql` files sorted by name
   - Create `schema_migrations` table if missing (columns: `name` VARCHAR PRIMARY KEY, `applied_at` TIMESTAMP)
   - For each file not in `schema_migrations`: execute SQL, insert row
   - Export `runMigrations(connection): Promise<void>` (uses mysql PoolConnection from getDbConnection)
-- [ ] **2.2** Create `migrations/001_initial.sql` — MySQL DDL converted from `lib/schema.sql`:
+- [x] **2.2** Create `migrations/001_initial.sql` — MySQL DDL converted from `lib/schema.sql`:
   - `INTEGER PRIMARY KEY AUTOINCREMENT` → `INT AUTO_INCREMENT PRIMARY KEY`
   - `TEXT` → `VARCHAR(255)` or `TEXT` as appropriate
   - `INTEGER` → `INT` or `BIGINT`
   - Include `created_by` on plans (from current schema)
   - Use `utf8mb4` charset
-- [ ] **2.3** Remove `lib/schema.sql` after migration system works
+- [x] **2.3** Remove `lib/schema.sql` after migration system works
 
 ### 3. DB layer — `lib/db.config.ts` (required pattern)
 
-- [ ] **3.1** Create `lib/db.config.ts` following the pattern in 30-CONTEXT § G:
+- [x] **3.1** Create `lib/db.config.ts` following the pattern in 30-CONTEXT § G:
   - `"use server"`
   - `mysql2/promise` + `named-placeholders`
   - `globalForDb` singleton to avoid pool exhaustion on server hot reload
@@ -61,50 +61,50 @@ Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; versioned migration
   - Env: `DB_HOST`, `DB_USER`, `DB_NAME`, `DB_PASS`, `DB_PORT`
   - Export `getDbConnection()` → `[connection, release]`
   - Export `namedPlaceholders(q, params)` for `:param` → `?` conversion
-- [ ] **3.2** Create `lib/db.ts`: `initDb()` gets connection via `getDbConnection()`, calls `runMigrations(connection)`, `seedUsers(connection)`, then `release()`
-- [ ] **3.3** Update `seedUsers(connection)`: `INSERT IGNORE`; bcrypt hashes for nico/athena
-- [ ] **3.4** Remove `runSchema`, `migratePlansCreatedBy` (replaced by migrations)
-- [ ] **3.5** Ensure `initDb()` runs before first API request (instrumentation or lazy init)
+- [x] **3.2** Create `lib/db.ts`: `initDb()` gets connection via `getDbConnection()`, calls `runMigrations(connection)`, `seedUsers(connection)`, then `release()`
+- [x] **3.3** Update `seedUsers(connection)`: `INSERT IGNORE`; bcrypt hashes for nico/athena
+- [x] **3.4** Remove `runSchema`, `migratePlansCreatedBy` (replaced by migrations)
+- [x] **3.5** Ensure `initDb()` runs before first API request (instrumentation or lazy init)
 
 ### 4. API routes — async queries
 
 Use `getDbConnection()`; `connection.execute()` or `connection.query()`; call `release()` when done. Optionally use `namedPlaceholders` for `:param` syntax.
 
-- [ ] **4.1** `app/api/auth/login/route.ts`: `getDbConnection` → `connection.execute('SELECT ...', [username])`; destructure `rows[0]`; `release()`
-- [ ] **4.2** `app/api/user/active-plan/route.ts`: GET `SELECT`; PUT `INSERT ... ON DUPLICATE KEY UPDATE` (replace `ON CONFLICT`)
-- [ ] **4.3** `app/api/progress/route.ts`: GET `SELECT`; POST `REPLACE INTO` or `INSERT ... ON DUPLICATE KEY UPDATE` (replace `INSERT OR REPLACE`); DELETE
-- [ ] **4.4** `app/api/plans/route.ts`: GET `SELECT`; POST `INSERT`
-- [ ] **4.5** `app/api/plans/[id]/route.ts`: `SELECT` plan, `SELECT` active user, `DELETE`
+- [x] **4.1** `app/api/auth/login/route.ts`: `getDbConnection` → `connection.execute('SELECT ...', [username])`; destructure `rows[0]`; `release()`
+- [x] **4.2** `app/api/user/active-plan/route.ts`: GET `SELECT`; PUT `INSERT ... ON DUPLICATE KEY UPDATE` (replace `ON CONFLICT`)
+- [x] **4.3** `app/api/progress/route.ts`: GET `SELECT`; POST `REPLACE INTO` or `INSERT ... ON DUPLICATE KEY UPDATE` (replace `INSERT OR REPLACE`); DELETE
+- [x] **4.4** `app/api/plans/route.ts`: GET `SELECT`; POST `INSERT`
+- [x] **4.5** `app/api/plans/[id]/route.ts`: `SELECT` plan, `SELECT` active user, `DELETE`
 
 ### 5. `lib/plan.ts` — async loadPlan
 
-- [ ] **5.1** Change `loadPlan(planId)` to `async loadPlan(planId): Promise<PlanWithMeta>`:
+- [x] **5.1** Change `loadPlan(planId)` to `async loadPlan(planId): Promise<PlanWithMeta>`:
   - File reads stay sync; DB read uses `pool.execute('SELECT ...', [planId])`
   - Return plan from row or fallback to default-plan.json
-- [ ] **5.2** Update `app/api/progress/route.ts`: `await loadPlan(plan_id)` for day_index → day_id resolution
+- [x] **5.2** Update `app/api/progress/route.ts`: `await loadPlan(plan_id)` for day_index → day_id resolution
 
 ### 6. App initialization
 
-- [ ] **6.1** Ensure `initDb()` runs before any DB access. Options:
+- [x] **6.1** Ensure `initDb()` runs before any DB access. Options:
   - **A:** `instrumentation.ts` (Next.js 15) — `register()` calls `initDb()`
   - **B:** Lazy init in first route — check `initialized` flag; call `initDb()` if needed; await
-- [ ] **6.2** Remove `FREEDIVING_DB_PATH` usage; document removal in server guide
+- [x] **6.2** Remove `FREEDIVING_DB_PATH` usage; document removal in server guide
 
 ### 7. E2E — fresh DB per run (local + CI)
 
-- [ ] **7.1** Create `scripts/run-e2e-with-fresh-db.mjs`:
+- [x] **7.1** Create `scripts/run-e2e-with-fresh-db.mjs`:
   - Generate `DB_NAME=freediving_test_${Date.now()}`
   - Connect to MySQL (root/root, localhost:3306) and `CREATE DATABASE ${DB_NAME}`
   - Set env: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`
   - Spawn `npx playwright test` with that env (Playwright webServer inherits it)
   - Use `mysql2` for DB creation (already a dependency)
-- [ ] **7.2** Update `package.json`: `test:e2e` runs `node scripts/run-e2e-with-fresh-db.mjs` (replacing direct `playwright test`)
-- [ ] **7.3** Update `playwright.config.ts`: remove hardcoded `FREEDIVING_DB_PATH`; webServer inherits `DB_*` from parent process
-- [ ] **7.4** Document: run `npm run db:up` before `npm run test:e2e` (local); README or docs
+- [x] **7.2** Update `package.json`: `test:e2e` runs `node scripts/run-e2e-with-fresh-db.mjs` (replacing direct `playwright test`)
+- [x] **7.3** Update `playwright.config.ts`: remove hardcoded `FREEDIVING_DB_PATH`; webServer inherits `DB_*` from parent process
+- [x] **7.4** Document: run `npm run db:up` before `npm run test:e2e` (local); README or docs
 
 ### 8. CI (GitHub Actions)
 
-- [ ] **8.1** Add MySQL service to `.github/workflows/deploy.yml`:
+- [x] **8.1** Add MySQL service to `.github/workflows/deploy.yml`:
   ```yaml
   services:
     mysql:
@@ -119,21 +119,21 @@ Use `getDbConnection()`; `connection.execute()` or `connection.query()`; call `r
         --health-timeout=5s
         --health-retries=5
   ```
-- [ ] **8.2** E2E step runs `npm run test:e2e` — the script creates a fresh DB per run; no job-level `DB_NAME` (script sets it)
-- [ ] **8.3** Set job env for MySQL connection: `DB_HOST=localhost`, `DB_PORT=3306`, `DB_USER=root`, `DB_PASS=root` (script uses these to create DB and pass to Playwright)
+- [x] **8.2** E2E step runs `npm run test:e2e` — the script creates a fresh DB per run; no job-level `DB_NAME` (script sets it)
+- [x] **8.3** Set job env for MySQL connection: `DB_HOST=localhost`, `DB_PORT=3306`, `DB_USER=root`, `DB_PASS=root` (script uses these to create DB and pass to Playwright)
 
 ### 9. Server setup guide
 
-- [ ] **9.1** Ensure `docs/SERVER-SETUP.md` exists and is complete (created in this phase)
-- [ ] **9.2** Add README section or link: "Server setup: see [docs/SERVER-SETUP.md](docs/SERVER-SETUP.md)"
+- [x] **9.1** Ensure `docs/SERVER-SETUP.md` exists and is complete (created in this phase)
+- [x] **9.2** Add README section or link: "Server setup: see [docs/SERVER-SETUP.md](docs/SERVER-SETUP.md)"
 
 ### 10. Cleanup and verification
 
-- [ ] **10.1** Remove `better-sqlite3`, `@types/better-sqlite3` from package.json
-- [ ] **10.2** Delete `lib/schema.sql` after migrations work
-- [ ] **10.3** Update `.env.production.example` (if exists) or create: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`
-- [ ] **10.4** Run `npm run build`, `npm run lint`, `npm run test:run`, `npm run test:e2e` — all pass
-- [ ] **10.5** Update `STATE.md`, `.continue-here.md` when phase complete
+- [x] **10.1** Remove `better-sqlite3`, `@types/better-sqlite3` from package.json
+- [x] **10.2** Delete `lib/schema.sql` after migrations work
+- [x] **10.3** Update `.env.production.example` (if exists) or create: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`
+- [x] **10.4** Run `npm run build`, `npm run lint`, `npm run test:run`, `npm run test:e2e` — all pass
+- [x] **10.5** Update `STATE.md`, `.continue-here.md` when phase complete
 
 ---
 

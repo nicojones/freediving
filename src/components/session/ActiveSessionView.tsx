@@ -9,7 +9,7 @@ import { TopAppBar } from '../layout/TopAppBar';
 import { HoldProgressRing } from './HoldProgressRing';
 import { SessionActionButtons } from './SessionActionButtons';
 
-export function ActiveSessionView() {
+export const ActiveSessionView = () => {
   const {
     plan,
     sessionDayIndex,
@@ -134,4 +134,4 @@ export function ActiveSessionView() {
       </div>
     </div>
   );
-}
+};

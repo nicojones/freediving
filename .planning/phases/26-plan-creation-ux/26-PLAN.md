@@ -225,10 +225,10 @@ Make plan creation more intuitive: tab to switch between natural-language and JS
 
 ## Verification
 
-- [ ] Tabs visible; Describe and Paste / Raw
-- [ ] Describe: empty → disabled; has text → Create draft
-- [ ] After Create draft: Preview (DayListSection) visible; no raw JSON
-- [ ] Refine flow: placeholder; repeatable; clears after success
-- [ ] Confirm modal: name/description editable; Proceed with defaults vs Save
-- [ ] Paste tab: JSON only; invalid JSON shows error
-- [ ] E2E: create-plan.spec.ts all pass
+- [x] Tabs visible; Describe and Paste / Raw
+- [x] Describe: empty → disabled; has text → Create draft
+- [x] After Create draft: Preview (DayListSection) visible; no raw JSON
+- [x] Refine flow: placeholder; repeatable; clears after success
+- [x] Confirm modal: name/description editable; Proceed with defaults vs Save
+- [x] Paste tab: JSON only; invalid JSON shows error
+- [x] E2E: create-plan.spec.ts all pass

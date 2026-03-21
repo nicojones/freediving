@@ -1,6 +1,6 @@
 # Phase 31: UI Polish — Plan
 
-**Status:** Executed  
+**Status:** Complete  
 **Depends on:** Phase 30 (Dockerize MySQL + Change Database Type)
 
 ---
@@ -26,36 +26,36 @@ Refine UI details: bottom tabs show label only on active tab; top-right corner s
 
 ### 1. Bottom tabs — label only on active (REQ-31-1)
 
-- [ ] **1.1** In `BottomNavBar.tsx`, wrap each tab's label span in a conditional: render only when `activeTab === 'X'`. Apply to all four tabs (Training, Plans, Create, Settings). Preserve `data-testid="nav-training"`, `data-testid="nav-plans"`, `data-testid="nav-create"`. Use pattern: `{activeTab === 'training' && (<span className="font-label ...">Training</span>)}`
+- [x] **1.1** In `BottomNavBar.tsx`, wrap each tab's label span in a conditional: render only when `activeTab === 'X'`. Apply to all four tabs (Training, Plans, Create, Settings). Preserve `data-testid="nav-training"`, `data-testid="nav-plans"`, `data-testid="nav-create"`. Use pattern: `{activeTab === 'training' && (<span className="font-label ...">Training</span>)}`
 
 ### 2. Top-right — Dashboard progress; remove elsewhere (REQ-31-2)
 
-- [ ] **2.1** In `TopAppBar.tsx`, remove the default for `weekLabel` (change `weekLabel = 'Current Week'` to `weekLabel?: string` with no default). Change weekLabel render to only show when `weekLabel` is truthy: `{variant === 'dashboard' && weekLabel && (...)}` — so when weekLabel is not passed, nothing renders
-- [ ] **2.2** In `Dashboard.tsx`, compute `dayNum` and `totalDays`: `dayNum = currentDayIndex !== null ? currentDayIndex + 1 : p.length`; `totalDays = p.length`. Pass `weekLabel={\`Day ${dayNum} of ${totalDays}\`}` to TopAppBar (replace hardcoded "Current Week")
-- [ ] **2.3** In `PlansView.tsx`, remove `weekLabel="Plans"` from TopAppBar
-- [ ] **2.4** In `CreatePlanView.tsx`, remove `weekLabel="Create plan"` from TopAppBar
-- [ ] **2.5** In `SettingsView.tsx`, remove `weekLabel="Settings"` from TopAppBar
+- [x] **2.1** In `TopAppBar.tsx`, remove the default for `weekLabel` (change `weekLabel = 'Current Week'` to `weekLabel?: string` with no default). Change weekLabel render to only show when `weekLabel` is truthy: `{variant === 'dashboard' && weekLabel && (...)}` — so when weekLabel is not passed, nothing renders
+- [x] **2.2** In `Dashboard.tsx`, compute `dayNum` and `totalDays`: `dayNum = currentDayIndex !== null ? currentDayIndex + 1 : p.length`; `totalDays = p.length`. Pass `weekLabel={\`Day ${dayNum} of ${totalDays}\`}` to TopAppBar (replace hardcoded "Current Week")
+- [x] **2.3** In `PlansView.tsx`, remove `weekLabel="Plans"` from TopAppBar
+- [x] **2.4** In `CreatePlanView.tsx`, remove `weekLabel="Create plan"` from TopAppBar
+- [x] **2.5** In `SettingsView.tsx`, remove `weekLabel="Settings"` from TopAppBar
 
 ### 3. Trainings tab padding + plan complete green border (REQ-31-3, REQ-31-6)
 
-- [ ] **3.1** In `Dashboard.tsx` main element, change `px-2 sm:px-6` to `px-6` so padding matches Plans/Create/Settings
-- [ ] **3.2** In `Dashboard.tsx` main className, add `isPlanComplete` to the green ring condition: `(isSelectedDayCompleted || isPlanComplete) && 'ring-2 ring-emerald-500/60 shadow-[0_0_32px_rgba(5,150,105,0.15)]'`
+- [x] **3.1** In `Dashboard.tsx` main element, change `px-2 sm:px-6` to `px-6` so padding matches Plans/Create/Settings
+- [x] **3.2** In `Dashboard.tsx` main className, add `isPlanComplete` to the green ring condition: `(isSelectedDayCompleted || isPlanComplete) && 'ring-2 ring-emerald-500/60 shadow-[0_0_32px_rgba(5,150,105,0.15)]'`
 
 ### 4. Developer zone — muted, move to bottom (REQ-31-4)
 
-- [ ] **4.1** In `DevModeSection.tsx`, apply muted styling: `bg-surface-container-low/50`, `border-outline-variant/20`, `text-[9px]` for heading, `text-on-surface-variant/70` for heading. Keep `data-testid="dev-mode-section"` and `data-testid="dev-mode-toggle"`
-- [ ] **4.2** In `SettingsView.tsx`, move `DevModeSection` to bottom: render it after `UserProfileCard` and Sign out button, before the VersionFooter div (i.e. inside the `pt-12 pb-8` div, above VersionFooter)
+- [x] **4.1** In `DevModeSection.tsx`, apply muted styling: `bg-surface-container-low/50`, `border-outline-variant/20`, `text-[9px]` for heading, `text-on-surface-variant/70` for heading. Keep `data-testid="dev-mode-section"` and `data-testid="dev-mode-toggle"`
+- [x] **4.2** In `SettingsView.tsx`, move `DevModeSection` to bottom: render it after `UserProfileCard` and Sign out button, before the VersionFooter div (i.e. inside the `pt-12 pb-8` div, above VersionFooter)
 
 ### 5. Create plan success — "See plans here" + button (REQ-31-5)
 
-- [ ] **5.1** In `CreatePlanStatusBanner.tsx`, add `onNavigateToPlans?: () => void` to props. Replace success content: text "See plans here"; add button "Go to Plans" that calls `onNavigateToPlans` when clicked. Add `data-testid="create-plan-go-to-plans"` to button. Preserve `data-testid="create-plan-success"` on container. Use `flex flex-col gap-2` for layout
-- [ ] **5.2** In `CreatePlanSection.tsx`, add `onNavigateToPlans?: () => void` to interface; pass it to `CreatePlanStatusBanner`
-- [ ] **5.3** In `CreatePlanView.tsx`, pass `onNavigateToPlans={() => router.push('/plans')}` to `CreatePlanSection`. Ensure `useRouter` is used (already imported)
+- [x] **5.1** In `CreatePlanStatusBanner.tsx`, add `onNavigateToPlans?: () => void` to props. Replace success content: text "See plans here"; add button "Go to Plans" that calls `onNavigateToPlans` when clicked. Add `data-testid="create-plan-go-to-plans"` to button. Preserve `data-testid="create-plan-success"` on container. Use `flex flex-col gap-2` for layout
+- [x] **5.2** In `CreatePlanSection.tsx`, add `onNavigateToPlans?: () => void` to interface; pass it to `CreatePlanStatusBanner`
+- [x] **5.3** In `CreatePlanView.tsx`, pass `onNavigateToPlans={() => router.push('/plans')}` to `CreatePlanSection`. Ensure `useRouter` is used (already imported)
 
 ### 6. Update CreatePlanStatusBanner tests
 
-- [ ] **6.1** In `CreatePlanStatusBanner.test.tsx`, change success assertion from `'Plan created successfully'` to `'See plans here'` (or use `toHaveTextContent(/See plans here/)`)
-- [ ] **6.2** Add test: when `success` and `onNavigateToPlans` provided, button with `data-testid="create-plan-go-to-plans"` is visible and has text "Go to Plans"
+- [x] **6.1** In `CreatePlanStatusBanner.test.tsx`, change success assertion from `'Plan created successfully'` to `'See plans here'` (or use `toHaveTextContent(/See plans here/)`)
+- [x] **6.2** Add test: when `success` and `onNavigateToPlans` provided, button with `data-testid="create-plan-go-to-plans"` is visible and has text "Go to Plans"
 
 ---
 

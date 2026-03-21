@@ -100,9 +100,9 @@ Display app version dynamically from package.json on the login page. Automate ve
 
 ## Verification
 
-- [ ] Login page shows version from package.json
-- [ ] fix: commit → patch bump on next push to main
-- [ ] feat: commit → minor bump on next push to main
-- [ ] chore: commit → no new release
-- [ ] feat!: or BREAKING CHANGE → major bump (manual trigger)
-- [ ] `npm run build` and `npm run test:run` pass
+- [x] Login page shows version from package.json
+- [x] fix: commit → patch bump on next push to main
+- [x] feat: commit → minor bump on next push to main
+- [x] chore: commit → no new release
+- [x] feat!: or BREAKING CHANGE → major bump (manual trigger)
+- [x] `npm run build` and `npm run test:run` pass

@@ -6,6 +6,10 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
+vi.mock('../../hooks/useTraining', () => ({
+  useTraining: () => ({ resetProgress: vi.fn().mockResolvedValue(undefined) }),
+}));
+
 const mockPlans = [
   {
     id: 'plan-1',
@@ -43,7 +47,7 @@ describe('PlanSelectorSection', () => {
     expect(screen.getByTestId('plan-progress-plan-2')).toHaveTextContent('0/3 days');
   });
 
-  it('does not render progress when planProgress is empty', () => {
+  it('renders default 0/N progress when planProgress is empty', () => {
     render(
       <PlanSelectorSection
         availablePlans={mockPlans}
@@ -53,7 +57,7 @@ describe('PlanSelectorSection', () => {
         onPlanDeleted={() => {}}
       />
     );
-    expect(screen.queryByTestId('plan-progress-plan-2')).not.toBeInTheDocument();
+    expect(screen.getByTestId('plan-progress-plan-2')).toHaveTextContent('0/3 days');
   });
 
   it('shows empty state when no other plans', () => {

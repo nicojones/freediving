@@ -14,7 +14,7 @@ export const SessionBreakdown = memo(function SessionBreakdown({ phases }: Sessi
     <section className="mb-12">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-on-surface font-headline text-xl font-bold">Session Breakdown</h3>
-        <span className="text-on-surface-variant font-label text-xs">{timeline.length} Phases</span>
+        <span className="subtle">{timeline.length} Phases</span>
       </div>
       <div className="space-y-4">
         {timeline.map((item, idx) => (

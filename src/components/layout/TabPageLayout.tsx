@@ -16,7 +16,7 @@ interface TabPageLayoutProps {
   'data-testid'?: string;
 }
 
-export function TabPageLayout({
+export const TabPageLayout = ({
   title,
   subheader,
   activeTab,
@@ -26,7 +26,7 @@ export function TabPageLayout({
   onSettingsClick,
   children,
   'data-testid': dataTestId,
-}: TabPageLayoutProps) {
+}: TabPageLayoutProps) => {
   return (
     <div
       className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden max-sm:px-1!"
@@ -55,4 +55,4 @@ export function TabPageLayout({
       />
     </div>
   );
-}
+};

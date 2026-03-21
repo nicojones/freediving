@@ -25,7 +25,7 @@ interface CreatePlanDraftPreviewProps {
   isEditMode?: boolean;
 }
 
-export function CreatePlanDraftPreview({
+export const CreatePlanDraftPreview = ({
   refineText,
   setRefineText,
   isRefining,
@@ -43,7 +43,7 @@ export function CreatePlanDraftPreview({
   getAbortSignal,
   previewJustUpdated,
   isEditMode,
-}: CreatePlanDraftPreviewProps) {
+}: CreatePlanDraftPreviewProps) => {
   const textDisabled = isRefining || voiceActive;
   const voiceDisabled = isRefining;
   return (
@@ -148,4 +148,4 @@ export function CreatePlanDraftPreview({
       </button>
     </div>
   );
-}
+};

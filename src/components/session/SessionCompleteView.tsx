@@ -5,7 +5,7 @@ import { TopAppBar } from '../layout/TopAppBar';
 import { BottomNavBar } from '../layout/BottomNavBar';
 import { useTraining } from '../../hooks/useTraining';
 
-export function SessionCompleteView() {
+export const SessionCompleteView = () => {
   const router = useRouter();
   const { handleBackToTraining, handleSettingsClick } = useTraining();
 
@@ -40,4 +40,4 @@ export function SessionCompleteView() {
       />
     </div>
   );
-}
+};

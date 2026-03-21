@@ -16,11 +16,11 @@ interface CreatePlanSectionProps {
   initialDraftPlan?: PlanWithMeta | null;
 }
 
-export function CreatePlanSection({
+export const CreatePlanSection = ({
   onPlanCreated,
   onNavigateToPlans,
   initialDraftPlan,
-}: CreatePlanSectionProps) {
+}: CreatePlanSectionProps) => {
   const handlers = useCreatePlanHandlers(onPlanCreated, initialDraftPlan ?? undefined);
 
   return (
@@ -123,4 +123,4 @@ export function CreatePlanSection({
       )}
     </div>
   );
-}
+};

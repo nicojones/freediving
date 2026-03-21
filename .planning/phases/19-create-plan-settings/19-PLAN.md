@@ -188,8 +188,8 @@ _If complex, split into 19b, 19c, etc._
 
 ## Verification
 
-- [ ] User can upload valid JSON file → plan created and appears in selector
-- [ ] Invalid JSON shows specific validation errors
-- [ ] Plans stored in DB; `getAvailablePlans` includes them
-- [ ] (Optional) AI mode: record → transcribe → valid JSON → edit → save
-- [ ] `npm run build` and `npm run test:run` pass
+- [x] User can upload valid JSON file → plan created and appears in selector
+- [x] Invalid JSON shows specific validation errors
+- [x] Plans stored in DB; `getAvailablePlans` includes them
+- [x] (Optional) AI mode: record → transcribe → valid JSON → edit → save
+- [x] `npm run build` and `npm run test:run` pass

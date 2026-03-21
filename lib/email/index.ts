@@ -8,23 +8,20 @@ const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'no-reply-fishly@kupfer.es';
 const templatePath = join(process.cwd(), 'lib/email/templates/magic-link.hbs');
 const templateSource = readFileSync(templatePath, 'utf-8');
 
-function renderMagicLink(magicLinkUrl: string, appName: string): string {
-  return templateSource
+const renderMagicLink = (magicLinkUrl: string, appName: string): string =>
+  templateSource
     .replace(/\{\{magicLinkUrl\}\}/g, magicLinkUrl)
     .replace(/\{\{appName\}\}/g, appName);
-}
 
 let lastMagicLinkUrl: string | null = null;
 
-export function getLastMagicLinkUrlForTest(): string | null {
-  return lastMagicLinkUrl;
-}
+export const getLastMagicLinkUrlForTest = (): string | null => lastMagicLinkUrl;
 
-export function clearLastMagicLinkUrlForTest(): void {
+export const clearLastMagicLinkUrlForTest = (): void => {
   lastMagicLinkUrl = null;
-}
+};
 
-export async function sendMagicLink(to: string, magicLinkUrl: string): Promise<void> {
+export const sendMagicLink = async (to: string, magicLinkUrl: string): Promise<void> => {
   const skipBrevo = process.env.NODE_ENV === 'test' && !process.env.BREVO_API_KEY;
   const devBypass = process.env.NODE_ENV === 'development' && process.env.SKIP_BREVO_DEV === 'true';
 
@@ -42,4 +39,4 @@ export async function sendMagicLink(to: string, magicLinkUrl: string): Promise<v
     subject: `Sign in to ${APP_NAME}`,
     html,
   });
-}
+};

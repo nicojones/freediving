@@ -6,16 +6,16 @@ export interface User {
   email?: string | null;
 }
 
-export async function logout(): Promise<void> {
+export const logout = async (): Promise<void> => {
   await fetch(`${API_BASE}/logout`, {
     method: 'POST',
     credentials: 'include',
   });
-}
+};
 
-export async function requestMagicLink(
+export const requestMagicLink = async (
   email: string
-): Promise<{ message?: string } | { error: string }> {
+): Promise<{ message?: string } | { error: string }> => {
   const res = await fetch(`${API_BASE}/request-magic-link`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -34,13 +34,13 @@ export async function requestMagicLink(
   }
   const data = await res.json().catch(() => ({}));
   return { error: (data as { error?: string }).error || 'Request failed' };
-}
+};
 
-export async function getCurrentUser(): Promise<User | null> {
+export const getCurrentUser = async (): Promise<User | null> => {
   const res = await fetch(`${API_BASE}/me`, { credentials: 'include' });
   if (res.ok) {
     const data = await res.json();
     return data.user;
   }
   return null;
-}
+};

@@ -18,7 +18,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   missing: 'Invalid link.',
 };
 
-export function LoginPage(_props: LoginPageProps) {
+export const LoginPage = (_props: LoginPageProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
@@ -34,7 +34,7 @@ export function LoginPage(_props: LoginPageProps) {
     }
   }, [searchParams, router]);
 
-  async function handleMagicLinkSubmit(e: React.FormEvent) {
+  const handleMagicLinkSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -45,12 +45,12 @@ export function LoginPage(_props: LoginPageProps) {
     } else if ('error' in result) {
       setError(result.error);
     }
-  }
+  };
 
-  function handleTryAgain() {
+  const handleTryAgain = () => {
     setEmailSent(false);
     setError(null);
-  }
+  };
 
   return (
     <>
@@ -139,4 +139,4 @@ export function LoginPage(_props: LoginPageProps) {
       </main>
     </>
   );
-}
+};

@@ -104,8 +104,8 @@ Add a Settings toggle (dev mode) to show/hide test controls. When unchecked, tes
 
 ## Verification
 
-- [ ] All users see dev mode toggle in Settings
-- [ ] Dev mode ON: test toggle visible on session preview
-- [ ] Dev mode OFF (default): test toggle invisible
-- [ ] Dev mode preference persists after reload
-- [ ] `npm run build` and `npm run test:run` pass
+- [x] All users see dev mode toggle in Settings
+- [x] Dev mode ON: test toggle visible on session preview
+- [x] Dev mode OFF (default): test toggle invisible
+- [x] Dev mode preference persists after reload
+- [x] `npm run build` and `npm run test:run` pass

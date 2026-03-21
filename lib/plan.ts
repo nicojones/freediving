@@ -8,7 +8,7 @@ export type PlanWithMeta = {
   days: unknown[];
 };
 
-export async function loadPlan(planId = 'default'): Promise<PlanWithMeta> {
+export const loadPlan = async (planId = 'default'): Promise<PlanWithMeta> => {
   const [connection, release] = await getDbConnection();
   try {
     const [rows] = await connection.execute(
@@ -33,10 +33,10 @@ export async function loadPlan(planId = 'default'): Promise<PlanWithMeta> {
     release();
   }
   throw new Error(`Plan not found: ${planId}`);
-}
+};
 
-export function getDayAtIndex(plan: PlanWithMeta, dayIndex: number): { id: string } | null {
+export const getDayAtIndex = (plan: PlanWithMeta, dayIndex: number): { id: string } | null => {
   const days = Array.isArray(plan) ? plan : plan.days;
   const day = days?.[dayIndex];
   return day != null && typeof day === 'object' && 'id' in day ? (day as { id: string }) : null;
-}
+};

@@ -3,7 +3,7 @@ interface UserProfileCardProps {
   email?: string | null;
 }
 
-export function UserProfileCard({ username, email }: UserProfileCardProps) {
+export const UserProfileCard = ({ username, email }: UserProfileCardProps) => {
   const displayText = email ?? username;
   const isEmail = !!email;
 
@@ -32,4 +32,4 @@ export function UserProfileCard({ username, email }: UserProfileCardProps) {
       </div>
     </div>
   );
-}
+};

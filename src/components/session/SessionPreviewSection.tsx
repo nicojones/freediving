@@ -1,11 +1,9 @@
 import type { Phase } from '../../types/plan';
-import { APP_NAME, CREATED_BY } from '../../constants/app';
+import { CREATED_BY } from '../../constants/app';
 import { BackButton } from '../ui/BackButton';
 
 /** Title-cases a string like "warm-up" → "Warm-up" */
-function titleCase(s: string): string {
-  return s.replace(/\b\w/g, (c) => c.toUpperCase());
-}
+const titleCase = (s: string): string => s.replace(/\b\w/g, (c) => c.toUpperCase());
 import { SessionBreakdown } from './SessionBreakdown';
 import { SessionPreviewStats } from './SessionPreviewStats';
 import { SpeedMultiplierSelector } from './SpeedMultiplierSelector';
@@ -32,7 +30,7 @@ interface SessionPreviewSectionProps {
   onStartSession: () => void;
 }
 
-export function SessionPreviewSection({
+export const SessionPreviewSection = ({
   selectedDayIndex,
   selectedPhases,
   planName,
@@ -51,7 +49,7 @@ export function SessionPreviewSection({
   onSpeedMultiplierChange,
   onTestModeChange,
   onStartSession,
-}: SessionPreviewSectionProps) {
+}: SessionPreviewSectionProps) => {
   const isCurrentDay = selectedDayIndex === currentDayIndex;
   const isFutureDay = currentDayIndex !== null && selectedDayIndex > currentDayIndex;
   const showStartCTA = isCurrentDay && !isDayCompleted;
@@ -76,11 +74,7 @@ export function SessionPreviewSection({
           {planName && (
             <p className="text-on-surface-variant text-lg tracking-wide font-medium">{planName}</p>
           )}
-          {isPublic && (
-            <span className="text-on-surface-variant text-sm font-normal">
-              {CREATED_BY} {creatorName ?? APP_NAME}
-            </span>
-          )}
+          {isPublic && <span className="subtle">{CREATED_BY(creatorName)}</span>}
         </section>
       </div>
 
@@ -121,4 +115,4 @@ export function SessionPreviewSection({
       {showCompletedCTA && <StartSessionCTA onStart={onStartSession} completedAt={completedAt!} />}
     </>
   );
-}
+};

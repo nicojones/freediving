@@ -12,13 +12,13 @@ interface ConfirmPlanModalProps {
   isEditMode?: boolean;
 }
 
-export function ConfirmPlanModal({
+export const ConfirmPlanModal = ({
   isOpen,
   onClose,
   plan,
   onConfirm,
   isEditMode,
-}: ConfirmPlanModalProps) {
+}: ConfirmPlanModalProps) => {
   const [name, setName] = useState(plan.name ?? '');
   const [description, setDescription] = useState(plan.description ?? '');
 
@@ -95,4 +95,4 @@ export function ConfirmPlanModal({
       </div>
     </Dialog>
   );
-}
+};

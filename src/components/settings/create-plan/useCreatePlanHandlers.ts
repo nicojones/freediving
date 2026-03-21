@@ -5,10 +5,10 @@ import type { PlanWithMeta } from '../../../types/plan';
 import { validatePlanWithMeta } from '../../../schemas/planSchema';
 import { parseJson } from '../../../utils/parseJson';
 
-export function useCreatePlanHandlers(
+export const useCreatePlanHandlers = (
   onPlanCreated?: () => void | Promise<void>,
   initialDraftPlan?: PlanWithMeta | null
-) {
+) => {
   const [describeText, setDescribeText] = useState('');
   const [jsonText, setJsonText] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -389,4 +389,4 @@ export function useCreatePlanHandlers(
     resetDraftFlow,
     openPreview,
   };
-}
+};

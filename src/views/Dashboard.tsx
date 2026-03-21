@@ -23,7 +23,7 @@ import {
 import { getCompletionDateForDay, isDayCompleted } from '../utils/completions';
 
 /** Dashboard: ~162 lines. Slightly over 150; further extraction would split cohesive day/session routing logic. */
-export function Dashboard() {
+export const Dashboard = () => {
   const router = useRouter();
   const params = useParams();
   const urlDayId = params?.dayId as string | undefined;
@@ -192,4 +192,4 @@ export function Dashboard() {
       )}
     </div>
   );
-}
+};

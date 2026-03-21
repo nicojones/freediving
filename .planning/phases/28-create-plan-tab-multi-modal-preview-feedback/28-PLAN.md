@@ -212,13 +212,13 @@ Move CreatePlanSection to its own bottom tab (+); allow create and refine via vo
 
 ## Verification
 
-- [ ] Create tab visible in BottomNavBar; navigates to /create
-- [ ] CreatePlanView shows CreatePlanSection; PlansView does not
-- [ ] Create: voice and text both work
-- [ ] Refine: voice and text both work; mix and match
-- [ ] Preview button visible when draftPlan set
-- [ ] After refine: Preview button pulses (or equivalent feedback)
-- [ ] E2E create-plan: all tests pass
+- [x] Create tab visible in BottomNavBar; navigates to /create
+- [x] CreatePlanView shows CreatePlanSection; PlansView does not
+- [x] Create: voice and text both work
+- [x] Refine: voice and text both work; mix and match
+- [x] Preview button visible when draftPlan set
+- [x] After refine: Preview button pulses (or equivalent feedback)
+- [x] E2E create-plan: all tests pass
 
 ---
 

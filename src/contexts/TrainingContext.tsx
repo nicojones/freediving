@@ -28,7 +28,7 @@ import isEmpty from 'lodash/isEmpty.js';
 import isNil from 'lodash/isNil.js';
 import { TrainingContext, type TrainingContextValue, type ViewMode } from './trainingContextState';
 
-export function TrainingProvider({ children }: { children: ReactNode }) {
+export const TrainingProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const [user, setUser] = useState<{ id: number; username: string } | null | undefined>(undefined);
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -198,37 +198,41 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
-  const resetProgress = useCallback(async () => {
-    const planId = activePlanId ?? DEFAULT_PLAN_ID;
-    const res = await apiResetProgress(planId);
-    if ('ok' in res) {
-      const c = await fetchCompletions(planId);
-      setCompletions(c);
-    } else {
-      setProgressError(res.error);
-    }
-  }, [activePlanId]);
-
-  const setActivePlan = useCallback(
+  const resetProgress = useCallback(
     async (planId: string) => {
-      const res = await apiSetActivePlan(planId);
-      if (!('ok' in res)) {
+      const res = await apiResetProgress(planId);
+      if ('ok' in res) {
+        if (planId === (activePlanId ?? DEFAULT_PLAN_ID)) {
+          const c = await fetchCompletions(planId);
+          setCompletions(c);
+        }
+      } else {
         setProgressError(res.error);
-        return;
       }
-      const planResult = loadPlanById(planId, availablePlans);
-      if ('error' in planResult) {
-        setError(planResult.error);
-        return;
-      }
-      setActivePlanId(planId);
-      setPlanWithMeta(planResult);
-      setPlan(planResult.days);
-      const c = await fetchCompletions(planId);
-      setCompletions(c);
     },
-    [availablePlans]
+    [activePlanId]
   );
+
+  const setActivePlan = useCallback(async (planId: string) => {
+    const res = await apiSetActivePlan(planId);
+    if (!('ok' in res)) {
+      setProgressError(res.error);
+      return;
+    }
+    // Fresh list — newly created plans may not be in React state yet (stale closure).
+    const dbPlans = await fetchPlansFromApi();
+    setAvailablePlans(dbPlans);
+    const planResult = loadPlanById(planId, dbPlans);
+    if ('error' in planResult) {
+      setError(planResult.error);
+      return;
+    }
+    setActivePlanId(planId);
+    setPlanWithMeta(planResult);
+    setPlan(planResult.days);
+    const c = await fetchCompletions(planId);
+    setCompletions(c);
+  }, []);
 
   const handleBackFromComplete = useCallback(() => {
     engineResetToIdle();
@@ -326,4 +330,4 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   };
 
   return <TrainingContext.Provider value={value}>{children}</TrainingContext.Provider>;
-}
+};

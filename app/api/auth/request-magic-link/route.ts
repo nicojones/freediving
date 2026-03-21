@@ -12,13 +12,13 @@ const schema = z.object({
   email: z.string().email().trim(),
 });
 
-function getClientIp(request: NextRequest): string {
+const getClientIp = (request: NextRequest): string => {
   const forwarded = request.headers.get('x-forwarded-for');
   const realIp = request.headers.get('x-real-ip');
   return forwarded?.split(',')[0]?.trim() || realIp || 'unknown';
-}
+};
 
-export async function POST(request: NextRequest) {
+export const POST = async (request: NextRequest) => {
   await initDb();
   const ip = getClientIp(request);
 
@@ -104,4 +104,4 @@ export async function POST(request: NextRequest) {
   } finally {
     release();
   }
-}
+};

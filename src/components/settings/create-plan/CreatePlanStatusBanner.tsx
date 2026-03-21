@@ -6,11 +6,11 @@ interface CreatePlanStatusBannerProps {
   onNavigateToPlans?: () => void;
 }
 
-export function CreatePlanStatusBanner({
+export const CreatePlanStatusBanner = ({
   error,
   success,
   onNavigateToPlans,
-}: CreatePlanStatusBannerProps) {
+}: CreatePlanStatusBannerProps) => {
   if (error) {
     return (
       <div
@@ -42,4 +42,4 @@ export function CreatePlanStatusBanner({
     );
   }
   return null;
-}
+};

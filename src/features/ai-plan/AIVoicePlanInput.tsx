@@ -14,14 +14,14 @@ interface AIVoicePlanInputProps {
   getAbortSignal?: () => AbortSignal;
 }
 
-export function AIVoicePlanInput({
+export const AIVoicePlanInput = ({
   onResult,
   disabled,
   onRecordingChange,
   onVoiceSubmittingChange,
   contextPlan,
   getAbortSignal,
-}: AIVoicePlanInputProps) {
+}: AIVoicePlanInputProps) => {
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -154,4 +154,4 @@ export function AIVoicePlanInput({
       {error && <p className="text-error text-sm font-body">{error}</p>}
     </div>
   );
-}
+};

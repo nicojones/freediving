@@ -30,7 +30,7 @@ interface CreatePlanDescribeTabProps {
   isEditMode?: boolean;
 }
 
-export function CreatePlanDescribeTab(props: CreatePlanDescribeTabProps) {
+export const CreatePlanDescribeTab = (props: CreatePlanDescribeTabProps) => {
   const voiceActive = props.recording || props.voiceSubmitting;
 
   if (props.draftPlan) {
@@ -71,4 +71,4 @@ export function CreatePlanDescribeTab(props: CreatePlanDescribeTabProps) {
       onClearError={props.onClearError}
     />
   );
-}
+};

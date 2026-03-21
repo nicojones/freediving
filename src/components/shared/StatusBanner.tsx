@@ -3,7 +3,7 @@ interface StatusBannerProps {
   savedMessage?: boolean;
 }
 
-export function StatusBanner({ progressError, savedMessage }: StatusBannerProps) {
+export const StatusBanner = ({ progressError, savedMessage }: StatusBannerProps) => {
   if (progressError) {
     return (
       <p
@@ -26,4 +26,4 @@ export function StatusBanner({ progressError, savedMessage }: StatusBannerProps)
     );
   }
   return null;
-}
+};

@@ -9,14 +9,13 @@ const RELAXATION_SECONDS = 60;
 export type CompletionForPlan = { day_id: string; completed_at: number };
 
 /** Returns plan days from Plan or PlanWithMeta for backward compatibility */
-export function getPlanDays(plan: Plan | PlanWithMeta): Plan {
-  return (Array.isArray(plan) ? plan : plan.days) as Plan;
-}
+export const getPlanDays = (plan: Plan | PlanWithMeta): Plan =>
+  (Array.isArray(plan) ? plan : plan.days) as Plan;
 
 /**
  * Fetches plans from DB via API. Returns [] when not authenticated or on error.
  */
-export async function fetchPlansFromApi(): Promise<PlanWithMeta[]> {
+export const fetchPlansFromApi = async (): Promise<PlanWithMeta[]> => {
   try {
     const res = await fetch('/api/plans', { credentials: 'include' });
     if (!res.ok) {
@@ -31,43 +30,43 @@ export async function fetchPlansFromApi(): Promise<PlanWithMeta[]> {
   } catch {
     return [];
   }
-}
+};
 
 /**
  * Returns all available plans. Use plans param when available from context.
  * When no plans provided, returns [] (no bundled fallback; plans come from API).
  */
-export function getAvailablePlans(plans?: PlanWithMeta[]): PlanWithMeta[] {
+export const getAvailablePlans = (plans?: PlanWithMeta[]): PlanWithMeta[] => {
   if (plans) {
     return plans;
   }
   return [];
-}
+};
 
 /**
  * Loads a plan by id. Returns the plan or an error object if not found.
  * Pass plans from context when user is logged in (includes DB plans).
  */
-export function loadPlanById(
+export const loadPlanById = (
   planId: string,
   plans?: PlanWithMeta[]
-): PlanWithMeta | { error: string } {
+): PlanWithMeta | { error: string } => {
   const list = getAvailablePlans(plans);
   const plan = list.find((p) => p.id === planId);
   if (isNil(plan)) {
     return { error: `Plan not found: ${planId}` };
   }
   return plan as PlanWithMeta;
-}
+};
 
 /**
  * Loads the training plan. If planId is provided, loads that plan; otherwise loads the first available.
  * Returns PlanWithMeta or an error object if loading fails.
  */
-export async function loadPlan(
+export const loadPlan = async (
   planId?: string,
   plans?: PlanWithMeta[]
-): Promise<PlanWithMeta | { error: string }> {
+): Promise<PlanWithMeta | { error: string }> => {
   try {
     if (planId) {
       return loadPlanById(planId, plans);
@@ -82,13 +81,13 @@ export async function loadPlan(
       error: `Failed to load plan: ${e instanceof Error ? e.message : 'Unknown error'}`,
     };
   }
-}
+};
 
 /**
  * Returns phases for a training day, or null for rest/null days or out-of-range.
  * Defensively returns null for malformed plan — does not throw.
  */
-export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
+export const getPhasesForDay = (plan: Plan, dayIndex: number): Phase[] | null => {
   if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {
     return null;
   }
@@ -100,12 +99,12 @@ export function getPhasesForDay(plan: Plan, dayIndex: number): Phase[] | null {
     return day.phases;
   }
   return null;
-}
+};
 
 /**
  * Returns the day group at the given index (e.g. "warm-up", "deep pool"), or undefined.
  */
-export function getDayGroup(plan: Plan, dayIndex: number): string | undefined {
+export const getDayGroup = (plan: Plan, dayIndex: number): string | undefined => {
   if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {
     return undefined;
   }
@@ -115,12 +114,12 @@ export function getDayGroup(plan: Plan, dayIndex: number): string | undefined {
   }
   const g = (day as { group?: string }).group;
   return typeof g === 'string' ? g : undefined;
-}
+};
 
 /**
  * Returns the day id at the given index, or null if missing/invalid.
  */
-export function getDayId(plan: Plan, dayIndex: number): string | null {
+export const getDayId = (plan: Plan, dayIndex: number): string | null => {
   if (!Array.isArray(plan) || dayIndex < 0 || dayIndex >= plan.length) {
     return null;
   }
@@ -129,12 +128,12 @@ export function getDayId(plan: Plan, dayIndex: number): string | null {
     return null;
   }
   return (day as { id: string }).id;
-}
+};
 
 /**
  * Returns the day object for a given id, or null. Case-insensitive for URLs.
  */
-export function getDayById(plan: Plan, dayId: string): (typeof plan)[number] | null {
+export const getDayById = (plan: Plan, dayId: string): (typeof plan)[number] | null => {
   if (!Array.isArray(plan) || !dayId) {
     return null;
   }
@@ -143,12 +142,12 @@ export function getDayById(plan: Plan, dayId: string): (typeof plan)[number] | n
     (d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower
   );
   return day ?? null;
-}
+};
 
 /**
  * Returns the index of the day with the given id, or null.
  */
-export function getDayIndexById(plan: Plan, dayId: string): number | null {
+export const getDayIndexById = (plan: Plan, dayId: string): number | null => {
   if (!Array.isArray(plan) || !dayId) {
     return null;
   }
@@ -157,14 +156,14 @@ export function getDayIndexById(plan: Plan, dayId: string): number | null {
     (d) => d != null && 'id' in d && (d as { id: string }).id.toLowerCase() === lower
   );
   return idx >= 0 ? idx : null;
-}
+};
 
 /**
  * Returns the current day index (next to do), or null if all days complete.
  * On track (trained yesterday or today): next day in sequence, including rest.
  * Behind (last completion 2+ days ago): skip rest days, return first training day.
  */
-export function getCurrentDay(plan: Plan, completions: CompletionForPlan[]): number | null {
+export const getCurrentDay = (plan: Plan, completions: CompletionForPlan[]): number | null => {
   if (!Array.isArray(plan) || isEmpty(plan)) {
     return null;
   }
@@ -224,27 +223,27 @@ export function getCurrentDay(plan: Plan, completions: CompletionForPlan[]): num
     }
   }
   return null;
-}
+};
 
 /**
  * Computes total session duration in seconds (relaxation + all phases).
  */
-export function computeSessionDurationSeconds(phases: Phase[]): number {
+export const computeSessionDurationSeconds = (phases: Phase[]): number => {
   let total = RELAXATION_SECONDS;
   for (const p of phases) {
     total += p.duration;
   }
   return total;
-}
+};
 
 /**
  * Returns a short summary for a day: "Rest" or "X cycle(s)".
  */
-export function getDaySummary(plan: Plan, dayIndex: number): string {
+export const getDaySummary = (plan: Plan, dayIndex: number): string => {
   const phases = getPhasesForDay(plan, dayIndex);
   if (phases === null) {
     return 'Rest';
   }
   const holdCount = phases.filter((p) => p.type === 'hold').length;
   return holdCount === 1 ? '1 cycle' : `${holdCount} cycles`;
-}
+};

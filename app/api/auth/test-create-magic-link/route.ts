@@ -8,7 +8,7 @@ export const runtime = 'nodejs';
  * Test-only: creates a magic link for the given email and returns the verify URL.
  * Only available when NODE_ENV=test. Bypasses rate limit and email sending.
  */
-export async function POST(request: NextRequest) {
+export const POST = async (request: NextRequest) => {
   if (process.env.NODE_ENV !== 'test' && !process.env.E2E_MAGIC_LINK_ENABLED) {
     return Response.json({ error: 'Not available' }, { status: 404 });
   }
@@ -77,4 +77,4 @@ export async function POST(request: NextRequest) {
   } finally {
     release();
   }
-}
+};

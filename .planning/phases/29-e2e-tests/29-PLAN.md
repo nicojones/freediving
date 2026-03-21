@@ -123,8 +123,8 @@ Add comprehensive E2E tests; fix the flaky create-plan Describe test; add voice/
 
 ## Verification
 
-- [ ] Describe tab E2E: run 5×, no flakiness
-- [ ] Voice E2E: passes with mocked transcribe
-- [ ] ConfirmPlanModal.test.tsx: 4 tests pass
-- [ ] PlanPreviewModal.test.tsx: 3 tests pass
-- [ ] CreatePlanStatusBanner.test.tsx: 4 tests pass
+- [x] Describe tab E2E: run 5×, no flakiness
+- [x] Voice E2E: passes with mocked transcribe
+- [x] ConfirmPlanModal.test.tsx: 4 tests pass
+- [x] PlanPreviewModal.test.tsx: 3 tests pass
+- [x] CreatePlanStatusBanner.test.tsx: 4 tests pass

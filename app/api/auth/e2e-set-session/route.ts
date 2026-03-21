@@ -13,7 +13,7 @@ export const runtime = 'nodejs';
 
 const ALLOWED = ['nico', 'athena'];
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   if (process.env.NODE_ENV !== 'test' && !process.env.E2E_MAGIC_LINK_ENABLED) {
     return Response.json({ error: 'Not available' }, { status: 404 });
   }
@@ -48,4 +48,4 @@ export async function GET(request: NextRequest) {
   } finally {
     release();
   }
-}
+};

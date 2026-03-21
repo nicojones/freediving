@@ -8,7 +8,7 @@ import { createToken, COOKIE_MAX_AGE } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   const token = request.nextUrl.searchParams.get('token');
   if (!token) {
     redirect('/login?error=missing');
@@ -57,4 +57,4 @@ export async function GET(request: NextRequest) {
   } finally {
     release();
   }
-}
+};

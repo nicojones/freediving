@@ -4,7 +4,7 @@ import { getDbConnection } from '@/lib/db.config';
 
 export const runtime = 'nodejs';
 
-export async function GET() {
+export const GET = async () => {
   const authUser = await getAuthUser();
   if (!authUser) {
     return Response.json({ error: 'Not authenticated' }, { status: 401 });
@@ -27,4 +27,4 @@ export async function GET() {
   } finally {
     release();
   }
-}
+};

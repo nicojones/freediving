@@ -4,8 +4,8 @@ export const GEMINI_TRANSCRIPTION_MODEL = 'gemini-3-flash-preview';
 /** App display name */
 export const APP_NAME = 'Fishly';
 
-/** Creator attribution label for public plans (e.g. "Created by Fishly") */
-export const CREATED_BY = 'Created by';
+/** Creator attribution label for public plans (e.g. "By Fishly") */
+export const CREATED_BY = (name: string | undefined): string => `By ${name ?? APP_NAME}`;
 
 /** App tagline / description */
 export const APP_DESCR = 'Breathhold Protocol';

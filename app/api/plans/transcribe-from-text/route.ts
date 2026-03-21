@@ -21,7 +21,7 @@ Apply ONLY the requested changes. Return the modified plan as valid PlanWithMeta
 
 export const runtime = 'nodejs';
 
-export async function POST(request: NextRequest) {
+export const POST = async (request: NextRequest) => {
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
     return Response.json(
@@ -90,4 +90,4 @@ export async function POST(request: NextRequest) {
     const msg = err instanceof Error ? err.message : 'Text conversion failed';
     return Response.json({ error: msg }, { status: 502 });
   }
-}
+};

@@ -7,7 +7,7 @@ interface TopAppBarProps {
   onBack?: () => void;
 }
 
-export function TopAppBar({ weekLabel, onBack }: TopAppBarProps) {
+export const TopAppBar = ({ weekLabel, onBack }: TopAppBarProps) => {
   return (
     <>
       <div className="h-16 w-full" />
@@ -49,4 +49,4 @@ export function TopAppBar({ weekLabel, onBack }: TopAppBarProps) {
       </header>
     </>
   );
-}
+};

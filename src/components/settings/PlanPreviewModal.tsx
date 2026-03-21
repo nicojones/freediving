@@ -12,7 +12,7 @@ interface PlanPreviewModalProps {
   plan: PlanWithMeta;
 }
 
-export function PlanPreviewModal({ isOpen, onClose, plan }: PlanPreviewModalProps) {
+export const PlanPreviewModal = ({ isOpen, onClose, plan }: PlanPreviewModalProps) => {
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div
@@ -74,4 +74,4 @@ export function PlanPreviewModal({ isOpen, onClose, plan }: PlanPreviewModalProp
       </ModalBackdrop>
     </Dialog>
   );
-}
+};

@@ -10,7 +10,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 type Variant = 'banner' | 'compact';
 
-export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
+export const InstallPrompt = ({ variant = 'banner' }: { variant?: Variant }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -144,4 +144,4 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
       </div>
     </div>
   );
-}
+};

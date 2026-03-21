@@ -18,7 +18,7 @@ export interface SessionEngineOptions {
   relaxationSecondsOverride?: number;
 }
 
-export function useSessionEngine() {
+export const useSessionEngine = () => {
   const [sessionStatus, setSessionStatus] = useState<SessionStatus>('idle');
   const [timerState, setTimerState] = useState<TimerState | null>(null);
   const [audioLoading, setAudioLoading] = useState(false);
@@ -111,4 +111,4 @@ export function useSessionEngine() {
     audioLoading,
     speedMultiplier,
   };
-}
+};

@@ -11,14 +11,14 @@ interface ConfirmResetModalProps {
   confirmWord?: string;
 }
 
-export function ConfirmResetModal({
+export const ConfirmResetModal = ({
   isOpen,
   onClose,
   onConfirm,
   title,
   message,
   confirmWord = 'reset',
-}: ConfirmResetModalProps) {
+}: ConfirmResetModalProps) => {
   const [confirmInput, setConfirmInput] = useState('');
 
   useEffect(() => {
@@ -84,4 +84,4 @@ export function ConfirmResetModal({
       </div>
     </Dialog>
   );
-}
+};

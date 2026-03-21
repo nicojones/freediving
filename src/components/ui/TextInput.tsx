@@ -10,7 +10,7 @@ interface TextInputProps {
   'data-testid'?: string;
 }
 
-export function TextInput({
+export const TextInput = ({
   id,
   label,
   type = 'text',
@@ -20,7 +20,7 @@ export function TextInput({
   autoComplete,
   icon = 'person',
   'data-testid': dataTestId,
-}: TextInputProps) {
+}: TextInputProps) => {
   return (
     <div className="group">
       <label
@@ -46,4 +46,4 @@ export function TextInput({
       </div>
     </div>
   );
-}
+};

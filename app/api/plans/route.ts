@@ -8,7 +8,7 @@ import { parseJson } from '@/src/utils/parseJson';
 
 export const runtime = 'nodejs';
 
-export async function GET() {
+export const GET = async () => {
   await initDb();
   const user = await getAuthUser();
   if (!user) {
@@ -50,9 +50,9 @@ export async function GET() {
   } finally {
     release();
   }
-}
+};
 
-export async function POST(request: NextRequest) {
+export const POST = async (request: NextRequest) => {
   await initDb();
   const user = await getAuthUser();
   if (!user) {
@@ -94,4 +94,4 @@ export async function POST(request: NextRequest) {
   } finally {
     release();
   }
-}
+};

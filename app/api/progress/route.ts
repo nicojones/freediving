@@ -6,7 +6,7 @@ import { loadPlan, getDayAtIndex } from '@/lib/plan';
 
 export const runtime = 'nodejs';
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   await initDb();
   const user = await getAuthUser();
   if (!user) {
@@ -29,9 +29,9 @@ export async function GET(request: NextRequest) {
   } finally {
     release();
   }
-}
+};
 
-export async function POST(request: NextRequest) {
+export const POST = async (request: NextRequest) => {
   await initDb();
   const user = await getAuthUser();
   if (!user) {
@@ -68,9 +68,9 @@ export async function POST(request: NextRequest) {
   } finally {
     release();
   }
-}
+};
 
-export async function DELETE(request: NextRequest) {
+export const DELETE = async (request: NextRequest) => {
   await initDb();
   const user = await getAuthUser();
   if (!user) {
@@ -90,4 +90,4 @@ export async function DELETE(request: NextRequest) {
   } finally {
     release();
   }
-}
+};

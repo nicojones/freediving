@@ -110,9 +110,9 @@ Settings is becoming too polluted. Extract plan-related functionality into a ded
 
 ## Verification
 
-- [ ] Bottom nav shows Training, Plans, Settings
-- [ ] Plans tab shows plan selector and create-plan; Settings does not
-- [ ] plans table has created_by; new plans store creator
-- [ ] User can delete own non-active plans; cannot delete active plan
-- [ ] Structure allows future "explore without switching" without refactor
-- [ ] `npm run build` and `npm run test:run` pass
+- [x] Bottom nav shows Training, Plans, Settings
+- [x] Plans tab shows plan selector and create-plan; Settings does not
+- [x] plans table has created_by; new plans store creator
+- [x] User can delete own non-active plans; cannot delete active plan
+- [x] Structure allows future "explore without switching" without refactor
+- [x] `npm run build` and `npm run test:run` pass

@@ -11,11 +11,11 @@ export interface Completion {
 
 export type RecordCompletionResult = { ok: true } | { ok: true; queued: true } | { error: string };
 
-export async function recordCompletion(
+export const recordCompletion = async (
   planId: string,
   dayId: string,
   dayIndex?: number
-): Promise<RecordCompletionResult> {
+): Promise<RecordCompletionResult> => {
   if (!navigator.onLine) {
     await queueCompletion(planId, dayId, dayIndex);
     return { ok: true, queued: true };
@@ -47,13 +47,13 @@ export async function recordCompletion(
   const errBody = (await res.json().catch(() => ({}))) as { error?: string };
   const msg = errBody?.error ?? `Failed to record completion (${res.status})`;
   return { error: msg };
-}
+};
 
-export async function flushOfflineQueue(): Promise<void> {
+export const flushOfflineQueue = async (): Promise<void> => {
   await flushQueue();
-}
+};
 
-export async function fetchCompletions(planId: string = 'default'): Promise<Completion[]> {
+export const fetchCompletions = async (planId: string = 'default'): Promise<Completion[]> => {
   const res = await fetch(`${API_BASE}?plan_id=${encodeURIComponent(planId)}`, {
     credentials: 'include',
   });
@@ -62,22 +62,24 @@ export async function fetchCompletions(planId: string = 'default'): Promise<Comp
     return data.completions ?? [];
   }
   return [];
-}
+};
 
 /**
  * Fetches the active plan ID. Server auto-sets default when none exists.
  * Returns null only on 404 (no plans available) or other errors.
  */
-export async function fetchActivePlan(): Promise<string | null> {
+export const fetchActivePlan = async (): Promise<string | null> => {
   const res = await fetch(`${USER_BASE}/active-plan`, { credentials: 'include' });
   if (res.ok) {
     const data = await res.json();
     return data.plan_id ?? null;
   }
   return null;
-}
+};
 
-export async function setActivePlan(planId: string): Promise<{ ok: boolean } | { error: string }> {
+export const setActivePlan = async (
+  planId: string
+): Promise<{ ok: boolean } | { error: string }> => {
   try {
     const res = await fetch(`${USER_BASE}/active-plan`, {
       method: 'PUT',
@@ -96,9 +98,11 @@ export async function setActivePlan(planId: string): Promise<{ ok: boolean } | {
   } catch {
     return { error: 'Network error — is the server running?' };
   }
-}
+};
 
-export async function resetProgress(planId: string): Promise<{ ok: boolean } | { error: string }> {
+export const resetProgress = async (
+  planId: string
+): Promise<{ ok: boolean } | { error: string }> => {
   try {
     const res = await fetch(`${API_BASE}?plan_id=${encodeURIComponent(planId)}`, {
       method: 'DELETE',
@@ -116,4 +120,4 @@ export async function resetProgress(planId: string): Promise<{ ok: boolean } | {
   } catch {
     return { error: 'Network error — is the server running?' };
   }
-}
+};

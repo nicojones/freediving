@@ -13,7 +13,7 @@ export interface PendingCompletion {
   created_at: number;
 }
 
-async function getDB() {
+const getDB = async () => {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db, oldVersion) {
       if (oldVersion < 2 && db.objectStoreNames.contains(STORE_NAME)) {
@@ -24,13 +24,13 @@ async function getDB() {
       }
     },
   });
-}
+};
 
-export async function queueCompletion(
+export const queueCompletion = async (
   planId: string,
   dayId: string,
   dayIndex?: number
-): Promise<void> {
+): Promise<void> => {
   const db = await getDB();
   const now = Date.now();
   const item: PendingCompletion = {
@@ -43,9 +43,9 @@ export async function queueCompletion(
     item.day_index = dayIndex;
   }
   await db.add(STORE_NAME, item);
-}
+};
 
-export async function flushQueue(): Promise<{ synced: number; failed: number }> {
+export const flushQueue = async (): Promise<{ synced: number; failed: number }> => {
   const db = await getDB();
   const items = (await db.getAll(STORE_NAME)) as PendingCompletion[];
   let synced = 0;
@@ -78,14 +78,14 @@ export async function flushQueue(): Promise<{ synced: number; failed: number }> 
   }
 
   return { synced, failed };
-}
+};
 
-export async function getPendingCount(): Promise<number> {
+export const getPendingCount = async (): Promise<number> => {
   const db = await getDB();
   return db.count(STORE_NAME);
-}
+};
 
-export async function clearByPlanId(planId: string): Promise<number> {
+export const clearByPlanId = async (planId: string): Promise<number> => {
   const db = await getDB();
   const items = (await db.getAll(STORE_NAME)) as PendingCompletion[];
   const toDelete = items.filter((i) => i.plan_id === planId);
@@ -95,4 +95,4 @@ export async function clearByPlanId(planId: string): Promise<number> {
     }
   }
   return toDelete.length;
-}
+};

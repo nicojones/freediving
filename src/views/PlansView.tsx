@@ -4,18 +4,20 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
-import { Radio, RadioGroup } from '@headlessui/react';
 import { TabPageLayout } from '@/src/components/layout/TabPageLayout';
 import { ActivePlanSection } from '@/src/components/settings/ActivePlanSection';
+import { PlanFilterRadio, type PlanFilter } from '@/src/components/settings/PlanFilterRadio';
 import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSection';
 import { ConfirmSwitchPlanModal } from '@/src/components/settings/ConfirmSwitchPlanModal';
 import { useTraining } from '@/src/hooks/useTraining';
 import { fetchCompletions } from '@/src/services/progressService';
 import type { PlanWithMeta } from '@/src/types/plan';
 
-type PlanFilter = 'all' | 'my' | 'public';
-
-function filterPlans(plans: PlanWithMeta[], filter: PlanFilter, currentUserId: number | undefined) {
+const filterPlans = (
+  plans: PlanWithMeta[],
+  filter: PlanFilter,
+  currentUserId: number | undefined
+) => {
   if (filter === 'all') {
     return plans;
   }
@@ -23,7 +25,7 @@ function filterPlans(plans: PlanWithMeta[], filter: PlanFilter, currentUserId: n
     return plans.filter((p) => p.created_by === currentUserId);
   }
   return plans.filter((p) => p.public === true);
-}
+};
 
 /**
  * Plans tab: change plan, add plan, delete plan (user-created, non-active).
@@ -33,7 +35,7 @@ function filterPlans(plans: PlanWithMeta[], filter: PlanFilter, currentUserId: n
  * a "preview/explore" mode — user could browse plan details without changing
  * their active plan. Do not implement; only ensure no dead ends block this.
  */
-export function PlansView() {
+export const PlansView = () => {
   const router = useRouter();
   const { user, availablePlans, activePlanId, planWithMeta, setActivePlan, refreshAvailablePlans } =
     useTraining();
@@ -134,39 +136,10 @@ export function PlansView() {
           progress={activePlanId ? planProgress[activePlanId] : undefined}
           currentUserId={user?.id}
           onPlanEdited={refreshAvailablePlans}
+          onPlanReset={refreshPlanProgress}
         />
 
-        <RadioGroup
-          value={filter}
-          onChange={setFilter}
-          className="mb-4"
-          data-testid="plan-filter"
-          aria-label="Filter plans"
-        >
-          <div className="flex gap-2">
-            <Radio
-              value="all"
-              data-testid="plan-filter-all"
-              className="px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 cursor-pointer data-checked:bg-primary data-checked:text-on-primary data-[checked=false]:bg-surface-container-high data-[checked=false]:text-on-surface-variant hover:bg-surface-variant"
-            >
-              All
-            </Radio>
-            <Radio
-              value="my"
-              data-testid="plan-filter-my"
-              className="px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 cursor-pointer data-checked:bg-primary data-checked:text-on-primary data-[checked=false]:bg-surface-container-high data-[checked=false]:text-on-surface-variant hover:bg-surface-variant"
-            >
-              My
-            </Radio>
-            <Radio
-              value="public"
-              data-testid="plan-filter-public"
-              className="px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 cursor-pointer data-checked:bg-primary data-checked:text-on-primary data-[checked=false]:bg-surface-container-high data-[checked=false]:text-on-surface-variant hover:bg-surface-variant"
-            >
-              Public
-            </Radio>
-          </div>
-        </RadioGroup>
+        <PlanFilterRadio value={filter} onChange={setFilter} />
 
         <PlanSelectorSection
           availablePlans={filteredPlans}
@@ -175,6 +148,7 @@ export function PlansView() {
           onPlanChange={handlePlanChange}
           onPlanDeleted={refreshAvailablePlans}
           onPlanEdited={refreshAvailablePlans}
+          onPlanReset={refreshPlanProgress}
           planProgress={planProgress}
         />
 
@@ -195,4 +169,4 @@ export function PlansView() {
       />
     </>
   );
-}
+};
