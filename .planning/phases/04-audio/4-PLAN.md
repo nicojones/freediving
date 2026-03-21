@@ -48,7 +48,7 @@ Implement an Audio Service that plays cue files at the correct moments in respon
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/4-CONTEXT.md
+- 4-CONTEXT.md
 - @.planning/phases/04-audio/04-RESEARCH.md
 
 **Existing:** Phase 3 complete. Timer Engine emits phase_start, prepare_hold, countdown_30, hold_end, session_complete. App.tsx logs events.

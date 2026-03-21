@@ -91,7 +91,7 @@ Add comprehensive E2E tests; fix the flaky create-plan Describe test; add voice/
 
 ### Task 4: Document Phase 29 in Roadmap
 
-**Files:** `.planning/ROADMAP.md`, `.planning/STATE.md`, `.planning/29-PLAN.md`
+**Files:** `.planning/ROADMAP.md`, `.planning/STATE.md`, `29-PLAN.md`
 
 **Action:**
 

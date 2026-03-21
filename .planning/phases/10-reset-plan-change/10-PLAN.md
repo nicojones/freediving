@@ -78,7 +78,7 @@ Add reset progress from settings, multiple training plans with `{id, name, descr
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/10-CONTEXT.md
+- 10-CONTEXT.md
 - @.planning/phases/10-reset-plan-change/10-RESEARCH.md
 
 **Existing:** Phases 1–9 complete. Single plan `default-plan.json` (array of days). TrainingContext loads plan and completions with hardcoded `plan_id: 'default'`. Settings has logout only.

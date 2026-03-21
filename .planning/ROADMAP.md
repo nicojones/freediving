@@ -42,6 +42,8 @@
 - [x] **Phase 32: Multi-Program Switching** - Switch between training programs with preserved status (no reset); Plans tab shows progress (e.g. 3/17 days); confirmation on switch (no Reset prompt)
 - [x] **Phase 33: Sign Up** - Magic link (passwordless email); request-magic-link + verify-magic-link; rate limiting; unified login (email + legacy username)
 - [x] **Phase 34: Login & Profile UX** - UserProfileCard: email + name (or email only); Login page: hide input after send, "Check inbox for {...}", try again link; Fishly in TopBar links to current training plan
+- [ ] **Phase 35: Default Plan Migration + Creator Attribution** - Remove default-plan.json; seed default plan via DB migration; plans table: public flag, owner; PUBLIC: "Created by Fishly" (no owner) or "Created by {name}" (never email); PRIVATE: no creator text; creator attribution small and greyed out in Plans + Training tabs (not plan name)
+- [ ] **Phase 36: Plans Tab Context Menu, Filters, Progress & How It Works** - Replace trash with "..." context menu (copy JSON, download, delete, edit); All/My/Public filter; progress at top-right of plan boxes; public plans show greyed 🌐 icon; expandable "How it works" section; "Create Plan" button at bottom
 
 ---
 
@@ -61,7 +63,7 @@
 2. Parsed plans expose hold/breathe intervals per day
 3. Admin can add or modify plans by updating JSON (no in-app editor)
 
-**Plans:** `.planning/1-PLAN.md` (5 tasks: scaffold → types → Plan Service → wire App → admin docs)
+**Plans:** `.planning/phases/01-plan-service/1-PLAN.md` (5 tasks: scaffold → types → Plan Service → wire App → admin docs)
 
 ---
 
@@ -80,7 +82,7 @@
 3. App records session completion per user per day
 4. Progress survives browser restart and syncs across devices
 
-**Plans:** `.planning/2-PLAN.md` (Plan 01: 3 tasks backend; Plan 02: 2 tasks frontend)
+**Plans:** `.planning/phases/02-progress-profile/2-PLAN.md` (Plan 01: 3 tasks backend; Plan 02: 2 tasks frontend)
 
 ---
 
@@ -100,7 +102,7 @@
 4. "30 seconds" event fires only when recovery ≥31s, at 30s remaining
 5. Engine is pure logic (no audio or persistence side effects)
 
-**Plans:** `.planning/3-PLAN.md` (3 tasks: types → timer engine → demo)
+**Plans:** `.planning/phases/03-timer-engine/3-PLAN.md` (3 tasks: types → timer engine → demo)
 
 ---
 
@@ -120,7 +122,7 @@
 4. User hears "Breathe!" exactly when hold ends
 5. No audio plays during the breathhold itself
 
-**Plans:** `.planning/4-PLAN.md` (2 tasks: audioService → wire App)
+**Plans:** `.planning/phases/04-audio/4-PLAN.md` (2 tasks: audioService → wire App)
 
 ---
 
@@ -140,7 +142,7 @@
 4. User can start a session and complete it with all audio cues
 5. Session completion is recorded for the selected profile and day
 
-**Plans:** `.planning/5-PLAN.md` (4 tasks: session utils → day selector → preview → session flow)
+**Plans:** `.planning/phases/05-session-runner/5-PLAN.md` (4 tasks: session utils → day selector → preview → session flow)
 
 ---
 
@@ -159,7 +161,7 @@
 3. Audio cue files play when offline (precached)
 4. Layout is responsive and mobile-first
 
-**Plans:** `.planning/6-PLAN.md` (4 tasks: vite-plugin-pwa + manifest + icons + audio precache → offline queue + progressService → InstallPrompt → responsive validation)
+**Plans:** `.planning/phases/06-pwa-offline/6-PLAN.md` (4 tasks: vite-plugin-pwa + manifest + icons + audio precache → offline queue + progressService → InstallPrompt → responsive validation)
 
 ---
 
@@ -179,7 +181,7 @@
 4. Route `/day/:dayId` shows day view; refresh preserves view
 5. Invalid dayId redirects to `/`
 
-**Plans:** `.planning/7-PLAN.md` (5 tasks: plan schema + default-plan → backend day_id → planService lookups → progressService/offlineQueue → routing + Dashboard URL sync)
+**Plans:** `.planning/phases/07-day-ids-routing/7-PLAN.md` (5 tasks: plan schema + default-plan → backend day_id → planService lookups → progressService/offlineQueue → routing + Dashboard URL sync)
 
 ---
 
@@ -198,7 +200,7 @@
 3. Test toggle allows overriding step 1 (relaxation) for faster testing
 4. Recovery phase shows faint glowing ring with breathing animation (no ring = faint blue)
 
-**Plans:** `.planning/8-PLAN.md` (5 tasks: hasCompletedToday → completion flow → test toggle → recovery ring → integration)
+**Plans:** `.planning/phases/08-session-ux/8-PLAN.md` (5 tasks: hasCompletedToday → completion flow → test toggle → recovery ring → integration)
 
 ---
 
@@ -215,7 +217,7 @@
 1. Refactoring scope and targets defined in plan
 2. Code structure improved without changing user-facing behavior
 
-**Plans:** `.planning/9-PLAN.md` (4 tasks: getDayId → useSessionEngine → DayListSection/SessionPreviewSection → integration)
+**Plans:** `.planning/phases/09-refactor-code/9-PLAN.md` (4 tasks: getDayId → useSessionEngine → DayListSection/SessionPreviewSection → integration)
 
 ---
 
@@ -234,7 +236,7 @@
 3. Active training plan is stored per user in the DB
 4. Settings page has a dropdown to select plan; changing plan shows warning that progress will be reset
 
-**Plans:** `.planning/10-PLAN.md` (Plan 01: 3 tasks; Plan 02: 3 tasks)
+**Plans:** `.planning/phases/10-reset-plan-change/10-PLAN.md` (Plan 01: 3 tasks; Plan 02: 3 tasks)
 
 ---
 
@@ -252,7 +254,7 @@
 2. Components stay logically small; no component exceeds ~150 lines
 3. Small UI blocks (e.g. status banners, inline messages) extracted to named sub-components for clarity and testability
 
-**Plans:** `.planning/11-PLAN.md` (6 tasks: rules of hooks + StatusBanner → constants → lodash/type-fest → clsx audit → SettingsView sections → size audit)
+**Plans:** `.planning/phases/11-refactor-code-quality-pass/11-PLAN.md` (6 tasks: rules of hooks + StatusBanner → constants → lodash/type-fest → clsx audit → SettingsView sections → size audit)
 
 ---
 
@@ -272,7 +274,7 @@
 4. E2E tests run against a separate test DB (in-memory or temp file)
 5. E2E tests never modify user's production data
 
-**Plans:** `.planning/12-PLAN.md` (8 tasks: scaffold → timerEngine → planService → utils → services → components → E2E login → E2E session)
+**Plans:** `.planning/phases/12-tests/12-PLAN.md` (8 tasks: scaffold → timerEngine → planService → utils → services → components → E2E login → E2E session)
 
 ---
 
@@ -291,7 +293,7 @@
 3. Post-deploy: unzip, systemctl restart freediving.service
 4. Production start script and systemd service template provided
 
-**Plans:** `.planning/13-PLAN.md` (6 tasks: server prod mode → start script → env example → GitHub workflow → systemd template → Vite base)
+**Plans:** `.planning/phases/13-deployment/13-PLAN.md` (6 tasks: server prod mode → start script → env example → GitHub workflow → systemd template → Vite base)
 
 ---
 
@@ -311,7 +313,7 @@
 4. Deployment updated for Next.js build output (.next/)
 5. All existing functionality works as before
 
-**Plans:** `.planning/14-PLAN.md` (9 tasks)
+**Plans:** `.planning/phases/14-nextjs-migration/14-PLAN.md` (9 tasks)
 
 ---
 
@@ -330,7 +332,7 @@
 3. No unused variables, functions, imports, or exports in codebase
 4. No behavior change; tests pass
 
-**Plans:** `.planning/15-PLAN.md` (5 tasks: ESLint config → curly braces → remove unused code → verify → CI)
+**Plans:** `.planning/phases/15-refactor-cleanup/15-PLAN.md` (5 tasks: ESLint config → curly braces → remove unused code → verify → CI)
 
 ---
 
@@ -349,7 +351,7 @@
 3. Component unit tests added for components that lacked them
 4. E2E tests cover: reset progress, plan change, abort breathhold session, non-happy-path (invalid login, invalid day, etc.)
 
-**Plans:** `.planning/16-PLAN.md` (6 tasks: ~ alias → component subfolders → component tests → E2E reset → E2E plan change & abort → E2E error paths)
+**Plans:** `.planning/phases/16-alias-imports-component-folders-tests/16-PLAN.md` (6 tasks: ~ alias → component subfolders → component tests → E2E reset → E2E plan change & abort → E2E error paths)
 
 ---
 
@@ -368,7 +370,7 @@
 3. When dev mode is unchecked, test controls are invisible on all pages (session preview, etc.)
 4. When dev mode is checked, test controls appear as before
 
-**Plans:** `.planning/17-PLAN.md` (4 tasks: dev mode preference → Settings toggle → gate test controls → tests)
+**Plans:** `.planning/phases/17-test-controls/17-PLAN.md` (4 tasks: dev mode preference → Settings toggle → gate test controls → tests)
 
 ---
 
@@ -388,7 +390,7 @@
 4. Push to main with chore: no version bump
 5. Major versions updated manually (BREAKING CHANGE or feat!:)
 
-**Plans:** `.planning/18-PLAN.md` (4 tasks: dynamic version → semantic-release config → GitHub Action → sync version)
+**Plans:** `.planning/phases/18-dynamic-version-semantic-release/18-PLAN.md` (4 tasks: dynamic version → semantic-release config → GitHub Action → sync version)
 
 ---
 
@@ -407,7 +409,7 @@
 3. Invalid JSON shows clear validation errors
 4. (Optional) AI mode: microphone icon, dictate → server sends audio + schema to Gemini → returns valid JSON → auto-fills form → user clicks OK to save
 
-**Plans:** `.planning/19-PLAN.md` (Plan 01: JSON upload + validation + storage; Plan 02: AI voice mode — may split into sub-phases if complex)
+**Plans:** `.planning/phases/19-create-plan-settings/19-PLAN.md` (Plan 01: JSON upload + validation + storage; Plan 02: AI voice mode — may split into sub-phases if complex)
 
 ---
 
@@ -425,7 +427,7 @@
 2. User cannot start or execute a session for a future day
 3. Future days are clearly differentiated from current/available days (e.g. read-only preview, no start button)
 
-**Plans:** `.planning/20-PLAN.md` (TBD — research and task breakdown)
+**Plans:** `.planning/phases/20-preview-future-days/20-PLAN.md` (TBD — research and task breakdown)
 
 ---
 
@@ -443,7 +445,7 @@
 2. TopAppBar does not show plan name (redundant with DayListSection)
 3. App name "Fishly" lives in `src/constants/app.ts`
 
-**Plans:** `.planning/21-PLAN.md` (3 tasks: DayListSection plan metadata → remove TopAppBar plan name → app name to constants)
+**Plans:** `.planning/phases/21-ui/21-PLAN.md` (3 tasks: DayListSection plan metadata → remove TopAppBar plan name → app name to constants)
 
 ---
 
@@ -463,7 +465,7 @@
 4. User can permanently delete plans they created, only when plan is not active
 5. Structure leaves room for future "explore plans without switching" (do not implement)
 
-**Plans:** `.planning/22-PLAN.md` (5 tasks: Plans tab → move sections → created_by → delete non-active → leave room for explore)
+**Plans:** `.planning/phases/22-plans-tab-settings-cleanup/22-PLAN.md` (5 tasks: Plans tab → move sections → created_by → delete non-active → leave room for explore)
 
 ---
 
@@ -481,7 +483,7 @@
 2. lefthook.yml runs format + lint on pre-commit; blocks commit if checks fail
 3. GitHub workflow runs format:check + lint; job aborts if any files would be changed (unformatted or lint-fixable)
 
-**Plans:** `.planning/23-PLAN.md` (5 tasks: Prettier → lefthook → GitHub workflow → document → verify)
+**Plans:** `.planning/phases/23-prettier-lefthook-ci/23-PLAN.md` (5 tasks: Prettier → lefthook → GitHub workflow → document → verify)
 
 ---
 
@@ -500,7 +502,7 @@
 3. Text path uses a prompt variant: "Given the text..." instead of "Convert this audio..."
 4. (Optional) Plan creation has its own screen if it improves UX
 
-**Plans:** `.planning/24-PLAN.md` (TBD — research and task breakdown)
+**Plans:** `.planning/phases/24-ai-plan-input-enhancements/24-PLAN.md` (TBD — research and task breakdown)
 
 ---
 
@@ -520,7 +522,7 @@
 4. No behavior change for users; existing tests pass
 5. Documented patterns for future modal/dialog/tab usage
 
-**Plans:** `.planning/25-PLAN.md` (TBD — research and task breakdown)
+**Plans:** `.planning/phases/25-component-library/25-PLAN.md` (TBD — research and task breakdown)
 
 ---
 
@@ -540,7 +542,7 @@
 4. Refine flow: user can send new text to LLM; repeat until satisfied
 5. Confirm modal: prefilled name/description; optional edit; hint; Save button (use Phase 25 Dialog primitive)
 
-**Plans:** `.planning/26-PLAN.md` (3 plans: Tabs + state machine → Preview + Refine + Confirm → Paste + E2E)
+**Plans:** `.planning/phases/26-plan-creation-ux/26-PLAN.md` (3 plans: Tabs + state machine → Preview + Refine + Confirm → Paste + E2E)
 
 ---
 
@@ -560,7 +562,7 @@
 4. ESLint passes; Prettier formatting applied
 5. No user-facing behavior change; E2E tests pass
 
-**Plans:** `.planning/27-PLAN.md` (4 tasks: clsx + constants → extract Describe tab → extract Paste tab + banners → size audit + lint)
+**Plans:** `.planning/phases/27-refactor-create-plan-section/27-PLAN.md` (4 tasks: clsx + constants → extract Describe tab → extract Paste tab + banners → size audit + lint)
 
 ---
 
@@ -579,7 +581,7 @@
 3. "Preview" button appears when user types/submits or audio is sent/re-sent
 4. After refinement, user clearly sees that preview was updated (attention brought back to Preview — not just loading stop)
 
-**Plans:** `.planning/28-PLAN.md` (7 tasks: Create tab + route + nav → multi-modal refine → Preview feedback + E2E)
+**Plans:** `.planning/phases/28-create-plan-tab-multi-modal-preview-feedback/28-PLAN.md` (7 tasks: Create tab + route + nav → multi-modal refine → Preview feedback + E2E)
 
 ---
 
@@ -598,7 +600,7 @@
 3. Additional E2E tests for create-plan refine flow, error paths, and critical user journeys
 4. Missing unit tests added for components/services without coverage; aim for reasonable coverage
 
-**Plans:** `.planning/29-PLAN.md` (TBD — task breakdown)
+**Plans:** `.planning/phases/29-e2e-tests/29-PLAN.md` (TBD — task breakdown)
 
 ---
 
@@ -618,7 +620,7 @@
 4. Production server: "freediving" database exists; migrations run on deploy or documented manual step
 5. Server setup guide documents: create DB, run migrations, env vars (connection string)
 
-**Plans:** `.planning/30-PLAN.md` (TBD — task breakdown)
+**Plans:** `.planning/phases/30-dockerize-mysql/30-PLAN.md` (TBD — task breakdown)
 
 ---
 
@@ -638,7 +640,7 @@
 4. Developer zone in Settings: more inconspicuous (e.g. collapsed, subtle styling)
 5. After creating a plan: message says "See plans _here_" with link that navigates to Plans tab
 
-**Plans:** `.planning/31-PLAN.md` (TBD — task breakdown)
+**Plans:** `.planning/phases/31-ui-polish/31-PLAN.md` (TBD — task breakdown)
 
 ---
 
@@ -657,7 +659,7 @@
 3. Switching plan asks for confirmation; does NOT open the Reset prompt
 4. Users may train different skills at once by switching between plans
 
-**Plans:** `.planning/32-PLAN.md`
+**Plans:** `.planning/phases/32-multi-program-switching/32-PLAN.md`
 
 ---
 
@@ -678,7 +680,7 @@
 5. No email enumeration; token/session indefinite per CONTEXT
 6. Legacy login (username+password) unchanged for seeded users
 
-**Plans:** `.planning/33-PLAN.md`
+**Plans:** `.planning/phases/33-sign-up/33-PLAN.md`
 
 ---
 
@@ -697,6 +699,48 @@
 3. Clicking "Fishly" in TopAppBar navigates to current training plan (Dashboard)
 
 **Plans:** `.planning/phases/34-login-profile-ux/34-PLAN.md`
+
+---
+
+### Phase 35: Default Plan Migration + Creator Attribution
+
+**Goal:** Remove `default-plan.json`; seed the default plan via DB migration. Plans table has `public` flag and `owner` (creator). Default plan: owner = null ("for everyone"). PUBLIC plans: "Created by Fishly" if no owner, "Created by {owner name}" if owner (never email). PRIVATE plans: no creator text. Creator attribution shown small and greyed out in Plans tab and Training tab.
+
+**Depends on:** Phase 34 (Login & Profile UX)
+
+**Requirements:** (Enhancement — plan storage and attribution)
+
+**Success Criteria** (what must be TRUE):
+
+1. `src/data/default-plan.json` removed; default plan seeded in DB via migration
+2. Plans table has `public` flag and `owner` (creator); default plan has owner = null
+3. PUBLIC plans: "Created by Fishly" (no owner) or "Created by {owner name}" (never email); server never returns email
+4. PRIVATE plans: no "created by you" or similar text
+5. Creator attribution displayed small and greyed out in Plans tab and Training tab
+
+**Plans:** `.planning/phases/35-default-plan-migration-creator-attribution/35-PLAN.md`
+
+---
+
+### Phase 36: Plans Tab Context Menu, Filters, Progress & How It Works
+
+**Goal:** Improve Plans tab UX: replace trash icon with "..." context menu (copy JSON, download, delete, edit); add All/My/Public filter; show progress at top-right of plan boxes (like TopAppBar); public plans show greyed 🌐 icon instead of menu; add expandable "How it works" section at top.
+
+**Depends on:** Phase 35 (Default Plan Migration + Creator Attribution)
+
+**Requirements:** (Enhancement — Plans tab UX)
+
+**Success Criteria** (what must be TRUE):
+
+1. Trash icon replaced by "..." context menu with: copy JSON, download plan (.json), delete (if allowed), edit (if allowed)
+2. Edit and delete share same permission rules; cannot delete active plan; can edit active plan
+3. Filter toggle: All plans / My plans / Public plans
+4. Progress (e.g. "0/12 days") shown at top-right of each plan box, similar to TopAppBar
+5. Public plans show greyed 🌐 icon instead of dropdown menu
+6. Expandable "How it works +" section at top explaining plans and linking to Create tab
+7. "Create Plan" button at bottom of plan list links to Create tab
+
+**Plans:** `.planning/phases/36-plans-tab-context-menu-filters-progress/36-PLAN.md`
 
 ---
 
@@ -738,6 +782,8 @@
 | 32. Multi-Program Switching                                        | —              | Complete | 32-PLAN.md |
 | 33. Sign Up                                                        | 0/0            | Complete | 33-PLAN.md |
 | 34. Login & Profile UX                                             | 6/6            | Complete | 34-PLAN.md |
+| 35. Default Plan Migration + Creator Attribution                   | —              | Pending  | 35-PLAN.md |
+| 36. Plans Tab Context Menu, Filters, Progress & How It Works       | —              | Pending  | 36-PLAN.md |
 
 ---
 

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import type { PlanWithMeta } from '../../types/plan';
-import { BUNDLED_PLAN_IDS } from '../../constants/app';
+import { APP_NAME, BUNDLED_PLAN_IDS, CREATED_BY } from '../../constants/app';
 import { ConfirmResetModal } from './ConfirmResetModal';
 
 interface PlanSelectorSectionProps {
@@ -96,48 +96,64 @@ export function PlanSelectorSection({
               data-testid-value={p.id}
               data-plan-name={p.name}
               className={clsx(
-                'w-full flex items-center justify-between gap-3 px-4 py-3 text-left border-b border-outline-variant/20 last:border-0 transition-colors cursor-pointer',
+                'w-full flex items-start justify-between gap-4 px-5 py-4 text-left border-b border-outline-variant/20 last:border-0 transition-colors cursor-pointer',
                 isActive
                   ? 'bg-primary/10 text-primary'
                   : 'hover:bg-surface-container-high text-on-surface'
               )}
             >
-              <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-                <span className="font-body font-medium truncate">{p.name}</span>
-                {planProgress[p.id] && (
-                  <span
-                    data-testid={`plan-progress-${p.id}`}
-                    className="text-on-surface-variant text-sm font-normal"
-                  >
-                    {planProgress[p.id].completed}/{planProgress[p.id].total} days
-                  </span>
-                )}
-                {p.description && (
-                  <span className="text-on-surface-variant text-sm font-normal line-clamp-2">
-                    {p.description}
-                  </span>
-                )}
-              </div>
-              {showDelete && (
-                <button
-                  type="button"
-                  onClick={(e) => handleRequestDelete(e, p.id, p.name)}
-                  disabled={deleteDisabled}
-                  className="shrink-0 h-9 px-3 rounded-lg border-2 border-error/50 bg-error/10 hover:bg-error/20 font-headline font-bold text-error text-sm flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-error/10"
-                  data-testid={`delete-plan-${p.id}`}
-                  aria-label={`Delete plan ${p.name}`}
-                >
-                  {deletingPlanId === p.id ? (
-                    <span className="material-symbols-outlined animate-spin text-base" aria-hidden>
-                      progress_activity
-                    </span>
-                  ) : (
-                    <span className="material-symbols-outlined text-base" aria-hidden>
-                      delete
-                    </span>
+              <div className="flex justify-between items-start gap-4 min-w-0 flex-1">
+                <div className="flex flex-col gap-2 min-w-0 flex-1">
+                  {/* Top row: name | progress + creator */}
+                  <div className="flex justify-between items-start flex-row-reverse gap-4">
+                    {planProgress[p.id] && (
+                      <span className="subtle" data-testid={`plan-progress-${p.id}`}>
+                        {planProgress[p.id].completed}/{planProgress[p.id].total} days
+                      </span>
+                    )}
+                    {p.public === true && (
+                      <span className="subtle" data-testid="plan-creator">
+                        {CREATED_BY} {p.creator_name ?? APP_NAME}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Rest of card details */}
+                  <span className="font-body font-medium truncate min-w-0">{p.name}</span>
+                  {(p.description || showDelete) && (
+                    <div className="flex flex-row justify-between">
+                      {p.description && (
+                        <span className="text-on-surface-variant text-sm font-normal line-clamp-2">
+                          {p.description}
+                        </span>
+                      )}
+                      {showDelete && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleRequestDelete(e, p.id, p.name)}
+                          disabled={deleteDisabled}
+                          className="shrink-0 h-9 px-3 rounded-lg border-2 border-error/50 bg-error/10 hover:bg-error/20 font-headline font-bold text-error text-sm flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-error/10"
+                          data-testid={`delete-plan-${p.id}`}
+                          aria-label={`Delete plan ${p.name}`}
+                        >
+                          {deletingPlanId === p.id ? (
+                            <span
+                              className="material-symbols-outlined animate-spin text-base"
+                              aria-hidden
+                            >
+                              progress_activity
+                            </span>
+                          ) : (
+                            <span className="material-symbols-outlined text-base" aria-hidden>
+                              delete
+                            </span>
+                          )}
+                        </button>
+                      )}
+                    </div>
                   )}
-                </button>
-              )}
+                </div>
+              </div>
             </div>
           );
         })}

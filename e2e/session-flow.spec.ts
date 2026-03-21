@@ -15,9 +15,11 @@ test('user can complete a session with test mode', async ({ page }) => {
   });
   await loginAsAthena(page);
 
-  // 2. Pick a day and open session preview
-  const firstDayCard = page.locator('[data-testid^="day-card-"]').first();
-  await firstDayCard.click();
+  // 2. Open session preview for current training day (avoids rest/completed days)
+  await page
+    .getByRole('button', { name: /Start Session/i })
+    .first()
+    .click();
 
   // 3. Enable test mode (skips real timers) and set 10x speed
   await page.getByTestId('test-mode-toggle').click();

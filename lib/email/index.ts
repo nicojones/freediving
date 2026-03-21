@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { send } from './brevo';
+import { APP_NAME } from '@/src/constants/app';
 
-const APP_NAME = 'Fishly';
 const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'no-reply-fishly@kupfer.es';
 
 const templatePath = join(process.cwd(), 'lib/email/templates/magic-link.hbs');

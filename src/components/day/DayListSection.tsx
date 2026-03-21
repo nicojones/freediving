@@ -1,4 +1,5 @@
 import type { Plan } from '../../types/plan';
+import { APP_NAME, CREATED_BY } from '../../constants/app';
 import { getDayId } from '../../services/planService';
 import { isDayCompleted } from '../../utils/completions';
 import { TrainingDayCard } from './TrainingDayCard';
@@ -10,6 +11,8 @@ interface DayListSectionProps {
   onSelectDay: (index: number) => void;
   planName: string;
   planDescription?: string;
+  creatorName?: string;
+  isPublic?: boolean;
 }
 
 export function DayListSection({
@@ -19,6 +22,8 @@ export function DayListSection({
   onSelectDay,
   planName,
   planDescription,
+  creatorName,
+  isPublic,
 }: DayListSectionProps) {
   return (
     <>
@@ -33,6 +38,11 @@ export function DayListSection({
           {planDescription ??
             'Focus on rhythmic breathing and peripheral relaxation during the peak CO2 phases.'}
         </p>
+        {isPublic === true && (
+          <span className="subtle block mt-1">
+            {CREATED_BY} {creatorName ?? APP_NAME}
+          </span>
+        )}
       </section>
 
       <div data-testid="dashboard-day-list" className="flex flex-col gap-6">

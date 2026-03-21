@@ -122,6 +122,6 @@ Users can create their own account via magic link (passwordless email). User ent
 ## Context
 
 - Research: `.planning/research/SIGN-UP.md`, `.planning/phases/33-sign-up/33-RESEARCH.md`
-- User decisions: `.planning/33-CONTEXT.md` (magic link, indefinite token)
+- User decisions: `33-CONTEXT.md` (magic link, indefinite token)
 - Existing auth: `app/api/auth/login/route.ts`, `lib/auth.ts`, `lib/db.ts`
 - Backward compatibility: seeded users (nico, athena) use username+password; no email column for them

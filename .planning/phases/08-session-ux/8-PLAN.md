@@ -59,7 +59,7 @@ Improve session flow UX: block duplicate sessions per day, make completion/save 
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/8-CONTEXT.md
+- 8-CONTEXT.md
 - @.planning/phases/08-session-ux/08-RESEARCH.md
 
 **Existing:** Phases 1–5 complete. Session runs with audio; completion recorded on session_complete; immediate navigate to /session/complete. Recovery shows solid border; hold shows focus-glow. No test mode.

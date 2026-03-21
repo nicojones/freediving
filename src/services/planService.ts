@@ -2,13 +2,6 @@ import isEmpty from 'lodash/isEmpty.js';
 import isNil from 'lodash/isNil.js';
 import { parseJson } from '../utils/parseJson';
 import type { Plan, PlanWithMeta, Phase } from '../types/plan';
-import defaultPlanData from '../data/default-plan.json';
-import minimalPlanData from '../data/minimal-plan.json';
-
-const planModules: PlanWithMeta[] = [
-  defaultPlanData as PlanWithMeta,
-  minimalPlanData as PlanWithMeta,
-];
 
 const RELAXATION_SECONDS = 60;
 
@@ -18,13 +11,6 @@ export type CompletionForPlan = { day_id: string; completed_at: number };
 /** Returns plan days from Plan or PlanWithMeta for backward compatibility */
 export function getPlanDays(plan: Plan | PlanWithMeta): Plan {
   return (Array.isArray(plan) ? plan : plan.days) as Plan;
-}
-
-/**
- * Returns bundled plans only (from src/data).
- */
-export function getBundledPlans(): PlanWithMeta[] {
-  return planModules.filter((p): p is PlanWithMeta => Boolean(p && 'id' in p && 'days' in p));
 }
 
 /**
@@ -48,13 +34,14 @@ export async function fetchPlansFromApi(): Promise<PlanWithMeta[]> {
 }
 
 /**
- * Returns all available plans (bundled + DB). Use plans param when available from context.
+ * Returns all available plans. Use plans param when available from context.
+ * When no plans provided, returns [] (no bundled fallback; plans come from API).
  */
 export function getAvailablePlans(plans?: PlanWithMeta[]): PlanWithMeta[] {
   if (plans) {
     return plans;
   }
-  return getBundledPlans();
+  return [];
 }
 
 /**

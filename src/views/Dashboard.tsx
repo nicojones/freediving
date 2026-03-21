@@ -150,6 +150,8 @@ export function Dashboard() {
             onSelectDay={handleSelectDay}
             planName={planName}
             planDescription={planWithMeta?.description}
+            creatorName={planWithMeta?.creator_name}
+            isPublic={planWithMeta?.public}
           />
         ) : (
           selectedPhases && (

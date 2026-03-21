@@ -60,7 +60,7 @@ Improve code quality through a second refactor pass: enforce clsx correctness, k
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/11-CONTEXT.md
+- 11-CONTEXT.md
 
 **Existing:** Phases 1–10 complete. Dashboard 169 lines; ActiveSessionView 158 lines; progressError/savedMessage inline in Dashboard (lines 107–117).
 

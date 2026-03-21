@@ -54,7 +54,7 @@ Implement the Plan Service so the app can load training plans from JSON, parse t
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/1-CONTEXT.md
+- 1-CONTEXT.md
 - @.planning/research/STACK.md
 - @.planning/research/ARCHITECTURE.md
 
@@ -220,7 +220,7 @@ npm run dev
 
 ### Task 5: Admin workflow documentation
 
-**Files:** `README.md` or `.planning/1-CONTEXT.md` (add section)
+**Files:** `README.md` or `1-CONTEXT.md` (add section)
 
 **Action:**
 

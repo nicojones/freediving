@@ -15,7 +15,7 @@ updated: 2025-03-20
 - Project `package.json` has `vite@^8.0.1`
 - npm ci uses strict peer resolution → ERESOLVE
 
-**Source:** npm registry, package.json, .planning/6-PLAN.md line 86 ("vite-plugin-pwa may not officially support Vite 8")
+**Source:** npm registry, package.json, .planning/phases/06-pwa-offline/6-PLAN.md line 86 ("vite-plugin-pwa may not officially support Vite 8")
 
 ## Symptoms
 

@@ -36,7 +36,7 @@ Third refactor pass: add ESLint, enforce style (curly braces for all `if`), remo
 ## Context
 
 - @.planning/PROJECT.md
-- @.planning/15-CONTEXT.md
+- 15-CONTEXT.md
 
 **Existing:** Phases 1–14 complete. Next.js migration done. `next lint` prompts for config — ESLint not yet set up. Similar scope to Phase 11 (quality pass) but focused on ESLint + style + dead-code removal.
 

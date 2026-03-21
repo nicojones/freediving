@@ -27,6 +27,19 @@ const serwist = new Serwist({
         plugins: [new CacheableResponsePlugin({ statuses: [200, 206] }), new RangeRequestsPlugin()],
       }),
     },
+    {
+      matcher: ({ request }) => {
+        const url = new URL(request.url);
+        return (
+          url.origin === 'https://fonts.googleapis.com' ||
+          url.origin === 'https://fonts.gstatic.com'
+        );
+      },
+      handler: new CacheFirst({
+        cacheName: 'fonts-cache',
+        plugins: [new CacheableResponsePlugin({ statuses: [200] })],
+      }),
+    },
   ],
 });
 

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { DEFAULT_PLAN_ID } from '../constants/app';
 import {
   loadPlanById,
-  getBundledPlans,
   fetchPlansFromApi,
   getPhasesForDay,
   getCurrentDay,
@@ -69,10 +68,8 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   }, [refreshUser]);
 
   const refreshAvailablePlans = useCallback(async () => {
-    const bundled = getBundledPlans();
     const dbPlans = await fetchPlansFromApi();
-    const merged = [...bundled, ...dbPlans];
-    setAvailablePlans(merged);
+    setAvailablePlans(dbPlans);
   }, []);
 
   useEffect(() => {
@@ -82,14 +79,13 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
 
     let cancelled = false;
     const run = async () => {
-      const bundled = getBundledPlans();
       const dbPlans = await fetchPlansFromApi();
-      const available = [...bundled, ...dbPlans];
-      setAvailablePlans(available);
-      if (isEmpty(available)) {
+      setAvailablePlans(dbPlans);
+      if (isEmpty(dbPlans)) {
         setError('No plans available');
         return;
       }
+      const available = dbPlans;
 
       let planId = await fetchActivePlan();
       if (planId === null) {

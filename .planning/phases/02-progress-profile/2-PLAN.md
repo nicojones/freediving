@@ -83,7 +83,7 @@ Implement Progress + Profile Services so users can log in, and the app stores/re
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/2-CONTEXT.md
+- 2-CONTEXT.md
 - @.planning/STATE.md
 
 **Existing:** Phase 1 complete. `src/services/planService.ts`, `src/types/plan.ts`, `src/data/default-plan.json` exist. Plan = array of days; index = day number.

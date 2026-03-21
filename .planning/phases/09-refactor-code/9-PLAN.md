@@ -65,7 +65,7 @@ Improve code quality through refactoring: add plan day ID helper, extract sessio
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/9-CONTEXT.md
+- 9-CONTEXT.md
 - @.planning/phases/09-refactor-code/09-RESEARCH.md
 
 **Existing:** Phases 1–8 complete. TrainingContext ~302 lines; Dashboard ~222 lines; repeated `(plan[i] as { id?: string })?.id` in 4+ places.
