@@ -12,10 +12,9 @@ export async function GET() {
   await initDb();
   const [connection, release] = await getDbConnection();
   try {
-    const [rows] = await connection.execute(
-      'SELECT id, username, email FROM users WHERE id = ?',
-      [authUser.id]
-    );
+    const [rows] = await connection.execute('SELECT id, username, email FROM users WHERE id = ?', [
+      authUser.id,
+    ]);
     const row = Array.isArray(rows)
       ? (rows[0] as { id: number; username: string; email: string | null } | undefined)
       : undefined;
