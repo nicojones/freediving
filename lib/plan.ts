@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { db } from './db';
+import { getDbConnection } from './db.config';
 
 export type PlanWithMeta = {
   id: string;
@@ -9,24 +9,31 @@ export type PlanWithMeta = {
   days: unknown[];
 };
 
-function loadPlan(planId = 'default'): PlanWithMeta {
+export async function loadPlan(planId = 'default'): Promise<PlanWithMeta> {
   const baseName = planId === 'default' ? 'default' : planId;
   const filePath = join(process.cwd(), 'src', 'data', `${baseName}-plan.json`);
   if (existsSync(filePath)) {
     return JSON.parse(readFileSync(filePath, 'utf-8'));
   }
-  const row = db
-    .prepare('SELECT id, name, description, days_json FROM plans WHERE id = ?')
-    .get(planId) as
-    | { id: string; name: string; description: string | null; days_json: string }
-    | undefined;
-  if (row) {
-    return {
-      id: row.id,
-      name: row.name,
-      description: row.description ?? undefined,
-      days: JSON.parse(row.days_json) as unknown[],
-    };
+  const [connection, release] = await getDbConnection();
+  try {
+    const [rows] = await connection.execute(
+      'SELECT id, name, description, days_json FROM plans WHERE id = ?',
+      [planId]
+    );
+    const row = (Array.isArray(rows) ? rows[0] : undefined) as
+      | { id: string; name: string; description: string | null; days_json: string }
+      | undefined;
+    if (row) {
+      return {
+        id: row.id,
+        name: row.name,
+        description: row.description ?? undefined,
+        days: JSON.parse(row.days_json) as unknown[],
+      };
+    }
+  } finally {
+    release();
   }
   const fallback = join(process.cwd(), 'src', 'data', 'default-plan.json');
   return JSON.parse(readFileSync(fallback, 'utf-8'));
@@ -37,5 +44,3 @@ export function getDayAtIndex(plan: PlanWithMeta, dayIndex: number): { id: strin
   const day = days?.[dayIndex];
   return day != null && typeof day === 'object' && 'id' in day ? (day as { id: string }) : null;
 }
-
-export { loadPlan };

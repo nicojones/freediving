@@ -61,23 +61,6 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
     localStorage.setItem(STORAGE_KEY, '1');
   };
 
-  const handleShare = async () => {
-    if (!navigator.share) {
-      return;
-    }
-    try {
-      await navigator.share({
-        title: 'Fishly',
-        text: 'Add to home screen for the best experience.',
-        url: typeof window !== 'undefined' ? window.location.origin : '',
-      });
-    } catch {
-      // User cancelled or share failed
-    }
-  };
-
-  const canShare = true; // typeof navigator !== 'undefined' && 'share' in navigator
-
   const isIOS =
     typeof navigator !== 'undefined' &&
     (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad'));
@@ -115,15 +98,6 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
           >
             Install
           </button>
-        ) : canShare ? (
-          <button
-            type="button"
-            onClick={handleShare}
-            className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg font-headline font-bold text-sm border-2 border-primary text-primary hover:bg-primary/10 transition-colors"
-          >
-            <span className="material-symbols-outlined text-lg">ios_share</span>
-            Share
-          </button>
         ) : null}
       </div>
     );
@@ -152,15 +126,6 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
             className="primary-pulse-gradient px-5 py-2.5 rounded-xl font-headline font-bold text-on-primary text-sm shadow-[0_4px_12px_rgba(82,218,211,0.2)] hover:shadow-[0_4px_16px_rgba(82,218,211,0.3)] active:scale-[0.98] transition-all duration-300"
           >
             Install
-          </button>
-        ) : canShare ? (
-          <button
-            type="button"
-            onClick={handleShare}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-headline font-bold text-sm border-2 border-primary text-primary hover:bg-primary/10 transition-all duration-300"
-          >
-            <span className="material-symbols-outlined text-xl">share</span>
-            Share
           </button>
         ) : isIOS ? (
           <span className="text-primary font-label text-xs font-medium tracking-wide">

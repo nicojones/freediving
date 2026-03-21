@@ -14,7 +14,6 @@ export default tseslint.config(
       '**/public/sw.js',
       '**/next-env.d.ts',
       '**/server/**',
-      '**/*.mjs',
       'vite*',
     ],
   },
@@ -53,6 +52,22 @@ export default tseslint.config(
     files: ['app/layout.tsx', 'app/icon.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'writable',
+      },
     },
   }
 );

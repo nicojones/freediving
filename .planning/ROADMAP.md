@@ -37,7 +37,7 @@
 - [x] **Phase 27: Refactor CreatePlanSection (Component Size)** - Reduce CreatePlanSection component size; prepare for eventual migration to its own page
 - [x] **Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback** - Move CreatePlanSection to its own bottom tab (+); allow create and refine via voice and/or text (mix and match); improve Preview feedback so users know when preview was updated after refinement
 - [x] **Phase 29: E2E Tests** - Add comprehensive E2E tests; fix flaky create-plan Describe test; add voice/audio create-plan E2E using fixture; add missing unit tests for coverage
-- [ ] **Phase 30: Dockerize MySQL + Change Database Type** - Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; server has MySQL but lacks "freediving" DB and migrations; guide server setup
+- [x] **Phase 30: Dockerize MySQL + Change Database Type** - Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; server has MySQL but lacks "freediving" DB and migrations; guide server setup
 - [ ] **Phase 31: UI Polish** - Bottom tabs: only active tab has label; top-right: no tab name; trainings tab: padding same as other tabs; developer zone: more inconspicuous; after create plan: "See plans here" link (navigate to Plans tab)
 - [ ] **Phase 32: Multi-Program Switching** - Switch between training programs with preserved status (no reset); Plans tab shows progress (e.g. 3/17 days); confirmation on switch (no Reset prompt)
 
