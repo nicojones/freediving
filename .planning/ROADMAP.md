@@ -40,8 +40,8 @@
 - [x] **Phase 30: Dockerize MySQL + Change Database Type** - Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; server has MySQL but lacks "freediving" DB and migrations; guide server setup
 - [x] **Phase 31: UI Polish** - Bottom tabs: only active tab has label; top-right: no tab name; trainings tab: padding same as other tabs; developer zone: more inconspicuous; after create plan: "See plans here" link (navigate to Plans tab)
 - [x] **Phase 32: Multi-Program Switching** - Switch between training programs with preserved status (no reset); Plans tab shows progress (e.g. 3/17 days); confirmation on switch (no Reset prompt)
-- [ ] **Phase 33: Sign Up** - Magic link (passwordless email); request-magic-link + verify-magic-link; rate limiting; unified login (email + legacy username)
-- [ ] **Phase 34: Login & Profile UX** - UserProfileCard: email + name (or email only); Login page: hide input after send, "Check inbox for {...}", try again link; Fishly in TopBar links to current training plan
+- [x] **Phase 33: Sign Up** - Magic link (passwordless email); request-magic-link + verify-magic-link; rate limiting; unified login (email + legacy username)
+- [x] **Phase 34: Login & Profile UX** - UserProfileCard: email + name (or email only); Login page: hide input after send, "Check inbox for {...}", try again link; Fishly in TopBar links to current training plan
 
 ---
 
@@ -736,8 +736,8 @@
 | 30. Dockerize MySQL + Change Database Type                         | —              | Complete | 30-PLAN.md |
 | 31. UI Polish                                                      | —              | Complete | 31-PLAN.md |
 | 32. Multi-Program Switching                                        | —              | Complete | 32-PLAN.md |
-| 33. Sign Up                                                        | 0/0            | Pending  | 33-PLAN.md |
-| 34. Login & Profile UX                                             | 0/0            | Pending  | 34-PLAN.md |
+| 33. Sign Up                                                        | 0/0            | Complete | 33-PLAN.md |
+| 34. Login & Profile UX                                             | 6/6            | Complete | 34-PLAN.md |
 
 ---
 

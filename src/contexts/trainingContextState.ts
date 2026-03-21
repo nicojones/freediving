@@ -7,7 +7,7 @@ export type ViewMode = 'dashboard' | 'session-preview' | 'settings';
 
 export interface TrainingContextValue {
   // Auth
-  user: { id: number; username: string } | null | undefined;
+  user: { id: number; username: string; email?: string | null } | null | undefined;
   refreshUser: () => Promise<void>;
 
   // Plan & progress

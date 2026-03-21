@@ -46,6 +46,16 @@ describe('authService', () => {
       const result = await getCurrentUser();
       expect(result).toEqual({ id: 1, username: 'nico' });
     });
+    it('returns user with email when present', async () => {
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          user: { id: 2, username: 'magic-user', email: 'magic@example.com' },
+        }),
+      } as Response);
+      const result = await getCurrentUser();
+      expect(result).toEqual({ id: 2, username: 'magic-user', email: 'magic@example.com' });
+    });
     it('returns null when not authenticated', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({ ok: false } as Response);
       const result = await getCurrentUser();

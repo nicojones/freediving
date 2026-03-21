@@ -23,7 +23,7 @@ export function LoginPage(_props: LoginPageProps) {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -37,15 +37,19 @@ export function LoginPage(_props: LoginPageProps) {
   async function handleMagicLinkSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setSuccessMessage(null);
     setLoading(true);
     const result = await requestMagicLink(email);
     setLoading(false);
     if ('message' in result) {
-      setSuccessMessage('Check your email');
+      setEmailSent(true);
     } else if ('error' in result) {
       setError(result.error);
     }
+  }
+
+  function handleTryAgain() {
+    setEmailSent(false);
+    setError(null);
   }
 
   return (
@@ -69,41 +73,61 @@ export function LoginPage(_props: LoginPageProps) {
             </p>
           </header>
 
-          <form onSubmit={handleMagicLinkSubmit} className="w-full space-y-8">
-            <div className="space-y-6">
-              <TextInput
-                id="email"
-                label="Email"
-                type="email"
-                value={email}
-                onChange={setEmail}
-                placeholder="you@example.com"
-                autoComplete="email"
-                icon="mail"
-                data-testid="login-email"
-              />
+          {emailSent ? (
+            <div className="w-full space-y-6">
+              <p data-testid="login-success" className="text-primary text-xl font-body text-center">
+                Check the inbox for {email}
+              </p>
+              <p className="text-on-surface-variant text-sm font-body text-center">
+                If you didn&apos;t receive any email, wait some seconds and{' '}
+                <button
+                  type="button"
+                  onClick={handleTryAgain}
+                  data-testid="login-try-again"
+                  className="text-primary underline hover:no-underline"
+                >
+                  try again
+                </button>
+                .
+              </p>
+              {error && (
+                <p data-testid="login-error" className="text-error text-sm font-body text-center">
+                  {error}
+                </p>
+              )}
             </div>
-            {error && (
-              <p data-testid="login-error" className="text-error text-sm font-body">
-                {error}
-              </p>
-            )}
-            {successMessage && (
-              <p data-testid="login-success" className="text-primary text-sm font-body">
-                {successMessage}
-              </p>
-            )}
-            <PrimaryButton
-              data-testid="login-send-link"
-              type="submit"
-              disabled={loading}
-              loading={loading}
-              size="login"
-              icon="mail"
-            >
-              Send me a link
-            </PrimaryButton>
-          </form>
+          ) : (
+            <form onSubmit={handleMagicLinkSubmit} className="w-full space-y-8">
+              <div className="space-y-6">
+                <TextInput
+                  id="email"
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={setEmail}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  icon="mail"
+                  data-testid="login-email"
+                />
+              </div>
+              {error && (
+                <p data-testid="login-error" className="text-error text-sm font-body">
+                  {error}
+                </p>
+              )}
+              <PrimaryButton
+                data-testid="login-send-link"
+                type="submit"
+                disabled={loading}
+                loading={loading}
+                size="login"
+                icon="mail"
+              >
+                Send me a link
+              </PrimaryButton>
+            </form>
+          )}
 
           <footer className="mt-24 text-center">
             <VersionFooter />

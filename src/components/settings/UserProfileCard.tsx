@@ -1,8 +1,12 @@
 interface UserProfileCardProps {
   username: string;
+  email?: string | null;
 }
 
-export function UserProfileCard({ username }: UserProfileCardProps) {
+export function UserProfileCard({ username, email }: UserProfileCardProps) {
+  const displayText = email ?? username;
+  const isEmail = !!email;
+
   return (
     <div className="bg-surface-container-low rounded-3xl p-6 overflow-hidden border border-outline-variant/30">
       <div className="flex items-center gap-4">
@@ -15,7 +19,15 @@ export function UserProfileCard({ username }: UserProfileCardProps) {
           <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em]">
             Logged in as
           </span>
-          <p className="text-on-surface font-headline text-xl font-bold truncate">{username}</p>
+          <p
+            className={
+              isEmail
+                ? 'text-on-surface-variant text-base truncate'
+                : 'text-on-surface font-headline text-xl font-bold truncate'
+            }
+          >
+            {displayText}
+          </p>
         </div>
       </div>
     </div>

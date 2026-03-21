@@ -3,6 +3,7 @@ const API_BASE = '/api/auth';
 export interface User {
   id: number;
   username: string;
+  email?: string | null;
 }
 
 export async function logout(): Promise<void> {

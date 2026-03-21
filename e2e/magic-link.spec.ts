@@ -5,6 +5,23 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('magic link flow', () => {
+  test('request link shows success state, try again resets form', async ({ page }) => {
+    await page.route('**/api/auth/request-magic-link', async (route) => {
+      await route.fulfill({ status: 200, json: { message: 'Check your email' } });
+    });
+    await page.goto('/login');
+    await page.getByTestId('login-email').fill('success-test@example.com');
+    await page.getByTestId('login-send-link').click();
+    await expect(page.getByTestId('login-success')).toContainText(
+      'Check the inbox for success-test@example.com',
+      { timeout: 10000 }
+    );
+    await expect(page.getByTestId('login-email')).not.toBeVisible();
+    await page.getByTestId('login-try-again').click();
+    await expect(page.getByTestId('login-email')).toBeVisible();
+    await expect(page.getByTestId('login-email')).toHaveValue('success-test@example.com');
+  });
+
   test('request link shows success, then verify logs user in', async ({ page, request }) => {
     const res = await request.post('/api/auth/test-create-magic-link', {
       data: { email: 'magic-test@example.com' },

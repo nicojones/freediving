@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { APP_NAME } from '../../constants/app';
 import { FishIcon } from '../ui/FishIcon';
 
@@ -25,10 +26,16 @@ export function TopAppBar({ weekLabel, onBack }: TopAppBarProps) {
               </span>
             </button>
           )}
-          <FishIcon className="text-primary" size={28} aria-hidden />
-          <span className="font-headline font-bold text-xl tracking-tighter text-primary">
-            {APP_NAME}
-          </span>
+          <Link
+            href="/"
+            className="flex items-center gap-3 text-primary hover:opacity-90 transition-opacity"
+            aria-label="Go to training"
+          >
+            <FishIcon className="text-primary" size={28} aria-hidden />
+            <span className="font-headline font-bold text-xl tracking-tighter text-primary">
+              {APP_NAME}
+            </span>
+          </Link>
         </div>
         <div className="flex items-center gap-4">
           {weekLabel && (

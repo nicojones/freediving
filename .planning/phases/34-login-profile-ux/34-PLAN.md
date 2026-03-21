@@ -1,6 +1,6 @@
 # Phase 34: Login & Profile UX — Plan
 
-**Status:** Draft  
+**Status:** Complete  
 **Depends on:** Phase 33 (Sign Up — magic link, email on users)
 
 ---
@@ -23,36 +23,36 @@ Improve login and profile UX: UserProfileCard shows email (Option B — no name 
 
 ### 1. Auth API — return email (REQ-34-profile)
 
-- [ ] **1.1** In `app/api/auth/me/route.ts`: after `getAuthUser()`, if authenticated, call `initDb()`, then fetch full user from DB via `getDbConnection()`: `SELECT id, username, email FROM users WHERE id = ?`. Return `{ user: { id, username, email } }`. Handle legacy users (email may be NULL) — include email in response when present.
+- [x] **1.1** In `app/api/auth/me/route.ts`: after `getAuthUser()`, if authenticated, call `initDb()`, then fetch full user from DB via `getDbConnection()`: `SELECT id, username, email FROM users WHERE id = ?`. Return `{ user: { id, username, email } }`. Handle legacy users (email may be NULL) — include email in response when present.
 
 ### 2. User type and context (REQ-34-profile)
 
-- [ ] **2.1** In `src/services/authService.ts`, extend `User` interface: `email?: string | null`. Update `getCurrentUser` return type.
-- [ ] **2.2** In `src/contexts/trainingContextState.ts`, extend user type: `user: { id: number; username: string; email?: string | null } | null | undefined`. Ensure `refreshUser` / `getCurrentUser` flow passes through.
+- [x] **2.1** In `src/services/authService.ts`, extend `User` interface: `email?: string | null`. Update `getCurrentUser` return type.
+- [x] **2.2** In `src/contexts/trainingContextState.ts`, extend user type: `user: { id: number; username: string; email?: string | null } | null | undefined`. Ensure `refreshUser` / `getCurrentUser` flow passes through.
 
 ### 3. UserProfileCard — email display (REQ-34-profile)
 
-- [ ] **3.1** Update `UserProfileCard` props: `username: string; email?: string | null`. Display: "Logged in as" label; primary text = `email ?? username` (Option B: email when present, else username for legacy). When showing email, use greyed smaller text (`text-on-surface-variant text-base`); when showing username, keep current `text-xl font-bold`.
-- [ ] **3.2** In `SettingsView.tsx`, pass `email={user?.email ?? undefined}` to `UserProfileCard`.
+- [x] **3.1** Update `UserProfileCard` props: `username: string; email?: string | null`. Display: "Logged in as" label; primary text = `email ?? username` (Option B: email when present, else username for legacy). When showing email, use greyed smaller text (`text-on-surface-variant text-base`); when showing username, keep current `text-xl font-bold`.
+- [x] **3.2** In `SettingsView.tsx`, pass `email={user?.email ?? undefined}` to `UserProfileCard`.
 
 ### 4. Login page — success state (REQ-34-login)
 
-- [ ] **4.1** Add state: `emailSent: boolean` (default false). On successful `requestMagicLink`, set `emailSent = true` (keep `email` in state).
-- [ ] **4.2** When `emailSent`: hide the form (input, button). Show: main text "Check the inbox for {email}" (larger, e.g. `text-lg` or `text-xl`); below, greyed helper "If you didn't receive any email, wait some seconds and try again." — "try again" is a clickable link/button.
-- [ ] **4.3** "Try again" onClick: set `emailSent = false`; keep `email` in state so input is pre-filled when form reappears.
-- [ ] **4.4** Preserve error display when `emailSent` (e.g. if user had an error before retry). Clear error on "try again" or on new submit.
-- [ ] **4.5** Add `data-testid="login-try-again"` for E2E.
+- [x] **4.1** Add state: `emailSent: boolean` (default false). On successful `requestMagicLink`, set `emailSent = true` (keep `email` in state).
+- [x] **4.2** When `emailSent`: hide the form (input, button). Show: main text "Check the inbox for {email}" (larger, e.g. `text-lg` or `text-xl`); below, greyed helper "If you didn't receive any email, wait some seconds and try again." — "try again" is a clickable link/button.
+- [x] **4.3** "Try again" onClick: set `emailSent = false`; keep `email` in state so input is pre-filled when form reappears.
+- [x] **4.4** Preserve error display when `emailSent` (e.g. if user had an error before retry). Clear error on "try again" or on new submit.
+- [x] **4.5** Add `data-testid="login-try-again"` for E2E.
 
 ### 5. TopAppBar — Fishly link (REQ-34-nav)
 
-- [ ] **5.1** In `TopAppBar.tsx`, wrap the FishIcon + APP_NAME block in a `Link` from `next/link` with `href="/"`. Use `className` to preserve styling; ensure it looks like a single clickable unit (e.g. `flex items-center gap-3`). Add `aria-label="Go to training"` or similar for accessibility.
-- [ ] **5.2** Ensure TopAppBar is used consistently; no `onBack` conflict — when `onBack` is present, Fishly link should still work (or consider layout: Fishly always links, Back is separate). Verify in Dashboard, Plans, Create, Settings, Session views.
+- [x] **5.1** In `TopAppBar.tsx`, wrap the FishIcon + APP_NAME block in a `Link` from `next/link` with `href="/"`. Use `className` to preserve styling; ensure it looks like a single clickable unit (e.g. `flex items-center gap-3`). Add `aria-label="Go to training"` or similar for accessibility.
+- [x] **5.2** Ensure TopAppBar is used consistently; no `onBack` conflict — when `onBack` is present, Fishly link should still work (or consider layout: Fishly always links, Back is separate). Verify in Dashboard, Plans, Create, Settings, Session views.
 
 ### 6. Tests
 
-- [ ] **6.1** Unit: `authService.getCurrentUser` returns user with `email` when present (mock `/api/auth/me` response).
-- [ ] **6.2** E2E in `e2e/magic-link.spec.ts`: visit `/login`, fill email input, submit "Send me a link", assert success state shows "Check the inbox for {email}" and form is hidden; click "try again" (data-testid), assert form reappears with email pre-filled.
-- [ ] **6.3** E2E: TopAppBar — from Plans or Settings, click Fishly → navigates to `/` (Dashboard).
+- [x] **6.1** Unit: `authService.getCurrentUser` returns user with `email` when present (mock `/api/auth/me` response).
+- [x] **6.2** E2E in `e2e/magic-link.spec.ts`: visit `/login`, fill email input, submit "Send me a link", assert success state shows "Check the inbox for {email}" and form is hidden; click "try again" (data-testid), assert form reappears with email pre-filled.
+- [x] **6.3** E2E: TopAppBar — from Plans or Settings, click Fishly → navigates to `/` (Dashboard).
 
 ---
 

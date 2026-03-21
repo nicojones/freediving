@@ -44,7 +44,7 @@ export function SettingsView() {
         <div className="flex flex-col gap-y-6">
           <InstallPrompt variant="compact" />
 
-          <UserProfileCard username={username} />
+          <UserProfileCard username={username} email={user?.email ?? undefined} />
 
           <ResetProgressSection onRequestReset={handleRequestReset} planName={planWithMeta?.name} />
 
