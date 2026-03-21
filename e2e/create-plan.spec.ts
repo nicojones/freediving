@@ -171,13 +171,14 @@ test.describe('Create plan', () => {
     await expect(page.getByTestId('create-plan-create-draft-button')).toBeEnabled({
       timeout: 3000,
     });
-    await page.getByTestId('create-plan-create-draft-button').click();
 
-    // Wait for API response before asserting UI; reduces flakiness from async timing
-    await page.waitForResponse(
+    // Start listening BEFORE click to avoid race: mock response can arrive before we listen
+    const responsePromise = page.waitForResponse(
       (res) => res.url().includes('transcribe-from-text') && res.status() === 200,
-      { timeout: 10000 }
+      { timeout: 15000 }
     );
+    await page.getByTestId('create-plan-create-draft-button').click();
+    await responsePromise;
     await expect(page.getByTestId('create-plan-preview')).toBeVisible({ timeout: 5000 });
     await page.getByTestId('create-plan-confirm-button').click();
     await expect(page.getByTestId('confirm-plan-name')).toBeVisible({ timeout: 5000 });
