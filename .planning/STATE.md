@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-21 — Phase 30 executed; phases 1–30 complete; Phase 31 next
+**Last updated:** 2025-03-21 — Phase 30 shipped; branch pushed; PR pending creation
 
 ---
 
@@ -14,12 +14,12 @@
 
 ## Current Position
 
-| Field    | Value             |
-| -------- | ----------------- |
-| Phase    | 31. UI Polish     |
-| Plan     | 31-PLAN.md        |
-| Status   | Pending           |
-| Progress | Phase 30 complete |
+| Field    | Value                                  |
+| -------- | -------------------------------------- |
+| Phase    | 31. UI Polish                          |
+| Plan     | 31-PLAN.md                             |
+| Status   | Phase 30 shipped — PR pending creation |
+| Progress | Phase 30 complete                      |
 
 ---
 
