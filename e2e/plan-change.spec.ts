@@ -38,7 +38,7 @@ test('progress is preserved when switching plans', async ({ page }) => {
   const firstDayCard = page.locator('[data-testid^="day-card-"]').first();
   await firstDayCard.click();
   await page.getByTestId('test-mode-toggle').click();
-  await page.locator('[data-testid="speed-option"][data-testid-value="10"]').click();
+  await page.locator('[data-testid="speed-option"][data-testid-value="100"]').click();
   await page.getByTestId('start-session-button').click();
   await expect(page.getByTestId('complete-session-button')).toBeVisible({ timeout: 60000 });
   await page.getByTestId('complete-session-button').click();

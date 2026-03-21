@@ -42,8 +42,8 @@
 - [x] **Phase 32: Multi-Program Switching** - Switch between training programs with preserved status (no reset); Plans tab shows progress (e.g. 3/17 days); confirmation on switch (no Reset prompt)
 - [x] **Phase 33: Sign Up** - Magic link (passwordless email); request-magic-link + verify-magic-link; rate limiting; unified login (email + legacy username)
 - [x] **Phase 34: Login & Profile UX** - UserProfileCard: email + name (or email only); Login page: hide input after send, "Check inbox for {...}", try again link; Fishly in TopBar links to current training plan
-- [ ] **Phase 35: Default Plan Migration + Creator Attribution** - Remove default-plan.json; seed default plan via DB migration; plans table: public flag, owner; PUBLIC: "Created by Fishly" (no owner) or "Created by {name}" (never email); PRIVATE: no creator text; creator attribution small and greyed out in Plans + Training tabs (not plan name)
-- [ ] **Phase 36: Plans Tab Context Menu, Filters, Progress & How It Works** - Replace trash with "..." context menu (copy JSON, download, delete, edit); All/My/Public filter; progress at top-right of plan boxes; public plans show greyed 🌐 icon; expandable "How it works" section; "Create Plan" button at bottom
+- [x] **Phase 35: Default Plan Migration + Creator Attribution** - Remove default-plan.json; seed default plan via DB migration; plans table: public flag, owner; PUBLIC: "Created by Fishly" (no owner) or "Created by {name}" (never email); PRIVATE: no creator text; creator attribution small and greyed out in Plans + Training tabs (not plan name)
+- [x] **Phase 36: Plans Tab Context Menu, Filters, Progress & How It Works** - Replace trash with "..." context menu (copy JSON, download, delete, edit); All/My/Public filter; progress at top-right of plan boxes; public plans show greyed 🌐 icon; expandable "How it works" section; "Create Plan" button at bottom
 
 ---
 
@@ -782,8 +782,8 @@
 | 32. Multi-Program Switching                                        | —              | Complete | 32-PLAN.md |
 | 33. Sign Up                                                        | 0/0            | Complete | 33-PLAN.md |
 | 34. Login & Profile UX                                             | 6/6            | Complete | 34-PLAN.md |
-| 35. Default Plan Migration + Creator Attribution                   | —              | Pending  | 35-PLAN.md |
-| 36. Plans Tab Context Menu, Filters, Progress & How It Works       | —              | Pending  | 36-PLAN.md |
+| 35. Default Plan Migration + Creator Attribution                   | —              | Complete | 35-PLAN.md |
+| 36. Plans Tab Context Menu, Filters, Progress & How It Works       | —              | Complete | 36-PLAN.md |
 
 ---
 

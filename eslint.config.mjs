@@ -49,6 +49,7 @@ export default tseslint.config(
       'react-hooks/set-state-in-effect': 'off',
       'react-refresh/only-export-components': ['error', { allowConstantExport: true }],
       curly: ['error', 'all'],
+      'func-style': ['warn', 'expression'],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

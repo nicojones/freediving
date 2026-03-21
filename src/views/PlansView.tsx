@@ -1,12 +1,29 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
+import { Radio, RadioGroup } from '@headlessui/react';
 import { TabPageLayout } from '@/src/components/layout/TabPageLayout';
+import { ActivePlanSection } from '@/src/components/settings/ActivePlanSection';
 import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSection';
 import { ConfirmSwitchPlanModal } from '@/src/components/settings/ConfirmSwitchPlanModal';
 import { useTraining } from '@/src/hooks/useTraining';
 import { fetchCompletions } from '@/src/services/progressService';
+import type { PlanWithMeta } from '@/src/types/plan';
+
+type PlanFilter = 'all' | 'my' | 'public';
+
+function filterPlans(plans: PlanWithMeta[], filter: PlanFilter, currentUserId: number | undefined) {
+  if (filter === 'all') {
+    return plans;
+  }
+  if (filter === 'my') {
+    return plans.filter((p) => p.created_by === currentUserId);
+  }
+  return plans.filter((p) => p.public === true);
+}
 
 /**
  * Plans tab: change plan, add plan, delete plan (user-created, non-active).
@@ -18,9 +35,10 @@ import { fetchCompletions } from '@/src/services/progressService';
  */
 export function PlansView() {
   const router = useRouter();
-  const { user, availablePlans, activePlanId, setActivePlan, refreshAvailablePlans } =
+  const { user, availablePlans, activePlanId, planWithMeta, setActivePlan, refreshAvailablePlans } =
     useTraining();
 
+  const [filter, setFilter] = useState<PlanFilter>('all');
   const [confirmPlanChange, setConfirmPlanChange] = useState<{
     pendingPlanId: string;
   } | null>(null);
@@ -28,6 +46,8 @@ export function PlansView() {
   const [planProgress, setPlanProgress] = useState<
     Record<string, { completed: number; total: number }>
   >({});
+
+  const filteredPlans = filterPlans(availablePlans, filter, user?.id);
 
   const refreshPlanProgress = useCallback(async () => {
     if (!user || availablePlans.length === 0) {
@@ -84,14 +104,87 @@ export function PlansView() {
         onCreateClick={() => router.push('/create')}
         onSettingsClick={() => router.push('/settings')}
       >
+        <Disclosure
+          as="div"
+          className="bg-surface-container-low rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/30"
+          data-testid="plans-how-it-works"
+        >
+          <DisclosureButton className="flex items-center justify-between w-full text-left">
+            <h2 className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant">
+              How it works
+            </h2>
+            <span
+              className="material-symbols-outlined text-base text-on-surface-variant transition-transform duration-200 data-open:rotate-45"
+              aria-hidden
+            >
+              add
+            </span>
+          </DisclosureButton>
+          <DisclosurePanel className="pt-4 text-on-surface-variant text-sm font-body">
+            Plans are a way to create training programs for breathhold. You can go to the{' '}
+            <Link href="/create" className="text-primary underline">
+              Create
+            </Link>{' '}
+            tab and create one by describing what you want.
+          </DisclosurePanel>
+        </Disclosure>
+
+        <ActivePlanSection
+          plan={planWithMeta}
+          progress={activePlanId ? planProgress[activePlanId] : undefined}
+          currentUserId={user?.id}
+          onPlanEdited={refreshAvailablePlans}
+        />
+
+        <RadioGroup
+          value={filter}
+          onChange={setFilter}
+          className="mb-4"
+          data-testid="plan-filter"
+          aria-label="Filter plans"
+        >
+          <div className="flex gap-2">
+            <Radio
+              value="all"
+              data-testid="plan-filter-all"
+              className="px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 cursor-pointer data-checked:bg-primary data-checked:text-on-primary data-[checked=false]:bg-surface-container-high data-[checked=false]:text-on-surface-variant hover:bg-surface-variant"
+            >
+              All
+            </Radio>
+            <Radio
+              value="my"
+              data-testid="plan-filter-my"
+              className="px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 cursor-pointer data-checked:bg-primary data-checked:text-on-primary data-[checked=false]:bg-surface-container-high data-[checked=false]:text-on-surface-variant hover:bg-surface-variant"
+            >
+              My
+            </Radio>
+            <Radio
+              value="public"
+              data-testid="plan-filter-public"
+              className="px-4 py-2 rounded-xl font-label font-semibold transition-colors duration-400 cursor-pointer data-checked:bg-primary data-checked:text-on-primary data-[checked=false]:bg-surface-container-high data-[checked=false]:text-on-surface-variant hover:bg-surface-variant"
+            >
+              Public
+            </Radio>
+          </div>
+        </RadioGroup>
+
         <PlanSelectorSection
-          availablePlans={availablePlans}
+          availablePlans={filteredPlans}
           activePlanId={activePlanId}
           currentUserId={user?.id}
           onPlanChange={handlePlanChange}
           onPlanDeleted={refreshAvailablePlans}
+          onPlanEdited={refreshAvailablePlans}
           planProgress={planProgress}
         />
+
+        <Link
+          href="/create"
+          className="flex items-center justify-center w-full py-3 px-6 rounded-xl font-headline font-bold bg-primary text-on-primary hover:bg-primary/90 transition-colors"
+          data-testid="create-plan-button"
+        >
+          Create Plan
+        </Link>
       </TabPageLayout>
 
       <ConfirmSwitchPlanModal

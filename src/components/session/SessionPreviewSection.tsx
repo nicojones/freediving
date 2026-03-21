@@ -1,4 +1,5 @@
 import type { Phase } from '../../types/plan';
+import { APP_NAME, CREATED_BY } from '../../constants/app';
 import { BackButton } from '../ui/BackButton';
 
 /** Title-cases a string like "warm-up" → "Warm-up" */
@@ -15,6 +16,8 @@ interface SessionPreviewSectionProps {
   selectedPhases: Phase[];
   planName?: string;
   dayGroup?: string;
+  creatorName?: string;
+  isPublic?: boolean;
   currentDayIndex: number | null;
   speedMultiplier: number;
   testMode: boolean;
@@ -34,6 +37,8 @@ export function SessionPreviewSection({
   selectedPhases,
   planName,
   dayGroup,
+  creatorName,
+  isPublic,
   currentDayIndex,
   speedMultiplier,
   testMode,
@@ -70,6 +75,11 @@ export function SessionPreviewSection({
           </h1>
           {planName && (
             <p className="text-on-surface-variant text-lg tracking-wide font-medium">{planName}</p>
+          )}
+          {isPublic && (
+            <span className="text-on-surface-variant text-sm font-normal">
+              {CREATED_BY} {creatorName ?? APP_NAME}
+            </span>
           )}
         </section>
       </div>

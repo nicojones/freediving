@@ -17,7 +17,7 @@ test('logged-in user sees default plan with creator attribution in Plans tab', a
 
   await expect(page.getByTestId('plan-selector')).toBeVisible({ timeout: 5000 });
   await expect(page.getByText('4:00 Dry Breathhold')).toBeVisible();
-  await expect(page.getByTestId('plan-creator')).toHaveText('Created by Fishly');
+  await expect(page.getByTestId('active-plan-creator')).toHaveText('Created by Fishly');
 });
 
 test('logged-in user sees creator attribution on Dashboard', async ({ page }) => {
@@ -26,5 +26,5 @@ test('logged-in user sees creator attribution on Dashboard', async ({ page }) =>
   await expect(page.getByTestId('plan-name')).toHaveText('4:00 Dry Breathhold', {
     timeout: 5000,
   });
-  await expect(page.getByText('Created by Fishly')).toBeVisible();
+  await expect(page.getByTestId('dashboard-plan-creator')).toHaveText('Created by Fishly');
 });

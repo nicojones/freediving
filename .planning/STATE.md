@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-21 — Phases 1–35 complete; Phase 35 shipped (PR open); Phase 36 pending
+**Last updated:** 2025-03-21 — Phases 1–36 complete
 
 ---
 
@@ -8,18 +8,17 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 36 — Plans Tab Context Menu, Filters, Progress & How It Works
+**Current focus:** All phases complete
 
 ---
 
 ## Current Position
 
-| Field    | Value                                                           |
-| -------- | --------------------------------------------------------------- |
-| Phase    | 36. Plans Tab Context Menu, Filters, Progress & How It Works    |
-| Plan     | phases/36-plans-tab-context-menu-filters-progress/36-CONTEXT.md |
-| Status   | Phases 1–35 complete                                            |
-| Progress | Phase 35 shipped (PR open); Phase 36 pending                    |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Phase    | 36 (complete)          |
+| Status   | All 36 phases complete |
+| Progress | Phase 35 + 36 shipped  |
 
 ---
 
@@ -27,10 +26,10 @@
 
 | Metric              | Value |
 | ------------------- | ----- |
-| Phases complete     | 35    |
+| Phases complete     | 36    |
 | Phases total        | 36    |
 | Requirements mapped | 17/17 |
-| Plans executed      | 35    |
+| Plans executed      | 36    |
 
 ---
 
@@ -81,8 +80,8 @@
 - [x] Phase 32: Multi-Program Switching (phases/32-multi-program-switching/)
 - [x] Phase 33: Sign Up (phases/33-sign-up/)
 - [x] Phase 34: Login & Profile UX (phases/34-login-profile-ux/)
-- [x] Phase 35: Default Plan Migration + Creator Attribution (phases/35-default-plan-migration-creator-attribution/35-CONTEXT.md, 35-PLAN.md) — **shipped**
-- [ ] Phase 36: Plans Tab Context Menu, Filters, Progress & How It Works (phases/36-plans-tab-context-menu-filters-progress/36-CONTEXT.md)
+- [x] Phase 35: Default Plan Migration + Creator Attribution (phases/35-default-plan-migration-creator-attribution/35-CONTEXT.md, 35-PLAN.md)
+- [x] Phase 36: Plans Tab Context Menu, Filters, Progress & How It Works (phases/36-plans-tab-context-menu-filters-progress/36-CONTEXT.md)
 
 ### Blockers
 

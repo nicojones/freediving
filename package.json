@@ -21,6 +21,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
+    "@fontsource/material-symbols-outlined": "^5.2.38",
     "@getbrevo/brevo": "^5.0.1",
     "@google/genai": "^1.46.0",
     "@headlessui/react": "^2.2.9",

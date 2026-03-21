@@ -1,6 +1,10 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { PlanSelectorSection } from './PlanSelectorSection';
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
 
 const mockPlans = [
   {
@@ -35,7 +39,7 @@ describe('PlanSelectorSection', () => {
         planProgress={planProgress}
       />
     );
-    expect(screen.getByTestId('plan-progress-plan-1')).toHaveTextContent('3/17 days');
+    expect(screen.queryByTestId('plan-progress-plan-1')).not.toBeInTheDocument();
     expect(screen.getByTestId('plan-progress-plan-2')).toHaveTextContent('0/3 days');
   });
 
@@ -49,6 +53,19 @@ describe('PlanSelectorSection', () => {
         onPlanDeleted={() => {}}
       />
     );
-    expect(screen.queryByTestId('plan-progress-plan-1')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('plan-progress-plan-2')).not.toBeInTheDocument();
+  });
+
+  it('shows empty state when no other plans', () => {
+    render(
+      <PlanSelectorSection
+        availablePlans={[mockPlans[0]]}
+        activePlanId="plan-1"
+        currentUserId={1}
+        onPlanChange={() => {}}
+        onPlanDeleted={() => {}}
+      />
+    );
+    expect(screen.getByTestId('plan-selector-empty')).toHaveTextContent('Nothing here');
   });
 });

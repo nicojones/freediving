@@ -1,7 +1,8 @@
 # Phase 36: Plans Tab Context Menu, Filters, Progress & How It Works — Plan
 
-**Status:** Pending  
-**Depends on:** Phase 35 (Default Plan Migration + Creator Attribution)
+**Status:** Executed  
+**Depends on:** Phase 35 (Default Plan Migration + Creator Attribution)  
+**Implementation notes:** `36-IMPLEMENTATION.md`
 
 ---
 
@@ -101,6 +102,19 @@ Improve Plans tab UX: replace trash icon with "..." context menu (copy JSON, dow
 - [ ] Public plans (not user-created) show greyed 🌐 icon, no menu
 - [ ] "How it works" expands to show short copy and link to Create
 - [ ] "Create Plan" button at bottom links to /create
+
+---
+
+## Implementation Notes
+
+See `36-IMPLEMENTATION.md` for executed changes, including:
+
+- PlanCard unified component (active + selectable variants)
+- PlanContextMenu extracted component
+- Active Plan section (uses PlanCard; readonly, links to Training; context menu for user-created)
+- PlanSelectorSection uses PlanCard; excludes active plan; empty state "Nothing here"
+- How it works styled as section (full width, + icon, justify-between)
+- PATCH `/api/plans/[id]` for edit flow
 
 ---
 

@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { PlanWithMeta } from '../../../types/plan';
 import { validatePlanWithMeta } from '../../../schemas/planSchema';
 import { parseJson } from '../../../utils/parseJson';
 
-export function useCreatePlanHandlers(onPlanCreated?: () => void) {
+export function useCreatePlanHandlers(
+  onPlanCreated?: () => void | Promise<void>,
+  initialDraftPlan?: PlanWithMeta | null
+) {
   const [describeText, setDescribeText] = useState('');
   const [jsonText, setJsonText] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -13,7 +16,14 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
   const [loading, setLoading] = useState(false);
   const [recording, setRecording] = useState(false);
   const [voiceSubmitting, setVoiceSubmitting] = useState(false);
-  const [draftPlan, setDraftPlan] = useState<PlanWithMeta | null>(null);
+  const [draftPlan, setDraftPlan] = useState<PlanWithMeta | null>(initialDraftPlan ?? null);
+  const isEditMode = !!initialDraftPlan;
+
+  useEffect(() => {
+    if (initialDraftPlan) {
+      setDraftPlan(initialDraftPlan);
+    }
+  }, [initialDraftPlan]);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const [refineText, setRefineText] = useState('');
@@ -180,29 +190,47 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     setError(null);
     setLoading(true);
     try {
-      const payload = { ...draftPlan, name, description };
-      const res = await fetch('/api/plans', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        credentials: 'include',
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        error?: string;
-        details?: string[];
-      };
-      if (!res.ok) {
-        const msg = data.details?.length
-          ? data.details.join('\n')
-          : (data.error ?? `Failed to create plan (${res.status})`);
-        setError(msg);
-        return;
+      if (isEditMode) {
+        const res = await fetch(`/api/plans/${encodeURIComponent(draftPlan.id)}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, description }),
+          credentials: 'include',
+        });
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        if (!res.ok) {
+          setError(data.error ?? `Failed to update plan (${res.status})`);
+          return;
+        }
+        setSuccess(true);
+        setDraftPlan(null);
+        await onPlanCreated?.();
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        const payload = { ...draftPlan, name, description };
+        const res = await fetch('/api/plans', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          credentials: 'include',
+        });
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          details?: string[];
+        };
+        if (!res.ok) {
+          const msg = data.details?.length
+            ? data.details.join('\n')
+            : (data.error ?? `Failed to create plan (${res.status})`);
+          setError(msg);
+          return;
+        }
+        setSuccess(true);
+        setDraftPlan(null);
+        setRefineText('');
+        await onPlanCreated?.();
+        setTimeout(() => setSuccess(false), 3000);
       }
-      setSuccess(true);
-      setDraftPlan(null);
-      setRefineText('');
-      onPlanCreated?.();
-      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error');
     } finally {
@@ -251,7 +279,7 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
       }
       setSuccess(true);
       setJsonText('');
-      onPlanCreated?.();
+      await onPlanCreated?.();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error');
@@ -325,6 +353,7 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
   };
 
   return {
+    isEditMode,
     describeText,
     setDescribeText,
     jsonText,

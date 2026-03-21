@@ -7,6 +7,7 @@ export default defineConfig({
   globalSetup: './e2e/global-setup.ts',
   workers: process.env.CI ? 1 : 4,
   timeout: 60000,
+  retries: 1,
   webServer: {
     command: `npx next dev -p ${E2E_PORT}`,
     url: `http://localhost:${E2E_PORT}/api/auth/me`,

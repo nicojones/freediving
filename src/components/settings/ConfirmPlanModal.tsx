@@ -9,9 +9,16 @@ interface ConfirmPlanModalProps {
   onClose: () => void;
   plan: PlanWithMeta;
   onConfirm: (name: string, description: string) => void | Promise<void>;
+  isEditMode?: boolean;
 }
 
-export function ConfirmPlanModal({ isOpen, onClose, plan, onConfirm }: ConfirmPlanModalProps) {
+export function ConfirmPlanModal({
+  isOpen,
+  onClose,
+  plan,
+  onConfirm,
+  isEditMode,
+}: ConfirmPlanModalProps) {
   const [name, setName] = useState(plan.name ?? '');
   const [description, setDescription] = useState(plan.description ?? '');
 
@@ -34,7 +41,10 @@ export function ConfirmPlanModal({ isOpen, onClose, plan, onConfirm }: ConfirmPl
         aria-hidden="true"
       />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="bg-surface-container-low rounded-3xl p-6 max-w-md w-full border border-outline-variant/30 shadow-xl">
+        <DialogPanel
+          className="bg-surface-container-low rounded-3xl p-6 max-w-md w-full border border-outline-variant/30 shadow-xl"
+          data-testid="confirm-plan-modal"
+        >
           <DialogTitle
             id="confirm-plan-title"
             className="font-headline text-xl font-bold text-on-surface mb-2"
@@ -78,7 +88,7 @@ export function ConfirmPlanModal({ isOpen, onClose, plan, onConfirm }: ConfirmPl
               onClick={handleConfirm}
               className="flex-1 h-12 rounded-xl border-2 border-primary bg-primary/20 hover:bg-primary/30 font-headline font-bold text-primary text-base transition-all duration-300 active:scale-[0.98]"
             >
-              Create
+              {isEditMode ? 'Save' : 'Create'}
             </button>
           </div>
         </DialogPanel>

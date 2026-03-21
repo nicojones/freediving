@@ -39,7 +39,7 @@ export function DayListSection({
             'Focus on rhythmic breathing and peripheral relaxation during the peak CO2 phases.'}
         </p>
         {isPublic === true && (
-          <span className="subtle block mt-1">
+          <span className="subtle block mt-1" data-testid="dashboard-plan-creator">
             {CREATED_BY} {creatorName ?? APP_NAME}
           </span>
         )}

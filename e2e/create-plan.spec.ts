@@ -53,6 +53,23 @@ const TYPE_PLAN = {
   ],
 };
 
+/** Plan for edit test — unique id so it does not conflict with PASTE_PLAN */
+const EDIT_PLAN = {
+  id: 'e2e-edit-plan',
+  name: 'E2E Edit Plan',
+  description: 'Plan for edit test',
+  days: [
+    {
+      id: 'e2eedt1',
+      day: 1,
+      phases: [
+        { type: 'hold' as const, duration: 6 },
+        { type: 'recovery' as const, duration: 12 },
+      ],
+    },
+  ],
+};
+
 async function goToCreatePlanSection(page: import('@playwright/test').Page) {
   await page.getByTestId('nav-create').click();
   await page.waitForURL(/\/create/);
@@ -264,5 +281,43 @@ test.describe('Create plan', () => {
     await page.getByTestId('confirm-plan-submit').click();
 
     await verifyPlanCreation(page, '1:30 to 2:00 14-Day Plan', true);
+  });
+
+  test('edit plan name via context menu modal, changes visible without refresh', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await loginAsNico(page);
+    await goToCreatePlanSection(page);
+    await switchToPasteTab(page);
+
+    const jsonStr = JSON.stringify(EDIT_PLAN, null, 2);
+    await page.evaluate(async (json) => {
+      await navigator.clipboard.writeText(json);
+    }, jsonStr);
+    await page.getByTestId('create-plan-paste-button').click();
+    await expect(page.getByTestId('create-plan-json-textarea')).toContainText('e2e-edit-plan', {
+      timeout: 5000,
+    });
+    await page.getByTestId('create-plan-create-button').click();
+    await expect(page.getByTestId('create-plan-success')).toBeVisible({ timeout: 5000 });
+
+    await page.getByTestId('nav-plans').click();
+    await page.waitForURL(/\/plans/);
+    await expect(page.getByTestId('plan-selector')).toBeVisible({ timeout: 5000 });
+
+    await page.getByTestId('plan-menu-e2e-edit-plan').click();
+    await page.getByTestId('plan-menu-edit').click();
+    await expect(page.getByTestId('confirm-plan-modal')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('confirm-plan-name')).toHaveValue('E2E Edit Plan');
+
+    await page.getByTestId('confirm-plan-name').fill('E2E Edited Plan');
+    await page.getByTestId('confirm-plan-submit').click();
+    await page.getByTestId('confirm-plan-modal').waitFor({ state: 'detached' });
+
+    await expect(
+      page.locator('[data-testid="plan-selector-option"][data-testid-value="e2e-edit-plan"]')
+    ).toContainText('E2E Edited Plan', { timeout: 5000 });
   });
 });

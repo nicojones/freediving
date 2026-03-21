@@ -160,6 +160,8 @@ export function Dashboard() {
               selectedPhases={selectedPhases}
               planName={planWithMeta?.name}
               dayGroup={getDayGroup(p, selectedDayIndex!)}
+              creatorName={planWithMeta?.creator_name}
+              isPublic={planWithMeta?.public}
               currentDayIndex={currentDayIndex}
               speedMultiplier={speedMultiplier}
               testMode={showTestControls ? testMode : false}

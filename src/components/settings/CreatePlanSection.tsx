@@ -1,5 +1,6 @@
 'use client';
 
+import type { PlanWithMeta } from '~/types/plan';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '~/components/ui/Tabs';
 import { ConfirmPlanModal } from './ConfirmPlanModal';
 import { PlanPreviewModal } from './PlanPreviewModal';
@@ -12,10 +13,15 @@ import { useCreatePlanHandlers } from './create-plan/useCreatePlanHandlers';
 interface CreatePlanSectionProps {
   onPlanCreated?: () => void;
   onNavigateToPlans?: () => void;
+  initialDraftPlan?: PlanWithMeta | null;
 }
 
-export function CreatePlanSection({ onPlanCreated, onNavigateToPlans }: CreatePlanSectionProps) {
-  const handlers = useCreatePlanHandlers(onPlanCreated);
+export function CreatePlanSection({
+  onPlanCreated,
+  onNavigateToPlans,
+  initialDraftPlan,
+}: CreatePlanSectionProps) {
+  const handlers = useCreatePlanHandlers(onPlanCreated, initialDraftPlan ?? undefined);
 
   return (
     <div className="bg-surface-container-low rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/30">
@@ -70,6 +76,7 @@ export function CreatePlanSection({ onPlanCreated, onNavigateToPlans }: CreatePl
               onVoiceRefineResult={handlers.handleVoiceRefineResult}
               onClearError={() => handlers.setError(null)}
               previewJustUpdated={handlers.previewJustUpdated}
+              isEditMode={handlers.isEditMode}
             />
           </TabPanel>
 
@@ -110,6 +117,7 @@ export function CreatePlanSection({ onPlanCreated, onNavigateToPlans }: CreatePl
             onClose={() => handlers.setConfirmModalOpen(false)}
             plan={handlers.draftPlan}
             onConfirm={handlers.handleConfirmPlan}
+            isEditMode={handlers.isEditMode}
           />
         </>
       )}

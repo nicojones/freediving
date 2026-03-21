@@ -124,7 +124,7 @@
 
 - `GET /api/plans` — returns all plans for user
 - `DELETE /api/plans/[id]` — delete if user-created and not active
-- No PATCH for plans yet; edit may use Create tab refine flow
+- `PATCH /api/plans/[id]` — update name/description for user-created plans (edit flow)
 
 ---
 
@@ -147,6 +147,28 @@
 | Public plans       | Greyed 🌐 icon, no menu                                                                 |
 | How it works       | Expandable section at top; link to Create                                               |
 | Create Plan button | At bottom of list; links to /create                                                     |
+
+---
+
+## Post-Implementation Additions (2025-03-21)
+
+| Addition            | Outcome                                                                               |
+| ------------------- | ------------------------------------------------------------------------------------- |
+| Active Plan section | Readonly box between How it works and filter; shows current plan; click → Training    |
+| Exclude active plan | PlanSelectorSection filters out `activePlanId`; active plan shown in Active Plan only |
+| Empty state         | "Nothing here" when no other plans                                                    |
+| How it works style  | Full-width section like Settings; + icon with justify-between                         |
+| PlanContextMenu     | Extracted to own component                                                            |
+| planToJson          | Outputs only `{ id, name, description, days }` (no server metadata)                   |
+| PlanCard            | Unified component for plan card UI; ActivePlanSection + PlanSelectorSection use it    |
+
+### PlanCard Unification (2025-03-21)
+
+ActivePlanSection and PlanSelectorSection shared duplicate UI (progress, creator, name, description). Refactored into `PlanCard`:
+
+- **Variants:** `active` (button, navigates to `/`) and `selectable` (list item, selects plan).
+- **Shared:** Progress, creator, name, description; context menu (Edit, Copy, Download, Delete) when `showMenu`; public icon when `showPublicIcon`.
+- **Active plan:** Now shows context menu for user-created plans (Edit, Copy, Download; Delete disabled).
 
 ---
 

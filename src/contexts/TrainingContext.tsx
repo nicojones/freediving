@@ -70,7 +70,17 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
   const refreshAvailablePlans = useCallback(async () => {
     const dbPlans = await fetchPlansFromApi();
     setAvailablePlans(dbPlans);
-  }, []);
+    setPlanWithMeta((prev) => {
+      if (!prev || !activePlanId) {
+        return prev;
+      }
+      const updated = dbPlans.find((p) => p.id === activePlanId);
+      if (!updated) {
+        return prev;
+      }
+      return updated;
+    });
+  }, [activePlanId]);
 
   useEffect(() => {
     if (!user) {

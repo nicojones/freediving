@@ -27,6 +27,7 @@ interface CreatePlanDescribeTabProps {
   onVoiceRefineResult: (json: string) => void;
   onClearError: () => void;
   previewJustUpdated?: boolean;
+  isEditMode?: boolean;
 }
 
 export function CreatePlanDescribeTab(props: CreatePlanDescribeTabProps) {
@@ -51,6 +52,7 @@ export function CreatePlanDescribeTab(props: CreatePlanDescribeTabProps) {
         onVoiceSubmittingChange={props.setVoiceSubmitting}
         getAbortSignal={props.getAbortSignal}
         previewJustUpdated={props.previewJustUpdated}
+        isEditMode={props.isEditMode}
       />
     );
   }

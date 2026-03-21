@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import clsx from 'clsx';
 import type { PlanWithMeta } from '../../types/plan';
-import { APP_NAME, BUNDLED_PLAN_IDS, CREATED_BY } from '../../constants/app';
+import { BUNDLED_PLAN_IDS } from '../../constants/app';
+import { ConfirmPlanModal } from './ConfirmPlanModal';
 import { ConfirmResetModal } from './ConfirmResetModal';
+import { PlanCard } from './PlanCard';
 
 interface PlanSelectorSectionProps {
   availablePlans: PlanWithMeta[];
@@ -12,20 +13,25 @@ interface PlanSelectorSectionProps {
   currentUserId: number | undefined;
   onPlanChange: (planId: string) => void;
   onPlanDeleted: () => void;
+  onPlanEdited?: () => void;
   planProgress?: Record<string, { completed: number; total: number }>;
 }
 
-export function PlanSelectorSection({
+export const PlanSelectorSection = ({
   availablePlans,
   activePlanId,
   currentUserId,
   onPlanChange,
   onPlanDeleted,
+  onPlanEdited,
   planProgress = {},
-}: PlanSelectorSectionProps) {
-  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
+}: PlanSelectorSectionProps) => {
   const [error, setError] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
+  const [editingPlan, setEditingPlan] = useState<PlanWithMeta | null>(null);
+  const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
+
+  const otherPlans = availablePlans.filter((p) => p.id !== activePlanId);
 
   const isUserCreated = (p: PlanWithMeta) =>
     !BUNDLED_PLAN_IDS.includes(p.id) &&
@@ -61,10 +67,39 @@ export function PlanSelectorSection({
     }
   };
 
+  const handleRequestEdit = (e: React.MouseEvent, plan: PlanWithMeta) => {
+    e.stopPropagation();
+    setEditingPlan(plan);
+  };
+
+  const handleConfirmEdit = async (name: string, description: string) => {
+    if (!editingPlan) {
+      return;
+    }
+    setError(null);
+    try {
+      const res = await fetch(`/api/plans/${encodeURIComponent(editingPlan.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description }),
+        credentials: 'include',
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(data.error ?? `Failed to update plan (${res.status})`);
+        return;
+      }
+      setEditingPlan(null);
+      await onPlanEdited?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Network error');
+    }
+  };
+
   return (
     <div className="bg-surface-container-low rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/30">
       <h2 className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-3">
-        Training plan
+        Other Training plans
       </h2>
       {error && (
         <div className="mb-3 p-3 rounded-xl bg-error/10 border border-error/30 text-error text-sm font-body">
@@ -75,88 +110,40 @@ export function PlanSelectorSection({
         data-testid="plan-selector"
         className="rounded-xl border border-outline-variant/60 bg-surface-container-low/50"
       >
-        {availablePlans.map((p) => {
-          const isActive = p.id === activePlanId;
-          const showDelete = isUserCreated(p);
-          const deleteDisabled = isActive || deletingPlanId === p.id;
+        {otherPlans.length === 0 ? (
+          <p
+            className="px-5 py-8 text-on-surface-variant text-sm font-body text-center"
+            data-testid="plan-selector-empty"
+          >
+            Nothing here
+          </p>
+        ) : (
+          otherPlans.map((p) => {
+            const showMenu = isUserCreated(p);
+            const showPublicIcon = !isUserCreated(p) && p.public === true;
+            const deleteDisabled = deletingPlanId === p.id;
+            const progress = planProgress[p.id];
 
-          return (
-            <div
-              key={p.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => onPlanChange(p.id)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  onPlanChange(p.id);
-                }
-              }}
-              data-testid="plan-selector-option"
-              data-testid-value={p.id}
-              data-plan-name={p.name}
-              className={clsx(
-                'w-full flex items-start justify-between gap-4 px-5 py-4 text-left border-b border-outline-variant/20 last:border-0 transition-colors cursor-pointer',
-                isActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'hover:bg-surface-container-high text-on-surface'
-              )}
-            >
-              <div className="flex justify-between items-start gap-4 min-w-0 flex-1">
-                <div className="flex flex-col gap-2 min-w-0 flex-1">
-                  {/* Top row: name | progress + creator */}
-                  <div className="flex justify-between items-start flex-row-reverse gap-4">
-                    {planProgress[p.id] && (
-                      <span className="subtle" data-testid={`plan-progress-${p.id}`}>
-                        {planProgress[p.id].completed}/{planProgress[p.id].total} days
-                      </span>
-                    )}
-                    {p.public === true && (
-                      <span className="subtle" data-testid="plan-creator">
-                        {CREATED_BY} {p.creator_name ?? APP_NAME}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Rest of card details */}
-                  <span className="font-body font-medium truncate min-w-0">{p.name}</span>
-                  {(p.description || showDelete) && (
-                    <div className="flex flex-row justify-between">
-                      {p.description && (
-                        <span className="text-on-surface-variant text-sm font-normal line-clamp-2">
-                          {p.description}
-                        </span>
-                      )}
-                      {showDelete && (
-                        <button
-                          type="button"
-                          onClick={(e) => handleRequestDelete(e, p.id, p.name)}
-                          disabled={deleteDisabled}
-                          className="shrink-0 h-9 px-3 rounded-lg border-2 border-error/50 bg-error/10 hover:bg-error/20 font-headline font-bold text-error text-sm flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-error/10"
-                          data-testid={`delete-plan-${p.id}`}
-                          aria-label={`Delete plan ${p.name}`}
-                        >
-                          {deletingPlanId === p.id ? (
-                            <span
-                              className="material-symbols-outlined animate-spin text-base"
-                              aria-hidden
-                            >
-                              progress_activity
-                            </span>
-                          ) : (
-                            <span className="material-symbols-outlined text-base" aria-hidden>
-                              delete
-                            </span>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+            return (
+              <PlanCard
+                key={p.id}
+                plan={p}
+                progress={progress}
+                variant="selectable"
+                onClick={() => onPlanChange(p.id)}
+                showMenu={showMenu}
+                showPublicIcon={showPublicIcon}
+                deleteDisabled={deleteDisabled}
+                onRequestDelete={handleRequestDelete}
+                onRequestEdit={handleRequestEdit}
+                onCopyError={setError}
+                dataTestId="plan-selector-option"
+                progressTestId={`plan-progress-${p.id}`}
+                creatorTestId="plan-creator"
+              />
+            );
+          })
+        )}
       </div>
 
       <ConfirmResetModal
@@ -177,6 +164,16 @@ export function PlanSelectorSection({
         }
         confirmWord="delete"
       />
+
+      {editingPlan && (
+        <ConfirmPlanModal
+          isOpen={editingPlan !== null}
+          onClose={() => setEditingPlan(null)}
+          plan={editingPlan}
+          onConfirm={handleConfirmEdit}
+          isEditMode
+        />
+      )}
     </div>
   );
-}
+};

@@ -66,16 +66,21 @@ Phase 36 improves the Plans tab UX with six features: (1) replace trash icon wit
 
 ## Architecture Patterns
 
-### Recommended Project Structure
+### Recommended Project Structure (Implemented)
 
 ```
 src/
 ├── components/settings/
-│   ├── PlanSelectorSection.tsx   # Context menu, progress layout, 🌐 icon
-│   └── PlansHowItWorks.tsx       # Optional: extract expandable section
+│   ├── PlanCard.tsx             # Unified plan card: active + selectable variants; progress, creator, menu
+│   ├── PlanContextMenu.tsx      # Extracted: Copy, Download, Edit, Delete menu
+│   ├── PlanSelectorSection.tsx  # Other plans list; uses PlanCard; excludes active; empty state
+│   ├── ActivePlanSection.tsx    # Uses PlanCard; readonly current plan; click → Training
+│   └── ...
 ├── views/
-│   └── PlansView.tsx             # Filter, How it works, Create Plan button
+│   └── PlansView.tsx            # How it works, Active Plan, filter, PlanSelectorSection, Create Plan button
 ```
+
+**PlanCard unification (2025-03-21):** ActivePlanSection and PlanSelectorSection previously shared duplicate plan card UI. Both now use `PlanCard` with `variant="active"` or `variant="selectable"`. PlanCard handles progress, creator, name, description, context menu, and public icon.
 
 ### Pattern 1: Headless UI Menu (Context Menu)
 
@@ -187,15 +192,21 @@ type PlanFilter = 'all' | 'my' | 'public';
 
 ### Pattern 4: Copy JSON
 
-**What:** `navigator.clipboard.writeText(JSON.stringify(plan))`.  
+**What:** `navigator.clipboard.writeText(planToJson(plan))`.  
 **When to use:** Copy JSON menu item.  
+**Implemented:** `planToJson` outputs only `{ id, name, description, days }` (no server metadata like `created_by`, `creator_name`).  
 **Example:**
 
 ```tsx
-// Source: CONTEXT.md, MDN Clipboard API
-const handleCopyJson = async () => {
-  await navigator.clipboard.writeText(JSON.stringify(planWithMeta, null, 2));
-};
+// Source: PlanContextMenu.tsx
+const planToJson = (plan: PlanWithMeta): string =>
+  JSON.stringify(
+    { id: plan.id, name: plan.name, description: plan.description, days: plan.days },
+    null,
+    2
+  );
+
+await navigator.clipboard.writeText(planToJson(plan));
 ```
 
 - Requires secure context (HTTPS) and user gesture. Returns Promise.
