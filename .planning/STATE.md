@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-21 — Phase 30 shipped; branch pushed; PR pending creation
+**Last updated:** 2025-03-21 — Phases 1–32 complete; Phase 33 (Sign Up) next; Phase 34 (Login & Profile UX) added
 
 ---
 
@@ -8,18 +8,18 @@
 
 **Core value:** User can lie down, close their eyes, and complete a breathhold session guided entirely by audio — no need to look at the screen during the workout.
 
-**Current focus:** Phase 31 — UI Polish (next)
+**Current focus:** Phase 33 — Sign Up
 
 ---
 
 ## Current Position
 
-| Field    | Value                                  |
-| -------- | -------------------------------------- |
-| Phase    | 31. UI Polish                          |
-| Plan     | 31-PLAN.md                             |
-| Status   | Phase 30 shipped — PR pending creation |
-| Progress | Phase 30 complete                      |
+| Field    | Value                |
+| -------- | -------------------- |
+| Phase    | 33. Sign Up          |
+| Plan     | 33-PLAN.md           |
+| Status   | Phases 1–32 complete |
+| Progress | Phase 33 pending     |
 
 ---
 
@@ -27,10 +27,10 @@
 
 | Metric              | Value |
 | ------------------- | ----- |
-| Phases complete     | 30    |
-| Phases total        | 32    |
+| Phases complete     | 32    |
+| Phases total        | 34    |
 | Requirements mapped | 17/17 |
-| Plans executed      | 30    |
+| Plans executed      | 32    |
 
 ---
 
@@ -77,8 +77,10 @@
 - [x] Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback (28-PLAN.md)
 - [x] Phase 29: E2E Tests (29-PLAN.md)
 - [x] Phase 30: Dockerize MySQL + Change Database Type (30-CONTEXT.md)
-- [ ] Phase 31: UI Polish (31-PLAN.md)
-- [ ] Phase 32: Multi-Program Switching (32-PLAN.md)
+- [x] Phase 31: UI Polish (31-PLAN.md)
+- [x] Phase 32: Multi-Program Switching (32-PLAN.md)
+- [ ] Phase 33: Sign Up (33-PLAN.md)
+- [ ] Phase 34: Login & Profile UX (34-CONTEXT.md, 34-PLAN.md)
 
 ### Blockers
 
@@ -88,4 +90,4 @@ None.
 
 ## Session Continuity
 
-Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 executed — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible. Phase 18 executed — Dynamic version from package.json on login; semantic-release for fix→patch, feat→minor, chore→no bump on push to main. Phase 19 executed — Create plan in Settings: JSON upload with PlanWithMeta schema validation; optional AI voice mode (dictate → Gemini → valid JSON → auto-fill → user confirms); DB storage preferred. Phase 20 executed — Preview future days in training plan (view structure); no way to execute future days. Phase 21 executed — UI: DayListSection uses plan name/description; remove plan name from TopAppBar; move "Fishly" to constants. Phase 22 executed — Plans Tab + Settings Cleanup: three tabs (Training, Plans, Settings); PlansView with plan selector, create plan, delete user-created non-active plans; created_by on plans table; Settings cleanup (reset, dev mode, profile, logout only). Phase 23 executed — Prettier + Lefthook + CI: Prettier installed and configured; lefthook pre-commit runs format + lint + unit tests + build + e2e (when source files staged), emoji-prefixed commands; GitHub workflow runs format:check before lint, emoji-prefixed step names, aborts if code is unformatted or has lint issues. Phase 24 executed — AI Plan Input Enhancements: Zod schemas in plan.ts with .describe(); dynamic responseJsonSchema for transcribe; transcribe-from-text endpoint; CreatePlanSection uses Zod validation to decide JSON vs AI path; unit tests for both endpoints and plan schema; E2E for text path. Phase 25 executed — Component Library (Headless UI): @headlessui/react installed; ConfirmResetModal → Dialog; Tabs primitive; PlanSelectorSection → Listbox; DevModeSection → Switch; SpeedMultiplierSelector → RadioGroup; COMPONENT-PATTERNS.md. Phase 26 executed — Plan Creation UX: CreatePlanSection two tabs (Describe, Paste/Raw); draft→preview→refine→confirm flow; PlanPreviewModal; ConfirmPlanModal; transcribe-from-text with contextPlan for refine; E2E create-plan. Phase 27 executed — Refactor CreatePlanSection: clsx + styles; CreatePlanDescribeTab, CreatePlanPasteTab, CreatePlanStatusBanner extracted; components under 150 lines. Phase 28 executed — Create Plan Tab: CreatePlanSection in own bottom tab (+); route /create; multi-modal create/refine (voice + text); Preview feedback. Phase 29 executed — E2E Tests: flaky Describe test fixed; voice create-plan E2E with fixture; unit tests for ConfirmPlanModal, PlanPreviewModal, CreatePlanStatusBanner. Phase 30 executed — Dockerize MySQL: mysql2 + named-placeholders; docker-compose.yml; lib/db.config.ts, lib/migrate.ts, migrations/001_initial.sql; API routes async; lib/plan.ts async loadPlan; run-e2e-with-fresh-db.mjs; CI MySQL service; docs/SERVER-SETUP.md. Phase 31 (UI Polish) next.
+Phase 11 (Refactor Code Quality Pass) executed. Phase 12 (Tests) executed — Vitest + Playwright, 99 unit tests, 2 E2E tests. Phase 13 (Deployment) executed — server production mode, start_freediving.sh, .env.production.example, .github/workflows/deploy.yml, systemd template. Phase 14 (Next.js Migration) executed — Express + React migrated to Next.js App Router, Route Handlers, @serwist/next PWA, standalone deployment. Phase 15 (Refactor Code Cleanup) executed — ESLint flat config, curly braces for all if, removed unused code, CI runs lint. Phase 16 executed — ~ path alias, component subfolders (ui, layout, day, session, settings, shared), component tests (DayListSection, LockedDayCard, SessionPreviewSection, ConfirmResetModal, ResetProgressSection), E2E (reset-progress, plan-change, abort-session, error-paths). Phase 17 executed — Settings dev mode toggle to show/hide test controls; all users can toggle; default OFF; unchecked = invisible. Phase 18 executed — Dynamic version from package.json on login; semantic-release for fix→patch, feat→minor, chore→no bump on push to main. Phase 19 executed — Create plan in Settings: JSON upload with PlanWithMeta schema validation; optional AI voice mode (dictate → Gemini → valid JSON → auto-fill → user confirms); DB storage preferred. Phase 20 executed — Preview future days in training plan (view structure); no way to execute future days. Phase 21 executed — UI: DayListSection uses plan name/description; remove plan name from TopAppBar; move "Fishly" to constants. Phase 22 executed — Plans Tab + Settings Cleanup: three tabs (Training, Plans, Settings); PlansView with plan selector, create plan, delete user-created non-active plans; created_by on plans table; Settings cleanup (reset, dev mode, profile, logout only). Phase 23 executed — Prettier + Lefthook + CI: Prettier installed and configured; lefthook pre-commit runs format + lint + unit tests + build + e2e (when source files staged), emoji-prefixed commands; GitHub workflow runs format:check before lint, emoji-prefixed step names, aborts if code is unformatted or has lint issues. Phase 24 executed — AI Plan Input Enhancements: Zod schemas in plan.ts with .describe(); dynamic responseJsonSchema for transcribe; transcribe-from-text endpoint; CreatePlanSection uses Zod validation to decide JSON vs AI path; unit tests for both endpoints and plan schema; E2E for text path. Phase 25 executed — Component Library (Headless UI): @headlessui/react installed; ConfirmResetModal → Dialog; Tabs primitive; PlanSelectorSection → Listbox; DevModeSection → Switch; SpeedMultiplierSelector → RadioGroup; COMPONENT-PATTERNS.md. Phase 26 executed — Plan Creation UX: CreatePlanSection two tabs (Describe, Paste/Raw); draft→preview→refine→confirm flow; PlanPreviewModal; ConfirmPlanModal; transcribe-from-text with contextPlan for refine; E2E create-plan. Phase 27 executed — Refactor CreatePlanSection: clsx + styles; CreatePlanDescribeTab, CreatePlanPasteTab, CreatePlanStatusBanner extracted; components under 150 lines. Phase 28 executed — Create Plan Tab: CreatePlanSection in own bottom tab (+); route /create; multi-modal create/refine (voice + text); Preview feedback. Phase 29 executed — E2E Tests: flaky Describe test fixed; voice create-plan E2E with fixture; unit tests for ConfirmPlanModal, PlanPreviewModal, CreatePlanStatusBanner. Phase 30 executed — Dockerize MySQL: mysql2 + named-placeholders; docker-compose.yml; lib/db.config.ts, lib/migrate.ts, migrations/001_initial.sql; API routes async; lib/plan.ts async loadPlan; run-e2e-with-fresh-db.mjs; CI MySQL service; docs/SERVER-SETUP.md. Phase 31 executed — UI Polish: bottom tabs label only on active; TopAppBar weekLabel only on Dashboard; trainings padding; developer zone muted; create plan "See plans here" + Go to Plans; plan complete green border. Phase 32 executed — Multi-Program Switching: no reset on plan switch; simple switch confirmation; Plans tab progress display. Phase 33 (Sign Up) next. Phase 34 (Login & Profile UX) added — UserProfileCard email+name or email-only; Login page success UX; Fishly TopAppBar link to training plan.

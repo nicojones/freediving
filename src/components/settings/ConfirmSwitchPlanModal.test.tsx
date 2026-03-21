@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ConfirmSwitchPlanModal } from './ConfirmSwitchPlanModal';
 
@@ -44,7 +44,9 @@ describe('ConfirmSwitchPlanModal', () => {
     render(
       <ConfirmSwitchPlanModal isOpen onClose={onClose} onConfirm={onConfirm} planName="Test Plan" />
     );
-    fireEvent.click(screen.getByTestId('confirm-switch-plan-confirm'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('confirm-switch-plan-confirm'));
+    });
     await vi.waitFor(() => {
       expect(onConfirm).toHaveBeenCalledTimes(1);
       expect(onClose).toHaveBeenCalledTimes(1);

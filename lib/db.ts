@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import type { PoolConnection } from 'mysql2/promise';
 import { getDbConnection } from './db.config';
 import { runMigrations } from './migrate';
@@ -22,19 +21,17 @@ export async function initDb(): Promise<void> {
   }
 }
 
+/**
+ * Seeds nico and athena for E2E tests (e2e-set-session).
+ * No password — legacy login removed; magic link is the only user-facing auth.
+ */
 export async function seedUsers(connection: PoolConnection): Promise<void> {
-  const nicoPassword = process.env.USER_PASSWORD_NICO || 'password';
-  const athenaPassword = process.env.USER_PASSWORD_ATHENA || 'password';
-
-  const nicoHash = await bcrypt.hash(nicoPassword, 10);
-  const athenaHash = await bcrypt.hash(athenaPassword, 10);
-
-  await connection.execute('INSERT IGNORE INTO users (username, password_hash) VALUES (?, ?)', [
-    'nico',
-    nicoHash,
-  ]);
-  await connection.execute('INSERT IGNORE INTO users (username, password_hash) VALUES (?, ?)', [
-    'athena',
-    athenaHash,
-  ]);
+  await connection.execute(
+    'INSERT IGNORE INTO users (username, password_hash, email) VALUES (?, NULL, NULL)',
+    ['nico']
+  );
+  await connection.execute(
+    'INSERT IGNORE INTO users (username, password_hash, email) VALUES (?, NULL, NULL)',
+    ['athena']
+  );
 }

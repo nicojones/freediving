@@ -4,6 +4,7 @@ import { initDb } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { validatePlanWithMeta } from '@/src/schemas/planSchema';
 import { BUNDLED_PLAN_IDS } from '@/src/constants/app';
+import { parseJson } from '@/src/utils/parseJson';
 
 export const runtime = 'nodejs';
 
@@ -25,13 +26,16 @@ export async function GET() {
       days_json: string;
       created_by: number | null;
     }[];
-    const plans = rawRows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      description: r.description ?? undefined,
-      days: JSON.parse(r.days_json) as unknown[],
-      created_by: r.created_by ?? undefined,
-    }));
+    const plans = rawRows.map((r) => {
+      const d = parseJson(r.days_json, [] as unknown[]);
+      return {
+        id: r.id,
+        name: r.name,
+        description: r.description ?? undefined,
+        days: Array.isArray(d) ? d : [],
+        created_by: r.created_by ?? undefined,
+      };
+    });
     return Response.json({ plans });
   } finally {
     release();

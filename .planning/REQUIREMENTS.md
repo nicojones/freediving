@@ -52,19 +52,19 @@ Deferred to future release. Tracked but not in current roadmap.
 ### Profiles
 
 - **PROF-03**: Profile customization (avatar, name)
+- **PROF-04**: User registration (sign up) — username + password; self-service account creation
 
 ## Out of Scope
 
 Explicitly excluded. Documented to prevent scope creep.
 
-| Feature               | Reason                                               |
-| --------------------- | ---------------------------------------------------- |
-| User registration     | Pre-defined users only; admin configures credentials |
-| Records / best times  | Progress is "what's next", not performance metrics   |
-| In-app plan editor    | Plans come from JSON                                 |
-| Audio generation      | User provides audio files                            |
-| Social features       | Not core to training                                 |
-| Paywall on core timer | Free to use                                          |
+| Feature               | Reason                                             |
+| --------------------- | -------------------------------------------------- |
+| Records / best times  | Progress is "what's next", not performance metrics |
+| In-app plan editor    | Plans come from JSON                               |
+| Audio generation      | User provides audio files                          |
+| Social features       | Not core to training                               |
+| Paywall on core timer | Free to use                                        |
 
 ## Traceability
 

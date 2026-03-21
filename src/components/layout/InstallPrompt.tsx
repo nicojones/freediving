@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/src/constants/app';
 import { useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'install-prompt-dismissed';
@@ -111,7 +112,7 @@ export function InstallPrompt({ variant = 'banner' }: { variant?: Variant }) {
         </span>
       </div>
       <div className="flex-1 min-w-0 flex flex-col gap-y-1">
-        <h3 className="font-headline font-bold text-on-surface text-base">Install Fishly</h3>
+        <h3 className="font-headline font-bold text-on-surface text-base">Install {APP_NAME}</h3>
         <p className="text-on-surface-variant text-sm leading-relaxed">
           {deferredPrompt
             ? 'Add to your home screen for the best experience.'

@@ -25,7 +25,8 @@ import { hasCompletedToday } from '../utils/completions';
 import { useSessionEngine } from '../hooks/useSessionEngine';
 import { useDevMode } from '../hooks/useDevMode';
 import type { Plan, PlanWithMeta } from '../types/plan';
-import { isEmpty, isNil } from '../utils/lang';
+import isEmpty from 'lodash/isEmpty.js';
+import isNil from 'lodash/isNil.js';
 import { TrainingContext, type TrainingContextValue, type ViewMode } from './trainingContextState';
 
 export function TrainingProvider({ children }: { children: ReactNode }) {

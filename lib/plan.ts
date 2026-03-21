@@ -1,6 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { getDbConnection } from './db.config';
+import { parseJson } from '@/src/utils/parseJson';
 
 export type PlanWithMeta = {
   id: string;
@@ -13,7 +14,12 @@ export async function loadPlan(planId = 'default'): Promise<PlanWithMeta> {
   const baseName = planId === 'default' ? 'default' : planId;
   const filePath = join(process.cwd(), 'src', 'data', `${baseName}-plan.json`);
   if (existsSync(filePath)) {
-    return JSON.parse(readFileSync(filePath, 'utf-8'));
+    const content = readFileSync(filePath, 'utf-8');
+    const parsed = parseJson(content, null as unknown as PlanWithMeta);
+    if (typeof parsed === 'string') {
+      throw new Error(`Invalid JSON in plan file: ${filePath}`);
+    }
+    return parsed as PlanWithMeta;
   }
   const [connection, release] = await getDbConnection();
   try {
@@ -29,14 +35,22 @@ export async function loadPlan(planId = 'default'): Promise<PlanWithMeta> {
         id: row.id,
         name: row.name,
         description: row.description ?? undefined,
-        days: JSON.parse(row.days_json) as unknown[],
+        days: (() => {
+          const d = parseJson(row.days_json, [] as unknown[]);
+          return Array.isArray(d) ? d : [];
+        })(),
       };
     }
   } finally {
     release();
   }
   const fallback = join(process.cwd(), 'src', 'data', 'default-plan.json');
-  return JSON.parse(readFileSync(fallback, 'utf-8'));
+  const content = readFileSync(fallback, 'utf-8');
+  const parsed = parseJson(content, null as unknown as PlanWithMeta);
+  if (typeof parsed === 'string') {
+    throw new Error(`Invalid JSON in fallback plan file: ${fallback}`);
+  }
+  return parsed as PlanWithMeta;
 }
 
 export function getDayAtIndex(plan: PlanWithMeta, dayIndex: number): { id: string } | null {

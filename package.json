@@ -14,12 +14,14 @@
     "lint": "eslint .",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:types": "vitest run --typecheck --typecheck.ignoreSourceErrors",
     "test:e2e": "node scripts/check-e2e-port.mjs && node scripts/run-e2e-with-fresh-db.mjs",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "semantic-release": "semantic-release"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^5.0.1",
     "@google/genai": "^1.46.0",
     "@headlessui/react": "^2.2.9",
     "bcrypt": "^5.1.1",

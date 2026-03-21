@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import type { PlanWithMeta } from '../../../types/plan';
 import { validatePlanWithMeta } from '../../../schemas/planSchema';
+import { parseJson } from '../../../utils/parseJson';
 
 export function useCreatePlanHandlers(onPlanCreated?: () => void) {
   const [describeText, setDescribeText] = useState('');
@@ -58,18 +59,18 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     setSuccess(false);
     const reader = new FileReader();
     reader.onload = () => {
-      try {
-        const text = reader.result as string;
-        const parsed = JSON.parse(text) as unknown;
-        const result = validatePlanWithMeta(parsed);
-        if (result.success) {
-          setJsonText(JSON.stringify(result.data, null, 2));
-          setError(null);
-        } else {
-          setError(result.errors.join('\n'));
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Invalid JSON');
+      const text = reader.result as string;
+      const parsed = parseJson(text, null) as unknown;
+      if (parsed === null || typeof parsed === 'string') {
+        setError('Invalid JSON');
+        return;
+      }
+      const result = validatePlanWithMeta(parsed);
+      if (result.success) {
+        setJsonText(JSON.stringify(result.data, null, 2));
+        setError(null);
+      } else {
+        setError(result.errors.join('\n'));
       }
     };
     reader.readAsText(file);
@@ -218,10 +219,8 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     setSuccess(false);
     setLoading(true);
     try {
-      let parsed: unknown;
-      try {
-        parsed = JSON.parse(val);
-      } catch {
+      const parsed = parseJson(val, null) as unknown;
+      if (parsed === null || typeof parsed === 'string') {
         setError('Invalid JSON. Paste tab only accepts valid JSON.');
         setLoading(false);
         return;
@@ -266,17 +265,17 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
     setSuccess(false);
     navigator.clipboard.readText().then(
       (text) => {
-        try {
-          const parsed = JSON.parse(text) as unknown;
-          const result = validatePlanWithMeta(parsed);
-          if (result.success) {
-            setJsonText(JSON.stringify(result.data, null, 2));
-            setError(null);
-          } else {
-            setError(result.errors.join('\n'));
-          }
-        } catch {
+        const parsed = parseJson(text, null) as unknown;
+        if (parsed === null || typeof parsed === 'string') {
           setError('Invalid JSON in clipboard');
+          return;
+        }
+        const result = validatePlanWithMeta(parsed);
+        if (result.success) {
+          setJsonText(JSON.stringify(result.data, null, 2));
+          setError(null);
+        } else {
+          setError(result.errors.join('\n'));
         }
       },
       () => setError('Could not read clipboard')
@@ -284,38 +283,38 @@ export function useCreatePlanHandlers(onPlanCreated?: () => void) {
   };
 
   const handleVoiceResult = (json: string) => {
-    try {
-      const parsed = JSON.parse(json) as unknown;
-      const result = validatePlanWithMeta(parsed);
-      if (result.success) {
-        setDraftPlan(result.data);
-        setDescribeText('');
-        setError(null);
-        setPreviewJustUpdated(true);
-        schedulePreviewJustUpdatedClear();
-      } else {
-        setError(result.errors.join('\n'));
-      }
-    } catch {
+    const parsed = parseJson(json, null) as unknown;
+    if (parsed === null || typeof parsed === 'string') {
       setError('Invalid JSON from voice');
+      return;
+    }
+    const result = validatePlanWithMeta(parsed);
+    if (result.success) {
+      setDraftPlan(result.data);
+      setDescribeText('');
+      setError(null);
+      setPreviewJustUpdated(true);
+      schedulePreviewJustUpdatedClear();
+    } else {
+      setError(result.errors.join('\n'));
     }
   };
 
   const handleVoiceRefineResult = (json: string) => {
-    try {
-      const parsed = JSON.parse(json) as unknown;
-      const result = validatePlanWithMeta(parsed);
-      if (result.success) {
-        setDraftPlan(result.data);
-        setRefineText('');
-        setError(null);
-        setPreviewJustUpdated(true);
-        schedulePreviewJustUpdatedClear();
-      } else {
-        setError(result.errors.join('\n'));
-      }
-    } catch {
+    const parsed = parseJson(json, null) as unknown;
+    if (parsed === null || typeof parsed === 'string') {
       setError('Invalid JSON from voice refine');
+      return;
+    }
+    const result = validatePlanWithMeta(parsed);
+    if (result.success) {
+      setDraftPlan(result.data);
+      setRefineText('');
+      setError(null);
+      setPreviewJustUpdated(true);
+      schedulePreviewJustUpdatedClear();
+    } else {
+      setError(result.errors.join('\n'));
     }
   };
 

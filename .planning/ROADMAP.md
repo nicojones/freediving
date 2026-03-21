@@ -38,8 +38,10 @@
 - [x] **Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback** - Move CreatePlanSection to its own bottom tab (+); allow create and refine via voice and/or text (mix and match); improve Preview feedback so users know when preview was updated after refinement
 - [x] **Phase 29: E2E Tests** - Add comprehensive E2E tests; fix flaky create-plan Describe test; add voice/audio create-plan E2E using fixture; add missing unit tests for coverage
 - [x] **Phase 30: Dockerize MySQL + Change Database Type** - Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; server has MySQL but lacks "freediving" DB and migrations; guide server setup
-- [ ] **Phase 31: UI Polish** - Bottom tabs: only active tab has label; top-right: no tab name; trainings tab: padding same as other tabs; developer zone: more inconspicuous; after create plan: "See plans here" link (navigate to Plans tab)
-- [ ] **Phase 32: Multi-Program Switching** - Switch between training programs with preserved status (no reset); Plans tab shows progress (e.g. 3/17 days); confirmation on switch (no Reset prompt)
+- [x] **Phase 31: UI Polish** - Bottom tabs: only active tab has label; top-right: no tab name; trainings tab: padding same as other tabs; developer zone: more inconspicuous; after create plan: "See plans here" link (navigate to Plans tab)
+- [x] **Phase 32: Multi-Program Switching** - Switch between training programs with preserved status (no reset); Plans tab shows progress (e.g. 3/17 days); confirmation on switch (no Reset prompt)
+- [ ] **Phase 33: Sign Up** - Magic link (passwordless email); request-magic-link + verify-magic-link; rate limiting; unified login (email + legacy username)
+- [ ] **Phase 34: Login & Profile UX** - UserProfileCard: email + name (or email only); Login page: hide input after send, "Check inbox for {...}", try again link; Fishly in TopBar links to current training plan
 
 ---
 
@@ -659,6 +661,45 @@
 
 ---
 
+### Phase 33: Sign Up
+
+**Goal:** Users can create their own account via magic link (passwordless email). User enters email → account created if new → magic link sent via SendGrid → user clicks → logged in. Legacy users (nico, athena) keep username+password.
+
+**Depends on:** Phase 31 (UI Polish)
+
+**Requirements:** (Enhancement — self-service registration)
+
+**Success Criteria** (what must be TRUE):
+
+1. User can request a magic link by entering email; if new, account is created; link sent via SendGrid
+2. User clicks magic link → verified → session cookie set → redirect to app (logged in)
+3. Rate limiting: 5 attempts per 15 min per IP on request-magic-link
+4. Login page has unified entry: email + "Send me a link" for magic link; "Sign in with username" for legacy
+5. No email enumeration; token/session indefinite per CONTEXT
+6. Legacy login (username+password) unchanged for seeded users
+
+**Plans:** `.planning/33-PLAN.md`
+
+---
+
+### Phase 34: Login & Profile UX
+
+**Goal:** Improve login and profile UX: (1) UserProfileCard shows email + name (migration) or full email only; (2) Login page after magic-link sent: hide input, larger "Check the inbox for {...}", greyed-out "try again" link that resets form; (3) Fishly in TopAppBar links to current training plan.
+
+**Depends on:** Phase 33 (Sign Up)
+
+**Requirements:** (Enhancement — login and profile UX)
+
+**Success Criteria** (what must be TRUE):
+
+1. UserProfileCard displays email (greyed out, smaller) and name (editable with pencil) — or full email only if no migration
+2. Login page: after email sent, input hidden; larger "Check the inbox for {email}"; greyed-out "if you didn't receive any email, wait some seconds and try again" with "try again" link that resets to form (email preserved)
+3. Clicking "Fishly" in TopAppBar navigates to current training plan (Dashboard)
+
+**Plans:** `.planning/phases/34-login-profile-ux/34-PLAN.md`
+
+---
+
 ## Progress
 
 | Phase                                                              | Plans Complete | Status   | Completed  |
@@ -692,9 +733,11 @@
 | 27. Refactor CreatePlanSection (Component Size)                    | 4/4            | Complete | 27-PLAN.md |
 | 28. Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback | 7/7            | Complete | 28-PLAN.md |
 | 29. E2E Tests                                                      | 4/4            | Complete | 29-PLAN.md |
-| 30. Dockerize MySQL + Change Database Type                         | 0/0            | Pending  | 30-PLAN.md |
-| 31. UI Polish                                                      | 0/0            | Pending  | 31-PLAN.md |
-| 32. Multi-Program Switching                                        | 0/0            | Pending  | 32-PLAN.md |
+| 30. Dockerize MySQL + Change Database Type                         | —              | Complete | 30-PLAN.md |
+| 31. UI Polish                                                      | —              | Complete | 31-PLAN.md |
+| 32. Multi-Program Switching                                        | —              | Complete | 32-PLAN.md |
+| 33. Sign Up                                                        | 0/0            | Pending  | 33-PLAN.md |
+| 34. Login & Profile UX                                             | 0/0            | Pending  | 34-PLAN.md |
 
 ---
 

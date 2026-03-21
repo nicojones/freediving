@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in to {{appName}}</title>
+</head>
+<body style="font-family: system-ui, sans-serif; line-height: 1.6; color: #333; max-width: 480px; margin: 0 auto; padding: 24px;">
+  <div style="text-align: center; margin-bottom: 24px;">
+    <img src="https://fishly.kupfer.es/fish.svg" alt="{{appName}}" width="48" height="48" style="display: inline-block; vertical-align: middle;">
+  </div>
+  <h1 style="font-size: 1.5rem; margin-bottom: 16px;">Sign in to {{appName}}</h1>
+  <p>Click the button below to sign in. This link expires in 15 minutes and can only be used once.</p>
+  <p style="margin: 24px 0;">
+    <a href="{{magicLinkUrl}}" style="display: inline-block; padding: 12px 24px; background: #0d9488; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Sign in</a>
+  </p>
+  <p style="font-size: 0.875rem; color: #666;">Or copy and paste this link into your browser:</p>
+  <p style="font-size: 0.8rem; word-break: break-all; background: #f4f4f4; padding: 12px; border-radius: 6px; font-family: monospace; color: #333;">{{magicLinkUrl}}</p>
+  <p style="font-size: 0.875rem; color: #666;">If you didn't request this link, you can safely ignore this email.</p>
+</body>
+</html>

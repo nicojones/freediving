@@ -1,4 +1,6 @@
-import { isEmpty, isNil } from '../utils/lang';
+import isEmpty from 'lodash/isEmpty.js';
+import isNil from 'lodash/isNil.js';
+import { parseJson } from '../utils/parseJson';
 import type { Plan, PlanWithMeta, Phase } from '../types/plan';
 import defaultPlanData from '../data/default-plan.json';
 import minimalPlanData from '../data/minimal-plan.json';
@@ -34,7 +36,11 @@ export async function fetchPlansFromApi(): Promise<PlanWithMeta[]> {
     if (!res.ok) {
       return [];
     }
-    const data = (await res.json()) as { plans?: PlanWithMeta[] };
+    const text = await res.text();
+    if (!text?.trim()) {
+      return [];
+    }
+    const data = parseJson(text, { plans: [] }) as { plans?: PlanWithMeta[] };
     return (data.plans ?? []) as PlanWithMeta[];
   } catch {
     return [];

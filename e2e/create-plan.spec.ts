@@ -7,13 +7,19 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
 import { loginAsNico, loginAsAthena } from './helpers/login';
+import { parseJson } from '../src/utils/parseJson';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** 14-day plan fixture matching e2e/fixtures/1:30 to 2:00 14-day plan.m4a description */
-const VOICE_14DAY_PLAN = JSON.parse(
-  readFileSync(join(__dirname, 'fixtures', '1-30-to-2-00-14-day-plan.json'), 'utf-8')
+const _voiceFixture = parseJson(
+  readFileSync(join(__dirname, 'fixtures', '1-30-to-2-00-14-day-plan.json'), 'utf-8'),
+  null
 );
+if (_voiceFixture === null || typeof _voiceFixture === 'string') {
+  throw new Error('Invalid fixture JSON: 1-30-to-2-00-14-day-plan.json');
+}
+const VOICE_14DAY_PLAN = _voiceFixture as Record<string, unknown>;
 
 const PASTE_PLAN = {
   id: 'e2e-paste-plan',

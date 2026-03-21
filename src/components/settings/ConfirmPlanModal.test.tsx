@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ConfirmPlanModal } from './ConfirmPlanModal';
 
@@ -42,14 +42,18 @@ describe('ConfirmPlanModal', () => {
     fireEvent.change(screen.getByTestId('confirm-plan-description'), {
       target: { value: 'Edited description' },
     });
-    fireEvent.click(screen.getByTestId('confirm-plan-submit'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('confirm-plan-submit'));
+    });
     expect(onConfirm).toHaveBeenCalledWith('Edited Name', 'Edited description');
   });
 
   it('calls onClose when submit clicked', async () => {
     const onClose = vi.fn();
     render(<ConfirmPlanModal isOpen onClose={onClose} plan={MOCK_PLAN} onConfirm={vi.fn()} />);
-    fireEvent.click(screen.getByTestId('confirm-plan-submit'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('confirm-plan-submit'));
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

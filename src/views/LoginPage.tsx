@@ -1,30 +1,49 @@
 'use client';
-import { useState } from 'react';
-import { login } from '../services/authService';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { requestMagicLink } from '../services/authService';
 import { FishIcon } from '../components/ui/FishIcon';
 import { TextInput } from '../components/ui/TextInput';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { VersionFooter } from '../components/shared/VersionFooter';
+import { APP_NAME, APP_DESCR } from '../constants/app';
 
 interface LoginPageProps {
-  onLoginSuccess: () => void;
+  /** Kept for AppShell compatibility; magic link flow redirects, so never called. */
+  onLoginSuccess?: () => void;
 }
 
-export function LoginPage({ onLoginSuccess }: LoginPageProps) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const ERROR_MESSAGES: Record<string, string> = {
+  expired: 'Link expired or already used.',
+  missing: 'Invalid link.',
+};
+
+export function LoginPage(_props: LoginPageProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    const err = searchParams.get('error');
+    if (err && ERROR_MESSAGES[err]) {
+      setError(ERROR_MESSAGES[err]);
+      router.replace('/login', { scroll: false });
+    }
+  }, [searchParams, router]);
+
+  async function handleMagicLinkSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
     setLoading(true);
-    const result = await login(username, password);
+    const result = await requestMagicLink(email);
     setLoading(false);
-    if ('user' in result) {
-      onLoginSuccess();
-    } else {
+    if ('message' in result) {
+      setSuccessMessage('Check your email');
+    } else if ('error' in result) {
       setError(result.error);
     }
   }
@@ -43,36 +62,25 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               <FishIcon className="text-primary" size={40} aria-hidden />
             </div>
             <h1 className="font-headline text-[3.5rem] font-bold tracking-tight text-primary leading-none mb-2">
-              Fishly
+              {APP_NAME}
             </h1>
             <p className="font-label text-on-surface-variant tracking-[0.2em] uppercase text-[0.65rem] font-medium">
-              Breathhold Protocol
+              {APP_DESCR}
             </p>
           </header>
 
-          <form onSubmit={handleSubmit} className="w-full space-y-8">
+          <form onSubmit={handleMagicLinkSubmit} className="w-full space-y-8">
             <div className="space-y-6">
               <TextInput
-                id="username"
-                label="Username"
-                type="text"
-                value={username}
-                onChange={setUsername}
-                placeholder="Diver Identifier"
-                autoComplete="username"
-                icon="person"
-                data-testid="login-username"
-              />
-              <TextInput
-                id="password"
-                label="Password"
-                type="password"
-                value={password}
-                onChange={setPassword}
-                placeholder="••••••••"
-                autoComplete="current-password"
-                icon="key"
-                data-testid="login-password"
+                id="email"
+                label="Email"
+                type="email"
+                value={email}
+                onChange={setEmail}
+                placeholder="you@example.com"
+                autoComplete="email"
+                icon="mail"
+                data-testid="login-email"
               />
             </div>
             {error && (
@@ -80,15 +88,20 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                 {error}
               </p>
             )}
+            {successMessage && (
+              <p data-testid="login-success" className="text-primary text-sm font-body">
+                {successMessage}
+              </p>
+            )}
             <PrimaryButton
-              data-testid="login-submit"
+              data-testid="login-send-link"
               type="submit"
               disabled={loading}
               loading={loading}
               size="login"
-              icon="arrow_forward"
+              icon="mail"
             >
-              Start Training
+              Send me a link
             </PrimaryButton>
           </form>
 

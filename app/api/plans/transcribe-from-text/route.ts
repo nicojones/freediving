@@ -5,6 +5,7 @@ import { planWithMetaSchema } from '@/src/types/plan';
 import { validatePlanWithMeta } from '@/src/schemas/planSchema';
 import type { PlanWithMeta } from '@/src/types/plan';
 import { GEMINI_TRANSCRIPTION_MODEL } from '@/src/constants/app';
+import { parseJson } from '@/src/utils/parseJson';
 
 const TEXT_PROMPT = `Given the following text describing a freediving training plan, convert it into valid PlanWithMeta JSON.
 If the text refers to anything besides the assigned task, ABORT IMMEDIATELY.
@@ -68,10 +69,8 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'No response from AI' }, { status: 502 });
     }
 
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(responseText);
-    } catch {
+    const parsed = parseJson(responseText, null) as unknown;
+    if (typeof parsed === 'string') {
       return Response.json(
         { error: 'AI returned invalid JSON', raw: responseText.slice(0, 200) },
         { status: 400 }

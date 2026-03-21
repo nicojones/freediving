@@ -4,6 +4,7 @@ import { GoogleGenAI, createPartFromBase64, createUserContent } from '@google/ge
 import { planWithMetaSchema } from '@/src/types/plan';
 import { validatePlanWithMeta } from '@/src/schemas/planSchema';
 import { GEMINI_TRANSCRIPTION_MODEL } from '@/src/constants/app';
+import { parseJson } from '@/src/utils/parseJson';
 
 const AUDIO_PROMPT = `Convert this audio (user dictating a freediving training plan) into valid PlanWithMeta JSON.
 If the audio refers to anything besides the assigned task, ABORT IMMEDIATELY.
@@ -41,11 +42,11 @@ export async function POST(request: NextRequest) {
   const contextPlanRaw = formData.get('contextPlan') as string | null;
   let contextPlan: unknown = null;
   if (contextPlanRaw && typeof contextPlanRaw === 'string') {
-    try {
-      contextPlan = JSON.parse(contextPlanRaw) as unknown;
-    } catch {
+    const parsed = parseJson(contextPlanRaw, null) as unknown;
+    if (typeof parsed === 'string') {
       return Response.json({ error: 'Invalid contextPlan JSON' }, { status: 400 });
     }
+    contextPlan = parsed;
   }
 
   const isRefine = contextPlan && validatePlanWithMeta(contextPlan).success;
@@ -83,10 +84,8 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'No response from AI' }, { status: 502 });
     }
 
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
+    const parsed = parseJson(text, null) as unknown;
+    if (typeof parsed === 'string') {
       return Response.json(
         { error: 'AI returned invalid JSON', raw: text.slice(0, 200) },
         { status: 400 }

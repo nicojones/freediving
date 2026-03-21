@@ -1,6 +1,6 @@
 /**
  * Tabs primitive for Phase 26 input modes.
- * Re-exports Headless UI Tab components with Fishly styling guidance.
+ * Re-exports Headless UI Tab components with app's styling guidance.
  *
  * @example
  * ```tsx

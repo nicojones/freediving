@@ -9,7 +9,8 @@ import { TopAppBar } from '@/src/components/layout/TopAppBar';
 import { DeferredSignOutButton } from '@/src/components/layout/DeferredSignOutButton';
 import { TrainingProvider } from '@/src/contexts/TrainingContext';
 import { useTraining } from '@/src/hooks/useTraining';
-import { isNil } from '@/src/utils/lang';
+import isNil from 'lodash/isNil.js';
+import { APP_NAME } from '@/src/constants/app';
 
 function SessionRouteGuard({ children }: ChildrenNode) {
   const { sessionStatus } = useTraining();
@@ -41,7 +42,7 @@ function AppContent({ children }: ChildrenNode) {
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-3">
             <FishIcon className="text-primary animate-pulse" size={28} aria-hidden />
-            <span className="font-headline font-bold text-xl text-primary">Fishly</span>
+            <span className="font-headline font-bold text-xl text-primary">{APP_NAME}</span>
           </div>
           <Loader />
         </div>

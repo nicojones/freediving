@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Fishly color tokens */
+  /* App color tokens */
   --color-background: #0d1416;
   --color-surface: #0d1416;
   --color-surface-container-low: #0c0f10;

@@ -2,10 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import { AppShell } from '@/src/components/layout/AppShell';
 import type { ChildrenNode } from '@/src/types/common';
 import './globals.css';
+import { APP_NAME, APP_DESCR } from '@/src/constants/app';
 
 export const metadata: Metadata = {
-  title: 'Fishly — Breathhold Protocol',
-  applicationName: 'Fishly',
+  title: `${APP_NAME} — ${APP_DESCR}`,
+  applicationName: APP_NAME,
   icons: { icon: '/fish.svg' },
 };
 

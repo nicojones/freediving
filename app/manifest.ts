@@ -1,9 +1,10 @@
+import { APP_NAME, APP_DESCR } from '@/src/constants/app';
 import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Fishly — Breathhold Protocol',
-    short_name: 'Fishly',
+    name: `${APP_NAME} — ${APP_DESCR}`,
+    short_name: APP_NAME,
     theme_color: '#52dad3',
     background_color: '#0d1416',
     display: 'standalone',

@@ -29,7 +29,7 @@ User can lie down, close their eyes, and complete a breathhold session guided en
 
 ### Out of Scope
 
-- User registration or sign-up — users are pre-defined, admin configures credentials
+- ~~User registration or sign-up~~ — Phase 33 adds sign up; pre-defined users remain for backward compatibility
 - Records or best times — progress is "what's next", not performance metrics
 - In-app plan editor — plans come from JSON
 - Audio generation — user provides audio files
