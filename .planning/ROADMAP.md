@@ -38,6 +38,8 @@
 - [x] **Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback** - Move CreatePlanSection to its own bottom tab (+); allow create and refine via voice and/or text (mix and match); improve Preview feedback so users know when preview was updated after refinement
 - [x] **Phase 29: E2E Tests** - Add comprehensive E2E tests; fix flaky create-plan Describe test; add voice/audio create-plan E2E using fixture; add missing unit tests for coverage
 - [ ] **Phase 30: Dockerize MySQL + Change Database Type** - Migrate from SQLite to MySQL; Dockerize MySQL for dev/local; server has MySQL but lacks "freediving" DB and migrations; guide server setup
+- [ ] **Phase 31: UI Polish** - Bottom tabs: only active tab has label; top-right: no tab name; trainings tab: padding same as other tabs; developer zone: more inconspicuous; after create plan: "See plans here" link (navigate to Plans tab)
+- [ ] **Phase 32: Multi-Program Switching** - Switch between training programs with preserved status (no reset); Plans tab shows progress (e.g. 3/17 days); confirmation on switch (no Reset prompt)
 
 ---
 
@@ -618,6 +620,45 @@
 
 ---
 
+### Phase 31: UI Polish
+
+**Goal:** Refine UI details: bottom tabs show label only on active tab; top-right corner does not show tab name; trainings tab padding matches other tabs; developer zone in settings is more inconspicuous; after creating a plan, message says "See plans here" with link that navigates to Plans tab (not "see plans above").
+
+**Depends on:** Phase 30 (Dockerize MySQL + Change Database Type)
+
+**Requirements:** (Enhancement — UI polish)
+
+**Success Criteria** (what must be TRUE):
+
+1. Bottom tabs: only the active tab displays its label; inactive tabs show icon only
+2. Top-right corner: no need to show the tab name (remove if redundant)
+3. Trainings tab: padding matches the other three tabs (Training, Plans, Settings, Create)
+4. Developer zone in Settings: more inconspicuous (e.g. collapsed, subtle styling)
+5. After creating a plan: message says "See plans _here_" with link that navigates to Plans tab
+
+**Plans:** `.planning/31-PLAN.md` (TBD — task breakdown)
+
+---
+
+### Phase 32: Multi-Program Switching
+
+**Goal:** Users can switch between training programs; progress is preserved per plan (not reset). Plans tab shows progress (e.g. 3/17 days). Switching asks for confirmation but does not open the Reset prompt. Supports users training different skills at once.
+
+**Depends on:** Phase 31 (UI Polish)
+
+**Requirements:** (Enhancement — multi-program support)
+
+**Success Criteria** (what must be TRUE):
+
+1. User can switch between training programs; status is preserved per plan (NOT reset)
+2. Plans tab shows progress per plan (e.g. "3/17 days" or similar)
+3. Switching plan asks for confirmation; does NOT open the Reset prompt
+4. Users may train different skills at once by switching between plans
+
+**Plans:** `.planning/32-PLAN.md` (TBD — task breakdown)
+
+---
+
 ## Progress
 
 | Phase                                                              | Plans Complete | Status   | Completed  |
@@ -652,6 +693,8 @@
 | 28. Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback | 7/7            | Complete | 28-PLAN.md |
 | 29. E2E Tests                                                      | 4/4            | Complete | 29-PLAN.md |
 | 30. Dockerize MySQL + Change Database Type                         | 0/0            | Pending  | 30-PLAN.md |
+| 31. UI Polish                                                      | 0/0            | Pending  | 31-PLAN.md |
+| 32. Multi-Program Switching                                        | 0/0            | Pending  | 32-PLAN.md |
 
 ---
 

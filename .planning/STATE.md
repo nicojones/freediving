@@ -1,6 +1,6 @@
 # Project State: Freediving Breathhold Trainer
 
-**Last updated:** 2025-03-20 — Phases 27–29 executed; phases 1–29 complete; Phase 30 next
+**Last updated:** 2025-03-20 — Phases 27–29 executed; phases 1–29 complete; Phase 30 next; Phases 31–32 added to roadmap
 
 ---
 
@@ -32,7 +32,7 @@
 | Metric              | Value |
 | ------------------- | ----- |
 | Phases complete     | 29    |
-| Phases total        | 30    |
+| Phases total        | 32    |
 | Requirements mapped | 17/17 |
 | Plans executed      | 29    |
 
@@ -81,6 +81,8 @@
 - [x] Phase 28: Create Plan Tab + Multi-Modal Create/Refine + Preview Feedback (28-PLAN.md)
 - [x] Phase 29: E2E Tests (29-PLAN.md)
 - [ ] Phase 30: Dockerize MySQL + Change Database Type (30-CONTEXT.md)
+- [ ] Phase 31: UI Polish (31-PLAN.md)
+- [ ] Phase 32: Multi-Program Switching (32-PLAN.md)
 
 ### Blockers
 
