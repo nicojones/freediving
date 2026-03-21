@@ -11,6 +11,7 @@ import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSecti
 import { ConfirmSwitchPlanModal } from '@/src/components/settings/ConfirmSwitchPlanModal';
 import { useTraining } from '@/src/hooks/useTraining';
 import { fetchCompletions } from '@/src/services/progressService';
+import { fetchPlansFromApi } from '@/src/services/planService';
 import type { PlanWithMeta } from '@/src/types/plan';
 
 const filterPlans = (
@@ -51,22 +52,26 @@ export const PlansView = () => {
 
   const filteredPlans = filterPlans(availablePlans, filter, user?.id);
 
-  const refreshPlanProgress = useCallback(async () => {
-    if (!user || availablePlans.length === 0) {
-      return;
-    }
-    const results = await Promise.all(
-      availablePlans.map(async (p) => {
-        const c = await fetchCompletions(p.id);
-        return { id: p.id, completed: c.length, total: p.days.length };
-      })
-    );
-    const record: Record<string, { completed: number; total: number }> = {};
-    for (const r of results) {
-      record[r.id] = { completed: r.completed, total: r.total };
-    }
-    setPlanProgress(record);
-  }, [user, availablePlans]);
+  const refreshPlanProgress = useCallback(
+    async (plansOverride?: PlanWithMeta[]) => {
+      const plans = plansOverride ?? availablePlans;
+      if (!user || plans.length === 0) {
+        return;
+      }
+      const results = await Promise.all(
+        plans.map(async (p) => {
+          const c = await fetchCompletions(p.id);
+          return { id: p.id, completed: c.length, total: p.days.length };
+        })
+      );
+      const record: Record<string, { completed: number; total: number }> = {};
+      for (const r of results) {
+        record[r.id] = { completed: r.completed, total: r.total };
+      }
+      setPlanProgress(record);
+    },
+    [user, availablePlans]
+  );
 
   useEffect(() => {
     refreshPlanProgress();
@@ -86,7 +91,9 @@ export const PlansView = () => {
   const handleConfirmPlanChange = async () => {
     if (confirmPlanChange?.pendingPlanId) {
       await setActivePlan(confirmPlanChange.pendingPlanId);
-      await refreshPlanProgress();
+      // Use fresh plans — closure may have stale availablePlans before React re-renders.
+      const freshPlans = await fetchPlansFromApi();
+      await refreshPlanProgress(freshPlans);
     }
     handleCloseConfirm();
   };
