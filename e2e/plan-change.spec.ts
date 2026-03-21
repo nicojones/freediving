@@ -65,6 +65,7 @@ test('progress is preserved when switching plans', async ({ page }) => {
       .getByTestId('plan-selector-option')
       .filter({ has: page.locator('[data-testid^="plan-progress-"]').filter({ hasText: /^1\// }) })
       .first();
+    await expect(planAOption).toBeVisible({ timeout: 15000 });
     await planAOption.click();
     await page.getByTestId('confirm-switch-plan-confirm').click();
     await page.getByTestId('confirm-switch-plan-modal').waitFor({ state: 'detached' });

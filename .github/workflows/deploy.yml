@@ -83,7 +83,6 @@ jobs:
           cp -r .next/static .next/standalone/.next/
           cp start_freediving.sh .next/standalone/
           mkdir -p .next/standalone/src .next/standalone/scripts
-          cp -r src/data .next/standalone/src/
           cd .next/standalone && zip -r ../../build.zip . && cd ../..
 
       - name: 🚀 Upload build to Server

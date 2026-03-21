@@ -94,9 +94,14 @@ const verifyPlanCreation = async (
     await page.getByTestId('nav-plans').click();
     await page.waitForURL(/\/plans/);
     await expect(planSelector).toBeVisible({ timeout: 5000 });
-    await page.locator(`[data-plan-name="${planName}"]`).click();
+    const planCard = page.locator(`[data-plan-name="${planName}"]`);
+    await expect(planCard).toBeVisible({ timeout: 10000 });
+    await planCard.click();
     await page.getByTestId('confirm-switch-plan-confirm').click();
     await page.getByTestId('confirm-switch-plan-modal').waitFor({ state: 'detached' });
+    await expect(page.getByTestId('active-plan-section')).toContainText(planName, {
+      timeout: 10000,
+    });
 
     await page.getByTestId('nav-training').click();
     await page.waitForURL(/\/(?!plans|settings)/);
