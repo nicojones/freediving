@@ -1,47 +1,40 @@
-import Database from 'better-sqlite3';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import bcrypt from 'bcrypt';
+import type { PoolConnection } from 'mysql2/promise';
+import { getDbConnection } from './db.config';
+import { runMigrations } from './migrate';
 
-const DB_PATH = process.env.FREEDIVING_DB_PATH || join(process.cwd(), 'data.db');
+let initialized = false;
 
-export const db = new Database(DB_PATH, { readonly: false });
-db.pragma('journal_mode = DELETE');
-db.pragma('temp_store = MEMORY');
-
-if (process.env.NODE_ENV !== 'test') {
-  console.log('Database:', DB_PATH);
-}
-
-export function runSchema() {
-  const schemaPath = join(process.cwd(), 'lib', 'schema.sql');
-  const schema = readFileSync(schemaPath, 'utf-8');
-  db.exec(schema);
-}
-
-/** Add created_by to plans if missing (Phase 22 migration) */
-function migratePlansCreatedBy() {
-  const info = db.prepare('PRAGMA table_info(plans)').all() as { name: string }[];
-  if (info.some((c) => c.name === 'created_by')) {
+export async function initDb(): Promise<void> {
+  if (initialized) {
     return;
   }
-  db.exec('ALTER TABLE plans ADD COLUMN created_by INTEGER REFERENCES users(id)');
+  const [connection, release] = await getDbConnection();
+  try {
+    await runMigrations(connection);
+    await seedUsers(connection);
+    initialized = true;
+    if (process.env.NODE_ENV !== 'test') {
+      console.log('Database ready');
+    }
+  } finally {
+    release();
+  }
 }
 
-export function seedUsers() {
+export async function seedUsers(connection: PoolConnection): Promise<void> {
   const nicoPassword = process.env.USER_PASSWORD_NICO || 'password';
   const athenaPassword = process.env.USER_PASSWORD_ATHENA || 'password';
 
-  const nicoHash = bcrypt.hashSync(nicoPassword, 10);
-  const athenaHash = bcrypt.hashSync(athenaPassword, 10);
+  const nicoHash = await bcrypt.hash(nicoPassword, 10);
+  const athenaHash = await bcrypt.hash(athenaPassword, 10);
 
-  const insert = db.prepare(`
-    INSERT OR IGNORE INTO users (username, password_hash) VALUES (?, ?)
-  `);
-  insert.run('nico', nicoHash);
-  insert.run('athena', athenaHash);
+  await connection.execute('INSERT IGNORE INTO users (username, password_hash) VALUES (?, ?)', [
+    'nico',
+    nicoHash,
+  ]);
+  await connection.execute('INSERT IGNORE INTO users (username, password_hash) VALUES (?, ?)', [
+    'athena',
+    athenaHash,
+  ]);
 }
-
-runSchema();
-migratePlansCreatedBy();
-seedUsers();

@@ -10,7 +10,7 @@ export default defineConfig({
     command: `npx next dev -p ${E2E_PORT}`,
     url: `http://localhost:${E2E_PORT}/api/auth/me`,
     env: {
-      FREEDIVING_DB_PATH: ':memory:',
+      ...process.env,
       NODE_ENV: 'test',
     },
     timeout: 90000,

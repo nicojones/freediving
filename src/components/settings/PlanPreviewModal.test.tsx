@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { PlanPreviewModal } from './PlanPreviewModal';
+import { PlanWithMeta } from '@/src/types/plan';
 
 const MOCK_PLAN = {
   id: 'preview-plan',
@@ -21,7 +22,7 @@ const MOCK_PLAN = {
       rest: true,
     },
   ],
-};
+} as const satisfies PlanWithMeta;
 
 describe('PlanPreviewModal', () => {
   it('renders nothing when closed', () => {
@@ -38,8 +39,8 @@ describe('PlanPreviewModal', () => {
     expect(screen.getByText('Day 2')).toBeInTheDocument();
   });
 
-  it('shows rest day for day with rest: true', () => {
+  it('shows rest day for day with rest: true', async () => {
     render(<PlanPreviewModal isOpen onClose={() => {}} plan={MOCK_PLAN} />);
-    expect(screen.getByText('Rest day')).toBeInTheDocument();
+    expect(await screen.findByText('Rest day')).toBeInTheDocument();
   });
 });

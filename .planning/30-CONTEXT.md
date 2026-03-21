@@ -11,13 +11,13 @@
 ### 1. Change Database Type: SQLite → MySQL
 
 - **Rationale:** Production server already has MySQL; align dev and prod for consistency.
-- **Change:** Replace `better-sqlite3` with a MySQL client (e.g. `mysql2` or `mysql`).
+- **Change:** Replace `better-sqlite3` with `mysql2` (promise-based, widely used).
 - **Scope:** Backend only; IndexedDB/offline queue in `src/services/offlineQueue.ts` stays (client-side, unrelated).
 
 ### 2. Dockerize MySQL for Dev/Local
 
 - **Rationale:** One-command local DB; no manual MySQL install on dev machines.
-- **Change:** Add `docker-compose.yml` (or similar) to run MySQL container for local development.
+- **Change:** Add `docker-compose.yml` to run MySQL container for local development. Optional `npm run db:up` / `npm run db:down` scripts.
 - **Production:** Server uses existing MySQL (not Docker); Docker is for dev only.
 
 ### 3. Server State: MySQL Exists, DB and Migrations Missing
@@ -32,23 +32,85 @@
 
 ### A. Migration Tool
 
-- **Decision:** No migration tool. Use raw SQL schema file(s); run on startup or via simple script.
-- **Rationale:** Keep it simple; no migration framework.
+- **Decision:** Versioned migrations (Alembic-style). Run automatically on app startup/deploy.
+- **Approach:** `migrations/001_initial.sql`, `002_add_created_by.sql`, etc.; `schema_migrations` table tracks applied migrations; custom runner (~50 lines) or Umzug.
+- **Rationale:** Supports future schema changes; no migration framework dependency initially.
 
 ### B. MySQL Client Library
 
-- **Decision:** Decide as we go (TBD during implementation).
+- **Decision:** `mysql2` (promise-based, widely used).
 
 ### C. E2E/Test Database
 
-- **Decision:** Yes — E2E runs against MySQL. Create a dedicated test user per run.
-- **Naming:** `test_{timestamp}` (e.g. `test_1710932400`).
-- **Rationale:** Isolated test user; no pollution of real data.
+- **Decision:** Fresh database per E2E run: `freediving_test_${timestamp}`.
+- **Rationale:** No pollution between runs; works locally and in CI; each run gets a clean DB.
+- **Implementation:** `scripts/run-e2e-with-fresh-db.mjs` creates DB, spawns Playwright with `DB_NAME` env.
 
-### D. Connection String / Env Vars
+### D. CI
 
-- **Local/dev:** You (implementer) choose the env var names; MySQL must be installed locally (or via Docker).
-- **Server:** User will provide env vars; no need to prescribe exact names in code.
+- **Decision:** MySQL in GitHub Actions. E2E runs against MySQL (service container).
+
+### E. Data Migration
+
+- **Decision:** None. Fresh install only. No SQLite → MySQL data migration.
+
+### F. Connection String / Env Vars
+
+- **Local/dev:** Implementer chooses env var names; MySQL via Docker.
+- **Server:** User provides env vars; app runs migrations on startup.
+
+### G. DB Config Pattern (required)
+
+- **Rationale:** Avoids connection pool exhaustion and OOO (out-of-order) issues on the server — singleton pool across hot reloads.
+- **Pattern:** `lib/db.config.ts` (or `lib/db.ts`) MUST follow the structure below.
+- **Env vars:** `DB_HOST`, `DB_USER`, `DB_NAME`, `DB_PASS`, `DB_PORT` (optional).
+- **Dependencies:** `mysql2`, `named-placeholders`.
+
+```ts
+'use server';
+
+import mysql from 'mysql2/promise';
+// @ts-expect-error invalid Typescript
+import named from 'named-placeholders';
+
+const globalForDb = global as unknown as { dbPool: mysql.Pool };
+
+globalForDb.dbPool =
+  globalForDb.dbPool ||
+  mysql.createPool({
+    host: process.env.DB_HOST ?? '',
+    user: process.env.DB_USER ?? '',
+    database: process.env.DB_NAME ?? '',
+    password: process.env.DB_PASS ?? '',
+    ...(process.env.DB_PORT ? { port: +process.env.DB_PORT } : {}),
+    waitForConnections: true,
+    connectionLimit: 10,
+    maxIdle: 10,
+    idleTimeout: 60000,
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+    namedPlaceholders: true,
+  });
+
+const dbPool = globalForDb.dbPool;
+
+export const getDbConnection = async (): Promise<[mysql.PoolConnection, () => void]> => {
+  const connection = await dbPool.getConnection();
+  return [
+    connection,
+    () => {
+      dbPool.releaseConnection(connection);
+      connection.release();
+    },
+  ];
+};
+
+export const namedPlaceholders: (
+  q: string,
+  p: Record<string, unknown>
+) => { sql: string; values: unknown[] } = named();
+```
 
 ---
 
@@ -59,7 +121,7 @@
 | File                                | Usage                                                                                                  |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `lib/db.ts`                         | `better-sqlite3`; `runSchema()`; `migratePlansCreatedBy()`; `seedUsers()`; `db.prepare()`, `db.exec()` |
-| `lib/schema.sql`                    | SQLite DDL: `INTEGER PRIMARY KEY AUTOINCREMENT`, `TEXT`, `INTEGER`                                     |
+| `lib/schema.sql`                    | SQLite DDL (will become `migrations/001_initial.sql` etc.)                                             |
 | `app/api/auth/login/route.ts`       | `db.prepare('SELECT ...').get()`                                                                       |
 | `app/api/user/active-plan/route.ts` | `db.prepare().get()`, `db.prepare().run()`                                                             |
 | `app/api/progress/route.ts`         | `db.prepare()` for GET, POST, DELETE                                                                   |
@@ -83,7 +145,7 @@
 
 ## Server Setup Guide (for user)
 
-_This section guides you through the server changes. Execute these steps on your production server (DigitalOcean or similar) when ready._
+_See **`docs/SERVER-SETUP.md`** for the full step-by-step guide. Summary below._
 
 ### Prerequisites
 
@@ -107,29 +169,21 @@ EXIT;
 
 Replace `YOUR_SECURE_PASSWORD` with a strong password. Store it in your env (see Step 3).
 
-### Step 2: Run Schema
+### Step 2: Run Migrations
 
-_After Phase 30 implementation, schema will be MySQL-compatible. No migration tool — raw SQL run on startup or via script._
-
-```bash
-# From the app directory on the server (or as part of deploy)
-# App may run schema on startup; or manual:
-mysql -u freediving -p freediving < lib/schema.sql
-```
+_App runs migrations automatically on startup. No manual step — ensure app has DB access and restart; migrations apply on first connect._
 
 ### Step 3: Configure Environment Variables
 
 Add to your server's env (e.g. `/etc/systemd/system/freediving.service.d/override.conf` or `.env.production`):
 
 ```bash
-# MySQL connection (exact names TBD in plan)
-DATABASE_URL=mysql://freediving:YOUR_SECURE_PASSWORD@localhost:3306/freediving
-# Or separate vars:
-# MYSQL_HOST=localhost
-# MYSQL_PORT=3306
-# MYSQL_USER=freediving
-# MYSQL_PASSWORD=YOUR_SECURE_PASSWORD
-# MYSQL_DATABASE=freediving
+# MySQL connection (required by db.config.ts)
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=freediving
+DB_PASS=YOUR_SECURE_PASSWORD
+DB_NAME=freediving
 ```
 
 Remove or stop using `FREEDIVING_DB_PATH` once migration is complete.
@@ -148,20 +202,13 @@ sudo systemctl restart freediving
 
 ### Optional: Backup Before Migration
 
-If you have existing SQLite data on the server:
-
-```bash
-# Backup SQLite DB
-cp /path/to/data.db /path/to/data.db.backup.$(date +%Y%m%d)
-```
-
-Data migration (SQLite → MySQL) is a separate concern; Phase 30 may assume fresh install or a one-time migration script (TBD in plan).
+_Phase 30 assumes fresh install. No SQLite → MySQL data migration._
 
 ---
 
 ## Out of Scope for Phase 30
 
-- Data migration from existing SQLite to MySQL (unless explicitly in plan)
+- Data migration from existing SQLite to MySQL (fresh install only)
 - Changing IndexedDB/offline queue (client-side)
 - Changing deployment target (still DigitalOcean)
 
@@ -169,16 +216,18 @@ Data migration (SQLite → MySQL) is a separate concern; Phase 30 may assume fre
 
 ## Traceability
 
-| Decision     | Outcome                                                                    |
-| ------------ | -------------------------------------------------------------------------- |
-| DB type      | MySQL (replace SQLite)                                                     |
-| Docker       | MySQL in Docker for dev/local only                                         |
-| Migration    | No migration tool; raw SQL schema                                          |
-| Env vars     | Local: implementer chooses; MySQL installed. Server: user provides         |
-| E2E          | Create test user `test_{timestamp}`; run E2E against MySQL                 |
-| Server       | Use existing MySQL; create `freediving` DB; run migrations; document steps |
-| Server guide | Create DB, run migrations, env vars, restart, verify                       |
+| Decision     | Outcome                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------- |
+| DB type      | MySQL (replace SQLite); client: `mysql2`                                                          |
+| Docker       | `docker-compose.yml` for dev/local; optional npm scripts                                          |
+| Migration    | Versioned migrations; run on startup/deploy (Alembic-style)                                       |
+| Env vars     | `DB_HOST`, `DB_USER`, `DB_NAME`, `DB_PASS`, `DB_PORT` (db.config.ts)                              |
+| E2E          | Fresh DB `freediving_test_${timestamp}` per run; script creates it, spawns Playwright             |
+| CI           | MySQL service container in GitHub Actions                                                         |
+| Data         | Fresh install only; no SQLite → MySQL migration                                                   |
+| Server       | Use existing MySQL; create `freediving` DB; app runs migrations on start                          |
+| Server guide | `docs/SERVER-SETUP.md` — step-by-step: create DB, env vars, restart; migrations run automatically |
 
 ---
 
-_Context captured from /gsd-add-phase 30 + /gsd-discuss-phase 30_
+_Context captured from /gsd-add-phase 30 + /gsd-discuss-phase 30 + discussion 2025-03-21_
