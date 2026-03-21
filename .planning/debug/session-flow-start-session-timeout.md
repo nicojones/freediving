@@ -1,6 +1,6 @@
 ---
 status: verifying
-trigger: "Investigate and fix: session-flow Start Session timeout"
+trigger: 'Investigate and fix: session-flow Start Session timeout'
 created: 2025-03-21T00:00:00Z
 updated: 2025-03-21T00:00:00Z
 ---
@@ -14,13 +14,13 @@ next_action: Human verify in environment with working DB (CI or local .env).
 
 ## Symptoms
 
-| Field | Value |
-|-------|-------|
-| **expected** | "Start Session" button visible after login, to open session preview |
-| **actual** | Button never appears; test times out |
-| **errors** | `locator.click: Test timeout of 90000ms exceeded` — waiting for `getByRole('button', { name: /Start Session/i }).first()` |
-| **reproduction** | Run `npx playwright test e2e/session-flow.spec.ts` |
-| **timeline** | Unknown |
+| Field            | Value                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **expected**     | "Start Session" button visible after login, to open session preview                                                       |
+| **actual**       | Button never appears; test times out                                                                                      |
+| **errors**       | `locator.click: Test timeout of 90000ms exceeded` — waiting for `getByRole('button', { name: /Start Session/i }).first()` |
+| **reproduction** | Run `npx playwright test e2e/session-flow.spec.ts`                                                                        |
+| **timeline**     | Unknown                                                                                                                   |
 
 ## Eliminated
 
