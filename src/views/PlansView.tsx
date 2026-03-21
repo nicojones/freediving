@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { TopAppBar } from '@/src/components/layout/TopAppBar';
-import { BottomNavBar } from '@/src/components/layout/BottomNavBar';
+import { TabPageLayout } from '@/src/components/layout/TabPageLayout';
 import { PlanSelectorSection } from '@/src/components/settings/PlanSelectorSection';
 import { ConfirmResetModal } from '@/src/components/settings/ConfirmResetModal';
 import { useTraining } from '@/src/hooks/useTraining';
@@ -44,33 +43,24 @@ export function PlansView() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden max-sm:px-1!">
-      <TopAppBar variant="dashboard" />
-      <main className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300 content-surface-gradient">
-        <section className="mb-12">
-          <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none mb-2">
-            Plans
-          </h1>
-          <p className="text-on-surface-variant font-body text-sm max-w-[80%] mb-10">
-            Choose your training plan or create a new one in the Create tab.
-          </p>
-
-          <PlanSelectorSection
-            availablePlans={availablePlans}
-            activePlanId={activePlanId}
-            currentUserId={user?.id}
-            onPlanChange={handlePlanChange}
-            onPlanDeleted={refreshAvailablePlans}
-          />
-        </section>
-      </main>
-      <BottomNavBar
+    <>
+      <TabPageLayout
+        title="Plans"
+        subheader="Choose your training plan or create a new one in the Create tab."
         activeTab="plans"
         onTrainingClick={() => router.push('/')}
         onPlansClick={() => {}}
         onCreateClick={() => router.push('/create')}
         onSettingsClick={() => router.push('/settings')}
-      />
+      >
+        <PlanSelectorSection
+          availablePlans={availablePlans}
+          activePlanId={activePlanId}
+          currentUserId={user?.id}
+          onPlanChange={handlePlanChange}
+          onPlanDeleted={refreshAvailablePlans}
+        />
+      </TabPageLayout>
 
       <ConfirmResetModal
         isOpen={confirmPlanChange !== null}
@@ -84,6 +74,6 @@ export function PlansView() {
           </>
         }
       />
-    </div>
+    </>
   );
 }

@@ -655,7 +655,7 @@
 3. Switching plan asks for confirmation; does NOT open the Reset prompt
 4. Users may train different skills at once by switching between plans
 
-**Plans:** `.planning/32-PLAN.md` (TBD — task breakdown)
+**Plans:** `.planning/32-PLAN.md`
 
 ---
 

@@ -34,7 +34,7 @@ export function ActiveSessionView() {
 
   return (
     <div className="min-h-screen bg-background font-body selection:bg-primary/30 flex flex-col">
-      <TopAppBar variant="active-session" />
+      <TopAppBar />
       <main className="flex-1 min-h-0 overflow-auto flex flex-col px-8 pt-4 pb-48 items-center">
         <div className="w-full shrink-0 mt-2 mb-4">
           <div className="flex justify-between items-end mb-3">

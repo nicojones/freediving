@@ -11,7 +11,7 @@ export function SessionCompleteView() {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopAppBar variant="dashboard" />
+      <TopAppBar />
       <main className="px-6 pt-8 pb-32 max-w-2xl mx-auto">
         <div className="bg-surface-container-low rounded-3xl p-8 text-center">
           <span

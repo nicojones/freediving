@@ -55,7 +55,7 @@ function AppContent({ children }: ChildrenNode) {
   if (error) {
     return (
       <main className="min-h-screen bg-background text-on-surface p-8 max-w-2xl mx-auto">
-        <TopAppBar variant="dashboard" />
+        <TopAppBar />
         <div className="pt-8">
           <p className="text-error font-body mb-4">{error}</p>
           <button onClick={handleLogout} className="text-primary font-label hover:underline">
@@ -69,7 +69,7 @@ function AppContent({ children }: ChildrenNode) {
   if (isNil(plan)) {
     return (
       <main className="min-h-screen bg-background text-on-surface p-8 max-w-2xl mx-auto">
-        <TopAppBar variant="dashboard" />
+        <TopAppBar />
         <div className="pt-8">
           <Loader label="Loading plan…" className="mb-4" />
           <button onClick={handleLogout} className="text-primary font-label hover:underline">

@@ -1,8 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { TopAppBar } from '../layout/TopAppBar';
-import { BottomNavBar } from '../layout/BottomNavBar';
+import { TabPageLayout } from '../layout/TabPageLayout';
 import { DevModeSection } from './DevModeSection';
 import { ResetProgressSection } from './ResetProgressSection';
 import { ConfirmResetModal } from './ConfirmResetModal';
@@ -32,17 +31,17 @@ export function SettingsView() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden max-sm:px-1!">
-      <TopAppBar variant="dashboard" />
-      <main className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300 content-surface-gradient">
-        <section className="mb-12 flex flex-col gap-y-6">
-          <h1 className="font-headline text-[2.5rem] font-extrabold tracking-tight leading-none">
-            Settings
-          </h1>
-          <p className="text-on-surface-variant font-body text-sm max-w-[80%]">
-            Account and app preferences.
-          </p>
-
+    <>
+      <TabPageLayout
+        title="Settings"
+        subheader="Account and app preferences."
+        activeTab="settings"
+        onTrainingClick={() => router.push('/')}
+        onPlansClick={() => router.push('/plans')}
+        onCreateClick={() => router.push('/create')}
+        onSettingsClick={() => {}}
+      >
+        <div className="flex flex-col gap-y-6">
           <InstallPrompt variant="compact" />
 
           <ResetProgressSection onRequestReset={handleRequestReset} />
@@ -65,15 +64,8 @@ export function SettingsView() {
           <div className="text-center pb-8">
             <VersionFooter />
           </div>
-        </section>
-      </main>
-      <BottomNavBar
-        activeTab="settings"
-        onTrainingClick={() => router.push('/')}
-        onPlansClick={() => router.push('/plans')}
-        onCreateClick={() => router.push('/create')}
-        onSettingsClick={() => {}}
-      />
+        </div>
+      </TabPageLayout>
 
       <ConfirmResetModal
         isOpen={confirmReset}
@@ -87,6 +79,6 @@ export function SettingsView() {
           </>
         }
       />
-    </div>
+    </>
   );
 }

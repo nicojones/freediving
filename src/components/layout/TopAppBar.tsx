@@ -1,16 +1,12 @@
 import { APP_NAME } from '../../constants/app';
 import { FishIcon } from '../ui/FishIcon';
 
-type TopAppBarVariant = 'dashboard' | 'session-preview' | 'active-session';
-
 interface TopAppBarProps {
-  variant: TopAppBarVariant;
   weekLabel?: string;
   onBack?: () => void;
-  onShare?: () => void;
 }
 
-export function TopAppBar({ variant, weekLabel, onBack, onShare }: TopAppBarProps) {
+export function TopAppBar({ weekLabel, onBack }: TopAppBarProps) {
   return (
     <>
       <div className="h-16 w-full" />
@@ -35,26 +31,12 @@ export function TopAppBar({ variant, weekLabel, onBack, onShare }: TopAppBarProp
           </span>
         </div>
         <div className="flex items-center gap-4">
-          {variant === 'dashboard' && weekLabel && (
+          {weekLabel && (
             <div className="flex flex-col items-end">
               <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em]">
                 {weekLabel}
               </span>
             </div>
-          )}
-          {variant === 'session-preview' && (
-            <>
-              {onShare && (
-                <button
-                  type="button"
-                  onClick={onShare}
-                  className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-400 p-2 rounded-full"
-                  aria-label="Share"
-                >
-                  <span className="material-symbols-outlined">share</span>
-                </button>
-              )}
-            </>
           )}
         </div>
       </header>

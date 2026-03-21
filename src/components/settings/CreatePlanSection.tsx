@@ -22,9 +22,6 @@ export function CreatePlanSection({ onPlanCreated, onNavigateToPlans }: CreatePl
       <h2 className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-3">
         Create plan
       </h2>
-      <p className="text-on-surface-variant font-body text-sm mb-4">
-        Describe your plan in natural language, paste JSON, or explain with voice.
-      </p>
 
       <TabGroup>
         <TabList className="flex gap-2 border-b border-outline-variant/30 mb-4">
