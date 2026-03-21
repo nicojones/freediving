@@ -29,28 +29,33 @@ const fixturePlan: Plan = [
 
 describe('planService', () => {
   describe('getAvailablePlans', () => {
-    it('returns array of plans', () => {
+    it('returns [] when no plans passed', () => {
       const plans = getAvailablePlans();
-      expect(Array.isArray(plans)).toBe(true);
-      if (plans.length > 0) {
-        expect(plans[0]).toHaveProperty('id');
-        expect(plans[0]).toHaveProperty('days');
-      }
+      expect(plans).toEqual([]);
+    });
+    it('returns passed plans when provided', () => {
+      const fixture = [
+        { id: 'p1', name: 'Plan 1', days: fixturePlan },
+      ] as import('../types/plan').PlanWithMeta[];
+      const plans = getAvailablePlans(fixture);
+      expect(plans).toEqual(fixture);
     });
   });
 
   describe('loadPlanById', () => {
-    it("returns plan for 'default' when available", () => {
-      const result = loadPlanById('default');
-      if ('error' in result) {
-        expect(result.error).toContain('Plan not found');
-      } else {
+    it('returns plan when plan is in list', () => {
+      const fixture = [
+        { id: 'default', name: 'Default', days: fixturePlan },
+      ] as import('../types/plan').PlanWithMeta[];
+      const result = loadPlanById('default', fixture);
+      expect(result).not.toHaveProperty('error');
+      if (!('error' in result)) {
         expect(result.id).toBe('default');
         expect(result.days).toBeDefined();
       }
     });
-    it('returns error for unknown plan id', () => {
-      const result = loadPlanById('nonexistent-plan-xyz');
+    it('returns error when plan not in list', () => {
+      const result = loadPlanById('nonexistent-plan-xyz', []);
       expect(result).toHaveProperty('error');
       expect((result as { error: string }).error).toContain('Plan not found');
     });

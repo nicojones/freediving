@@ -38,6 +38,9 @@ export const planWithMetaSchema = z.object({
     .positive()
     .optional()
     .describe('User id who created this plan (DB plans only); undefined for bundled plans'),
+  public: z.boolean().optional().describe('Whether plan is public'),
+  published_on: z.string().nullable().optional().describe('ISO date when published'),
+  creator_name: z.string().optional().describe('Display name of creator (never email)'),
 });
 
 export type Phase = z.infer<typeof phaseSchema>;
