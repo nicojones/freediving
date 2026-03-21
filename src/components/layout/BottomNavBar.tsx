@@ -44,8 +44,8 @@ export const BottomNavBar = memo(function BottomNavBar({
       </button>
       <button
         type="button"
-        data-testid="nav-plans"
         onClick={onPlansClick}
+        data-testid="nav-plans"
         className={clsx(
           'flex flex-col items-center justify-center rounded-2xl px-4 py-2 min-h-[44px] min-w-[44px] transition-all duration-400',
           {
