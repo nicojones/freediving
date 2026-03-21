@@ -38,7 +38,9 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           timer
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Training</span>
+        {activeTab === 'training' && (
+          <span className="font-label text-xs font-medium uppercase tracking-widest">Training</span>
+        )}
       </button>
       <button
         type="button"
@@ -59,7 +61,9 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           library_books
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Plans</span>
+        {activeTab === 'plans' && (
+          <span className="font-label text-xs font-medium uppercase tracking-widest">Plans</span>
+        )}
       </button>
       <button
         type="button"
@@ -80,7 +84,9 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           add_circle
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Create</span>
+        {activeTab === 'create' && (
+          <span className="font-label text-xs font-medium uppercase tracking-widest">Create</span>
+        )}
       </button>
       <button
         type="button"
@@ -101,7 +107,9 @@ export const BottomNavBar = memo(function BottomNavBar({
         >
           settings
         </span>
-        <span className="font-label text-xs font-medium uppercase tracking-widest">Settings</span>
+        {activeTab === 'settings' && (
+          <span className="font-label text-xs font-medium uppercase tracking-widest">Settings</span>
+        )}
       </button>
     </nav>
   );

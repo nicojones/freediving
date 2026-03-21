@@ -45,7 +45,7 @@ export function PlansView() {
 
   return (
     <div className="min-h-screen bg-background pb-32 min-w-0 overflow-x-hidden">
-      <TopAppBar variant="dashboard" weekLabel="Plans" />
+      <TopAppBar variant="dashboard" />
       <main
         className="px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300"
         style={{

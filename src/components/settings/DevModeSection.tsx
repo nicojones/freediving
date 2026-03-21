@@ -7,10 +7,10 @@ export function DevModeSection() {
 
   return (
     <div
-      className="bg-surface-container-low rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/30"
+      className="bg-surface-container-low/50 rounded-3xl p-6 mb-6 overflow-hidden border border-outline-variant/20"
       data-testid="dev-mode-section"
     >
-      <h2 className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-3">
+      <h2 className="font-label text-[9px] uppercase tracking-[0.2em] text-on-surface-variant/70 mb-3">
         Developer
       </h2>
       <label className="flex items-center gap-3 cursor-pointer">
