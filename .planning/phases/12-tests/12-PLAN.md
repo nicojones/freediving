@@ -81,7 +81,7 @@ Add unit tests across the application; add simple E2E tests that use an isolated
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/12-CONTEXT.md
+- 12-CONTEXT.md
 - @.planning/phases/12-tests/12-RESEARCH.md
 
 **Existing:** Phases 1–11 complete. No test framework installed. Server uses FREEDIVING_DB_PATH; Vite proxies /api to backend.

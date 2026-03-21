@@ -4,7 +4,7 @@ A PWA for training freediving breathholds. Users follow audio cues through hold/
 
 ## Adding or modifying plans
 
-Edit JSON files in `src/data/`. Add new files (e.g. `plan-b.json`) or modify `default-plan.json`. Commit and deploy. No in-app editor.
+Plans come from the database (seeded via migrations). Create plans via the in-app Create flow or API. No bundled JSON files.
 
 ## Development
 

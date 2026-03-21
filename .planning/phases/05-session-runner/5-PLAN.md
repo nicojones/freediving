@@ -48,7 +48,7 @@ Implement Session Runner + Plan/Day Selector so users can select a day, view ses
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/5-CONTEXT.md
+- 5-CONTEXT.md
 - @.planning/phases/05-session-runner/05-RESEARCH.md
 
 **Existing:** Phases 1–4 complete. Plan Service, Progress Service, Timer Engine, Audio Service exist. App currently hardcodes day 0; session_complete does not call recordCompletion.

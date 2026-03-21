@@ -112,7 +112,7 @@ Add a feature in Settings to create new training plans. Two paths:
 
 ### Task 5: Storage Pros/Cons Documentation
 
-**Files:** `.planning/19-STORAGE.md` (new) or inline in plan
+**Files:** `19-STORAGE.md` (new) or inline in plan
 
 **Action:**
 

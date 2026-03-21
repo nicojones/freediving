@@ -11,9 +11,16 @@ test('user can change plan', async ({ page }) => {
   await page.waitForURL(/\/plans/);
   const planSelector = page.getByTestId('plan-selector');
   await expect(planSelector).toBeVisible({ timeout: 5000 });
-  const optionCount = await page.getByTestId('plan-selector-option').count();
+  const options = page.getByTestId('plan-selector-option');
+  const optionCount = await options.count();
   if (optionCount > 1) {
-    await page.getByTestId('plan-selector-option').nth(1).click();
+    const firstOption = options.nth(0);
+    const secondOption = options.nth(1);
+    const firstIsActive = await firstOption.evaluate((el) =>
+      el.classList.contains('bg-primary/10')
+    );
+    const toSwitch = firstIsActive ? secondOption : firstOption;
+    await toSwitch.click();
     await page.getByTestId('confirm-switch-plan-confirm').click();
     await page.getByTestId('confirm-switch-plan-modal').waitFor({ state: 'detached' });
   }
@@ -66,6 +73,11 @@ test('progress is preserved when switching plans', async ({ page }) => {
   // Back to dashboard: completed day should still be shown as done
   await page.getByTestId('nav-training').click();
   await page.waitForURL(/\/(day\/[^/]+)?$/);
-  await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 5000 });
+  // If we landed on session preview (day view), click Back to reach day list
+  const backBtn = page.getByTestId('back-button');
+  if (await backBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await backBtn.click();
+  }
+  await expect(page.getByTestId('dashboard-day-list')).toBeVisible({ timeout: 15000 });
   await expect(page.getByText('Done')).toBeVisible();
 });

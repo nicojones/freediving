@@ -3,7 +3,7 @@
 **Researched:** 2025-03-21  
 **Domain:** Magic link auth, email sending, template rendering, token security  
 **Confidence:** HIGH  
-**Context:** `.planning/33-CONTEXT.md`, `.planning/research/SIGN-UP.md`
+**Context:** `33-CONTEXT.md`, `.planning/research/SIGN-UP.md`
 
 ## Summary
 

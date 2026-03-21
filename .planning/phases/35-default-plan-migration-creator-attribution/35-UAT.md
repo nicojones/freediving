@@ -10,6 +10,34 @@ updated: 2025-03-21T12:00:00Z
 
 All 8 tests completed. Four issues were diagnosed; all four fixes have been implemented (verify-work 2025-03-21). Ready for user re-verification.
 
+## E2E Regression (plan-change.spec.ts)
+
+Two plan-change E2E tests failed during verify-work. Diagnosis and fixes applied:
+
+### 1. user can change plan — timeout on confirm-switch-plan-confirm
+
+**Symptom:** Test times out (90s) waiting for `getByTestId('confirm-switch-plan-confirm')`.
+
+**Root cause:** Test always clicked `plan-selector-option.nth(1)`. If that option was already the active plan, `PlansView.handlePlanChange` returns early (no modal). The modal only appears when switching to a _different_ plan.
+
+**Fix:** Use the same logic as "progress is preserved" — detect the active option via `bg-primary/10` and click the non-active one.
+
+### 2. progress is preserved when switching plans — dashboard-day-list not found
+
+**Symptom:** `expect(getByTestId('dashboard-day-list')).toBeVisible()` fails (5s timeout).
+
+**Root cause:** After plan switch, nav-training navigates to `/`. The Dashboard may render SessionPreviewSection (day view) instead of DayListSection when `viewMode` persists as `session-preview`. `dashboard-day-list` only exists in DayListSection.
+
+**Fix:** If `back-button` is visible (session preview), click it to reach the day list. Increase timeout to 15s for plan load after switch.
+
+### Fixes Applied
+
+| File                             | Change                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------- |
+| e2e/plan-change.spec.ts          | "user can change plan": click non-active option (firstIsActive check)                 |
+| e2e/plan-change.spec.ts          | "progress is preserved": click back-button if visible; dashboard-day-list timeout 15s |
+| src/components/ui/BackButton.tsx | Add data-testid="back-button" for E2E                                                 |
+
 ## Tests
 
 ### 1. Cold Start Smoke Test

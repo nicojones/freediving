@@ -33,7 +33,7 @@ Add a Settings toggle (dev mode) to show/hide test controls. When unchecked, tes
 
 ## Context
 
-- @.planning/17-CONTEXT.md
+- 17-CONTEXT.md
 - @.planning/PROJECT.md
 
 **Existing:** Phase 8 added test toggle in SessionPreviewSection. TrainingContext holds `testMode` state; `relaxationSecondsOverride: testMode ? 3 : undefined` passed to session engine. User from `useTraining().user`.

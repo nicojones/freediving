@@ -63,7 +63,7 @@ Make the Freediving Breathhold Trainer installable as a PWA, functional offline,
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/6-CONTEXT.md
+- 6-CONTEXT.md
 - @.planning/phases/06-pwa-offline/06-RESEARCH.md
 
 **Existing:** Phases 1–5 complete. Vite 8, no PWA plugin. progressService.recordCompletion → POST /api/progress. TrainingContext calls recordCompletion on session_complete. Audio: hold.m4a, prepare.m4a, 30s.m4a, breathe.m4a in public/audio/. Dashboard is main training view. index.html has viewport meta; index.css has min-height max(884px, 100dvh); BottomNavBar has pb-safe.

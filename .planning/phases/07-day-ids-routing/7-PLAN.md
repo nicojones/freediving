@@ -61,7 +61,7 @@ Add stable day IDs to the plan schema, use them for completions and routing, and
 
 - @.planning/PROJECT.md
 - @.planning/ROADMAP.md
-- @.planning/7-CONTEXT.md
+- 7-CONTEXT.md
 
 **Existing:** Phases 1–6 complete. Plan is array of days; completions use `day_index`; no day in URL. Backend: `progress_completions` has `day_index INTEGER`.
 
@@ -146,7 +146,7 @@ Add stable day IDs to the plan schema, use them for completions and routing, and
        FOREIGN KEY (user_id) REFERENCES users(id)
      );
      ```
-   - Add `.planning/7-MIGRATION.md` with instructions: "To migrate from day_index: run script to map day_index → day_id via plan; or reset DB for fresh install."
+   - Add `7-MIGRATION.md` with instructions: "To migrate from day_index: run script to map day_index → day_id via plan; or reset DB for fresh install."
 2. Update `server/routes/progress.js`:
    - POST: accept `day_id` instead of `day_index`; validate `plan_id` and `day_id` present
    - GET: return `day_id` in completions
@@ -283,7 +283,7 @@ After completion:
 - `src/services/progressService.ts`, `offlineQueue.ts`, `completions.ts` — day_id
 - `src/App.tsx` — Route /day/:dayId
 - `src/pages/Dashboard.tsx` — URL sync, navigate on select
-- `.planning/7-MIGRATION.md` — migration notes for existing data
+- `7-MIGRATION.md` — migration notes for existing data
 
 ---
 
