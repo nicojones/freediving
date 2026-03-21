@@ -34,6 +34,6 @@ export async function runMigrations(connection: PoolConnection): Promise<void> {
     for (const stmt of statements) {
       await connection.query(stmt);
     }
-    await connection.query('INSERT INTO schema_migrations (name) VALUES (?)', [name]);
+    await connection.query('INSERT IGNORE INTO schema_migrations (name) VALUES (?)', [name]);
   }
 }

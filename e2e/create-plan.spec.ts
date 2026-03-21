@@ -246,12 +246,12 @@ test.describe('Create plan', () => {
     await expect(page.getByRole('button', { name: /stop recording/i })).toBeVisible({
       timeout: 3000,
     });
-    await page.getByRole('button', { name: /stop recording/i }).click();
-
-    await page.waitForResponse(
+    const transcribeResponse = page.waitForResponse(
       (res) => res.url().includes('/api/plans/transcribe') && res.status() === 200,
       { timeout: 15000 }
     );
+    await page.getByRole('button', { name: /stop recording/i }).click();
+    await transcribeResponse;
     await expect(page.getByTestId('create-plan-preview')).toBeVisible({ timeout: 10000 });
     await page.getByTestId('create-plan-confirm-button').click();
     await expect(page.getByTestId('confirm-plan-name')).toBeVisible({ timeout: 5000 });

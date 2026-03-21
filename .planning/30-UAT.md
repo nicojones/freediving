@@ -96,7 +96,7 @@ USER_PASSWORD_ATHENA=password
 | 6.1  | `npm run db:up`    | MySQL running                        |
 | 6.2  | `npm run test:e2e` | E2E passes; fresh DB created per run |
 
-**Result:** _Pending_
+**Result:** _12 passed_ (after migration fix + voice test race fix, 2025-03-21)
 
 ---
 
@@ -109,7 +109,36 @@ USER_PASSWORD_ATHENA=password
 | 3. Plans and active plan | Pending |
 | 4. Progress              | Pending |
 | 5. Migrations on startup | Pending |
-| 6. E2E with fresh DB     | Pending |
+| 6. E2E with fresh DB     | Pass    |
+
+---
+
+## E2E diagnosis (2025-03-21)
+
+### Issue 1: Migration race — `Duplicate entry '001_initial.sql' for key 'schema_migrations.PRIMARY'`
+
+**Symptom:** Multiple `initDb()` calls (from concurrent API requests) run migrations in parallel. Both pass the `SELECT` check, both run DDL, both `INSERT` into `schema_migrations` — second insert throws `ER_DUP_ENTRY`.
+
+**Root cause:** No locking around migration runner; Next.js server workers share DB but not in-memory `initialized` flag.
+
+**Fix applied:** `INSERT IGNORE` for `schema_migrations` in `lib/migrate.ts`. Duplicate inserts are silently ignored; migrations remain idempotent (CREATE TABLE IF NOT EXISTS, etc.).
+
+### Issue 2: E2E failures (2 tests) — resolved
+
+| Test                  | Error                                                              |
+| --------------------- | ------------------------------------------------------------------ |
+| `abort-session`       | Timeout 15s waiting for `dashboard-day-list` after login as athena |
+| `create-plan` (voice) | Timeout 15s waiting for `/api/plans/transcribe` response           |
+
+**Root cause (abort-session):** Migration race caused 500s on some API requests; login/plan requests failed intermittently. After migration fix, test passes.
+
+**Root cause (voice):** `waitForResponse` was called _after_ clicking "Stop recording". The mocked transcribe response can arrive in the same tick; by the time `waitForResponse` started listening, the response had already been received, so the test timed out.
+
+**Fix applied (voice):** Start `waitForResponse` _before_ the click, then await it after. Ensures we're listening when the mocked response arrives.
+
+### Issue 3: Webpack cache warning (non-blocking)
+
+`Caching failed for pack: ENOENT: rename ... 10.pack.gz_ -> 10.pack.gz` — known Next.js dev cache race; does not affect test outcomes.
 
 ---
 
@@ -117,5 +146,7 @@ USER_PASSWORD_ATHENA=password
 
 1. **Restart dev server** — env vars are loaded at startup.
 2. Run Test 1–4 manually in the browser.
-3. Update this file with pass/fail for each test.
-4. If any test fails, diagnose and prepare fix plan for `/gsd-execute-phase`.
+3. Re-run `npm run test:e2e` to verify migration fix resolves duplicate-entry errors.
+4. ~~If abort-session or voice tests still fail, investigate timing/mocking.~~ Voice test fixed (waitForResponse before click).
+5. Update this file with pass/fail for each test.
+6. If any test fails, diagnose and prepare fix plan for `/gsd-execute-phase`.
