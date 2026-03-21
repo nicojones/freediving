@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef, useCallback, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { DEFAULT_PLAN_ID } from '../constants/app';
 import {
   loadPlanById,
   fetchPlansFromApi,
@@ -23,6 +22,7 @@ import {
 import { hasCompletedToday } from '../utils/completions';
 import { useSessionEngine } from '../hooks/useSessionEngine';
 import { useDevMode } from '../hooks/useDevMode';
+import { DEFAULT_PLAN_ID } from '../constants/app';
 import type { Plan, PlanWithMeta } from '../types/plan';
 import isEmpty from 'lodash/isEmpty.js';
 import isNil from 'lodash/isNil.js';
@@ -87,14 +87,10 @@ export function TrainingProvider({ children }: { children: ReactNode }) {
       }
       const available = dbPlans;
 
-      let planId = await fetchActivePlan();
+      const planId = await fetchActivePlan();
       if (planId === null) {
-        planId = available[0].id;
-        const res = await apiSetActivePlan(planId);
-        if (!('ok' in res)) {
-          setError(res.error);
-          return;
-        }
+        setError('Failed to load active plan');
+        return;
       }
       if (cancelled) {
         return;

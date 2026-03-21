@@ -4,10 +4,14 @@
  * Playwright starts both servers via playwright.config.ts webServer.
  */
 import { test, expect } from '@playwright/test';
-import { loginAsAthena } from './helpers/login';
+import { loginAsAthena, e2eReset } from './helpers/login';
 
-// Session can take ~60s with 10x speed; allow up to 90s for flakiness
-test.setTimeout(90000);
+// Session can take ~19s with 100x speed (default plan Day 1); allow 60s total
+test.setTimeout(60000);
+
+test.beforeEach(async ({ request }) => {
+  await e2eReset(request);
+});
 
 test('user can complete a session with test mode', async ({ page }) => {
   await page.addInitScript(() => {
@@ -21,13 +25,14 @@ test('user can complete a session with test mode', async ({ page }) => {
     .first()
     .click();
 
-  // 3. Enable test mode (skips real timers) and set 10x speed
+  // 3. Enable test mode (skips real timers) and set 100x speed
+  // Default plan Day 1 is ~31 min real time; at 100x that's ~19s
   await page.getByTestId('test-mode-toggle').click();
-  await page.locator('[data-testid="speed-option"][data-testid-value="10"]').click();
+  await page.locator('[data-testid="speed-option"][data-testid-value="100"]').click();
 
   // 4. Start the session
   await page.getByTestId('start-session-button').click();
 
-  // 5. Assert session completes (complete button appears within 60s)
-  await expect(page.getByTestId('complete-session-button')).toBeVisible({ timeout: 60000 });
+  // 5. Assert session completes (complete button appears within 30s)
+  await expect(page.getByTestId('complete-session-button')).toBeVisible({ timeout: 30000 });
 });

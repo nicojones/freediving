@@ -2,8 +2,16 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import nextPlugin from '@next/eslint-plugin-next';
 
 export default tseslint.config(
+  // Next.js detects the plugin via calculateConfigForFile(configPath); config file is .mjs
+  // so we must include it in a block that has the plugin (see next.js#73655)
+  {
+    files: ['eslint.config.mjs'],
+    plugins: { '@next/next': nextPlugin },
+    rules: {},
+  },
   {
     ignores: [
       '**/node_modules/**',
@@ -24,6 +32,7 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      '@next/next': nextPlugin,
     },
     languageOptions: {
       parserOptions: {
@@ -36,6 +45,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      ...nextPlugin.configs.recommended.rules,
       'react-hooks/set-state-in-effect': 'off',
       'react-refresh/only-export-components': ['error', { allowConstantExport: true }],
       curly: ['error', 'all'],

@@ -1,5 +1,6 @@
 pre-commit:
   follow: true
+  parallel: false
   commands:
     '✨ format':
       glob: '*.{js,ts,jsx,tsx,json,css,scss,md,html,yml,yaml,mjs}'

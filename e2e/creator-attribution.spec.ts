@@ -3,7 +3,11 @@
  * Logged-in user sees default plan "4:00 Dry Breathhold" with "Created by Fishly".
  */
 import { test, expect } from '@playwright/test';
-import { loginAsAthena } from './helpers/login';
+import { loginAsAthena, e2eReset } from './helpers/login';
+
+test.beforeEach(async ({ request }) => {
+  await e2eReset(request);
+});
 
 test('logged-in user sees default plan with creator attribution in Plans tab', async ({ page }) => {
   await loginAsAthena(page);

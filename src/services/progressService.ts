@@ -64,14 +64,15 @@ export async function fetchCompletions(planId: string = 'default'): Promise<Comp
   return [];
 }
 
+/**
+ * Fetches the active plan ID. Server auto-sets default when none exists.
+ * Returns null only on 404 (no plans available) or other errors.
+ */
 export async function fetchActivePlan(): Promise<string | null> {
   const res = await fetch(`${USER_BASE}/active-plan`, { credentials: 'include' });
   if (res.ok) {
     const data = await res.json();
     return data.plan_id ?? null;
-  }
-  if (res.status === 404) {
-    return null;
   }
   return null;
 }
