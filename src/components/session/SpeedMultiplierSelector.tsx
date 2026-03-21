@@ -11,14 +11,10 @@ interface SpeedMultiplierSelectorProps {
 export const SpeedMultiplierSelector = memo(function SpeedMultiplierSelector({
   value,
   onChange,
-  label = 'Speed (test)',
 }: SpeedMultiplierSelectorProps) {
   return (
-    <section data-testid="speed-selector" className="mb-8">
-      <RadioGroup value={value} onChange={onChange} aria-label={label}>
-        <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em] block mb-3">
-          {label}
-        </span>
+    <section data-testid="speed-selector" className="mb-8 w-full overflow-x-auto">
+      <RadioGroup value={value} onChange={onChange}>
         <div className="flex gap-2">
           {SPEEDS.map((speed) => (
             <Radio

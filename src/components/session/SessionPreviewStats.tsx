@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { Stat } from '../ui/Stat';
 import { formatDuration } from '../../utils/formatDuration';
 import {
   getSessionDurationMinutes,
@@ -19,36 +20,20 @@ export const SessionPreviewStats = memo(function SessionPreviewStats({
   const recoveryDuration = getRecoveryDurationSeconds(phases);
 
   return (
-    <section className="grid grid-cols-2 gap-4 mb-12">
-      <div className="col-span-2 bg-surface-container-low p-6 rounded-xl flex flex-col justify-between h-40 relative overflow-hidden group">
-        <div className="relative z-10">
-          <span className="text-on-surface-variant font-label text-xs uppercase tracking-[0.2em]">
-            Total Time
-          </span>
-          <div className="text-primary font-headline text-5xl font-extrabold mt-2">
-            {totalMinutes}m
-          </div>
-        </div>
-        <div className="absolute right-0 -bottom-4 opacity-5 transition-opacity duration-700">
-          <span className="material-symbols-outlined text-[120px]">timer</span>
-        </div>
-      </div>
-      <div className="bg-surface-container-low p-5 rounded-xl">
-        <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em] block mb-2">
-          Longest Hold
-        </span>
-        <div className="text-on-surface font-headline text-2xl font-bold">
-          {formatDuration(longestHold)}
-        </div>
-      </div>
-      <div className="bg-surface-container-low p-5 rounded-xl">
-        <span className="text-on-surface-variant font-label text-[10px] uppercase tracking-[0.2em] block mb-2">
-          Recovery
-        </span>
-        <div className="text-secondary font-headline text-2xl font-bold">
-          {formatDuration(recoveryDuration)}
-        </div>
-      </div>
+    <section className="grid grid-cols-2 gap-4">
+      <Stat
+        label="Total Time"
+        value={`${totalMinutes}m`}
+        variant="large"
+        valueClassName="text-primary"
+        icon="timer"
+      />
+      <Stat label="Longest Hold" value={formatDuration(longestHold)} />
+      <Stat
+        label="Recovery"
+        value={formatDuration(recoveryDuration)}
+        valueClassName="text-secondary"
+      />
     </section>
   );
 });

@@ -125,7 +125,7 @@ export const Dashboard = () => {
       <TopAppBar weekLabel={`Day ${dayNum} of ${totalDays}`} />
       <main
         className={clsx(
-          'px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300 content-surface-gradient',
+          'px-6 pt-8 max-w-2xl mx-auto rounded-3xl transition-all duration-300 content-surface-gradient flex flex-col gap-4',
           { 'pb-12': showDayDetail },
           (isSelectedDayCompleted || isPlanComplete) &&
             'ring-2 ring-emerald-500/60 shadow-[0_0_32px_rgba(5,150,105,0.15)]'

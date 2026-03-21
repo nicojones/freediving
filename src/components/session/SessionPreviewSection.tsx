@@ -1,4 +1,5 @@
 import type { Phase } from '../../types/plan';
+import { Switch } from '@headlessui/react';
 import { CREATED_BY } from '../../constants/app';
 import { BackButton } from '../ui/BackButton';
 
@@ -8,6 +9,7 @@ import { SessionBreakdown } from './SessionBreakdown';
 import { SessionPreviewStats } from './SessionPreviewStats';
 import { SpeedMultiplierSelector } from './SpeedMultiplierSelector';
 import { StartSessionCTA } from './StartSessionCTA';
+import { Stat } from '../ui/Stat';
 
 interface SessionPreviewSectionProps {
   selectedDayIndex: number;
@@ -80,26 +82,32 @@ export const SessionPreviewSection = ({
 
       <SessionPreviewStats phases={selectedPhases} />
 
-      {showTestControls && (
-        <SpeedMultiplierSelector value={speedMultiplier} onChange={onSpeedMultiplierChange} />
-      )}
-
-      {showTestControls && (
-        <label
-          data-testid="test-mode-toggle"
-          className="flex items-center gap-3 cursor-pointer mb-4"
-        >
-          <input
-            type="checkbox"
-            checked={testMode}
-            onChange={(e) => onTestModeChange(e.target.checked)}
-            className="rounded border-outline-variant bg-surface-container-low"
-          />
-          <span className="text-on-surface-variant font-body text-sm">
-            Test mode — shorten relaxation to 3s for faster testing
-          </span>
-        </label>
-      )}
+      <Stat
+        label="Speed (test)"
+        value={
+          <>
+            {' '}
+            {showTestControls && (
+              <SpeedMultiplierSelector value={speedMultiplier} onChange={onSpeedMultiplierChange} />
+            )}
+            {showTestControls && (
+              <label className="flex items-center gap-3 cursor-pointer mb-4">
+                <Switch
+                  checked={testMode}
+                  onChange={onTestModeChange}
+                  data-testid="test-mode-toggle"
+                  className="group inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-outline-variant/60 bg-surface-container-high transition data-checked:bg-primary data-checked:border-primary"
+                >
+                  <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
+                </Switch>
+                <span className="text-on-surface-variant font-body text-sm">
+                  Test mode — shorten relaxation to 3s for faster testing
+                </span>
+              </label>
+            )}
+          </>
+        }
+      />
 
       <SessionBreakdown phases={selectedPhases} />
 
